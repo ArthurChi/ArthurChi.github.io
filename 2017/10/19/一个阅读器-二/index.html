@@ -1,0 +1,1033 @@
+<!DOCTYPE html>
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+<html class="theme-next muse use-motion" lang="zh-Hans">
+<head><meta name="generator" content="Hexo 3.8.0">
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2">
+
+<link rel="stylesheet" href="/css/main.css?v=7.1.0">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=7.1.0">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=7.1.0">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=7.1.0">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=7.1.0" color="#222">
+
+
+
+
+
+
+
+<script id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Muse',
+    version: '7.1.0',
+    sidebar: {"position":"left","display":"post","offset":12,"onmobile":false,"dimmer":false},
+    back2top: true,
+    back2top_sidebar: false,
+    fancybox: false,
+    fastclick: false,
+    lazyload: false,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+  
+
+
+
+
+  <meta name="description" content="Begin接上一篇, 这一篇介绍网络部分">
+<meta property="og:type" content="article">
+<meta property="og:title" content="一个阅读器(二)">
+<meta property="og:url" content="http://yoursite.com/2017/10/19/一个阅读器-二/index.html">
+<meta property="og:site_name" content="ArthurChi&#39;s Blog">
+<meta property="og:description" content="Begin接上一篇, 这一篇介绍网络部分">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:updated_time" content="2017-10-23T13:31:08.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="一个阅读器(二)">
+<meta name="twitter:description" content="Begin接上一篇, 这一篇介绍网络部分">
+
+
+
+
+
+  
+  
+  <link rel="canonical" href="http://yoursite.com/2017/10/19/一个阅读器-二/">
+
+
+
+<script id="page.configurations">
+  CONFIG.page = {
+    sidebar: "",
+  };
+</script>
+
+  <title>一个阅读器(二) | ArthurChi's Blog</title>
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .motion-element,
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-title { opacity: initial; }
+
+  .use-motion .logo,
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">ArthurChi's Blog</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+    
+      
+        <p class="site-subtitle">Yesterday you said tomorrow</p>
+      
+    
+    
+  </div>
+
+  <div class="site-nav-toggle">
+    <button aria-label="Toggle navigation bar">
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  
+    <ul id="menu" class="menu">
+      
+        
+        
+        
+          
+          <li class="menu-item menu-item-home">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/" rel="section"><i class="menu-item-icon fa fa-fw fa-home"></i> <br>Home</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-archives">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/archives/" rel="section"><i class="menu-item-icon fa fa-fw fa-archive"></i> <br>Archives</a>
+
+  </li>
+
+      
+      
+    </ul>
+  
+
+  
+    
+
+  
+
+  
+</nav>
+
+
+
+  
+
+
+
+</div>
+    </header>
+
+    
+
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/10/19/一个阅读器-二/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Author">
+      <meta itemprop="description" content>
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="ArthurChi's Blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">一个阅读器(二)
+
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+
+            
+            
+            
+
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Posted on</span>
+              
+
+              
+                
+              
+
+              <time title="Created: 2017-10-19 11:51:52" itemprop="dateCreated datePublished" datetime="2017-10-19T11:51:52+08:00">2017-10-19</time>
+            
+
+            
+              
+
+              
+                
+                <span class="post-meta-divider">|</span>
+                
+
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">Edited on</span>
+                
+                <time title="Modified: 2017-10-23 21:31:08" itemprop="dateModified" datetime="2017-10-23T21:31:08+08:00">2017-10-23</time>
+              
+            
+          </span>
+
+          
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">In</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/iOS/" itemprop="url" rel="index"><span itemprop="name">iOS</span></a></span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h1 id="Begin"><a href="#Begin" class="headerlink" title="Begin"></a>Begin</h1><p>接上一篇, 这一篇介绍网络部分<br><a id="more"></a></p>
+<h1 id="Moya-amp-BaseNetService"><a href="#Moya-amp-BaseNetService" class="headerlink" title="Moya &amp; BaseNetService"></a>Moya &amp; BaseNetService</h1><p>Moya的使用方式, 和Android的Retrofit2有几分相似, 但是之前用的时候, 全局一个TargetType的子类, 一旦接口多了以后, 便使得维护起来很麻烦, 后来经过改进, 可以分模块定义. 与之对应的, NetService也需要对应不同的模块.</p>
+<h2 id="BaseNetService"><a href="#BaseNetService" class="headerlink" title="BaseNetService"></a>BaseNetService</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br></pre></td><td class="code"><pre><span class="line">import Foundation</span><br><span class="line">import Alamofire</span><br><span class="line">import Moya</span><br><span class="line">import RxSwift</span><br><span class="line">import ObjectMapper</span><br><span class="line"></span><br><span class="line">class NetWorkService&lt;T: TargetType&gt; &#123;</span><br><span class="line">    </span><br><span class="line">    fileprivate lazy var sessionManager: SessionManager = &#123;</span><br><span class="line">        // 首先, 自定义超时时间</span><br><span class="line">        let configuration = URLSessionConfiguration.default</span><br><span class="line">        configuration.timeoutIntervalForRequest = 15</span><br><span class="line">        </span><br><span class="line">        return SessionManager(configuration: configuration)</span><br><span class="line">    &#125;()</span><br><span class="line">    </span><br><span class="line">    fileprivate var provider: RxMoyaProvider&lt;T&gt;</span><br><span class="line">    var reachabilityManger = NetworkReachabilityManager()!</span><br><span class="line">    </span><br><span class="line">    init() &#123;</span><br><span class="line">        </span><br><span class="line">        // Endpoint</span><br><span class="line">        let endpointClosure = &#123; (target: T) -&gt; Endpoint&lt;T&gt; in</span><br><span class="line">            let defaultEndpoint = MoyaProvider.defaultEndpointMapping(for: target)</span><br><span class="line"></span><br><span class="line">            var tmpParams = Dictionary&lt;String, Any&gt;()</span><br><span class="line"></span><br><span class="line">            if let oldParam = defaultEndpoint.parameters &#123;</span><br><span class="line">                tmpParams = oldParam</span><br><span class="line">            &#125;</span><br><span class="line">				// 添加公共参数</span><br><span class="line">            tmpParams[&quot;authcode&quot;] = Marco.URL.authcode</span><br><span class="line"></span><br><span class="line">            return defaultEndpoint.adding(newParameters: tmpParams)</span><br><span class="line">        &#125;</span><br><span class="line">        </span><br><span class="line">        // Manager</span><br><span class="line">        let configuration = URLSessionConfiguration.default</span><br><span class="line">        configuration.timeoutIntervalForRequest = 15</span><br><span class="line">        </span><br><span class="line">        let sessionManager = SessionManager(configuration: configuration)</span><br><span class="line">        </span><br><span class="line">        provider = RxMoyaProvider&lt;T&gt;(endpointClosure: endpointClosure, manager: sessionManager)</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">	  // 只需要Boolean类型的返回结果</span><br><span class="line">    func requestBool(reqType: T) -&gt; Observable&lt;Bool&gt; &#123;</span><br><span class="line">        return provider</span><br><span class="line">            .request(reqType)</span><br><span class="line">            .asObservable()</span><br><span class="line">            .convenienceObserveOn(scheduler: .serial(.default))</span><br><span class="line">            .mapJSON()</span><br><span class="line">            .shareReplay(1)</span><br><span class="line">            .filterError()</span><br><span class="line">            .mapToBool()</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    // 需要返回指定类型的结果, key是因为后台接口人员交替导致json结构混乱, 有时候需要指定返回结果中的key</span><br><span class="line">    func requestObject&lt;U: Mappable&gt;(reqType: T, byKey: String = &quot;&quot;) -&gt; Observable&lt;U&gt; &#123;</span><br><span class="line">        return provider</span><br><span class="line">            .request(reqType)</span><br><span class="line">            .asObservable()</span><br><span class="line">            .convenienceObserveOn(scheduler: .serial(.default))</span><br><span class="line">            .mapJSON()</span><br><span class="line">            .shareReplay(1)</span><br><span class="line">            .filterError()</span><br><span class="line">            .mapToObject(byKey)</span><br><span class="line">    &#125;</span><br><span class="line">    // 需要返回指定类型的结果, 这里是集合类型的.</span><br><span class="line">    func requestCollection&lt;U: Mappable&gt;(reqType: T, byKey: String = &quot;&quot;) -&gt; Observable&lt;[U]&gt; &#123;</span><br><span class="line">        return provider</span><br><span class="line">            .request(reqType)</span><br><span class="line">            .asObservable()</span><br><span class="line">            .convenienceObserveOn(scheduler: .serial(.default))</span><br><span class="line">            .mapJSON()</span><br><span class="line">            .shareReplay(1)</span><br><span class="line">            .filterError()</span><br><span class="line">            .mapToCollection(byKey)</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">// 协议Extension</span><br><span class="line">extension TargetType &#123;</span><br><span class="line">    </span><br><span class="line">    var baseURL : URL &#123; return URL(safeString: Marco.URL.baseUrl) &#125;</span><br><span class="line">    </span><br><span class="line">    var parameterEncoding: ParameterEncoding &#123;</span><br><span class="line">        return URLEncoding.default</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    var headers: [String: String]? &#123;</span><br><span class="line">        return nil</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>这里的 <code>filterError</code> , <code>mapToBool</code>, <code>mapToObject</code>, <code>mapToCollection</code> 做的是 <code>Observable</code> 的 extension</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br></pre></td><td class="code"><pre><span class="line">extension Observable &#123;</span><br><span class="line">    </span><br><span class="line">    func filterError() -&gt; Observable&lt;Dictionary&lt;String, Any&gt;&gt; &#123; // 这里两个作用, 一个是将后台返回的非正常的状态码封装成对应的Error, 另一个作用是将provider返回的结果绑定为Dictionary&lt;String: Any&gt;, 以便后面使用</span><br><span class="line">        </span><br><span class="line">        return self</span><br><span class="line">            .catchError(&#123; (error) -&gt; Observable&lt;Element&gt; in</span><br><span class="line"></span><br><span class="line">                if let error = error as? MoyaError &#123;</span><br><span class="line">                    switch error &#123;</span><br><span class="line">                    case .underlying(let error as NSError) where error.code == -1001:</span><br><span class="line">                        throw CustomError.timeout</span><br><span class="line">                    default:</span><br><span class="line">                        throw error</span><br><span class="line">                    &#125;</span><br><span class="line">                &#125;</span><br><span class="line">                </span><br><span class="line">                throw error</span><br><span class="line">            &#125;)</span><br><span class="line">        .map(&#123; response -&gt; Dictionary&lt;String, Any&gt; in</span><br><span class="line">            </span><br><span class="line">            if let response = response as? [String: Any] &#123;</span><br><span class="line">                if let status = response[&quot;status&quot;] as? [String: Any] &#123;</span><br><span class="line">                    if let code = status[&quot;code&quot;] as? Int, let statusMsg = status[&quot;msg&quot;] as? String &#123;</span><br><span class="line">                        if code != 0 &#123;</span><br><span class="line">                            switch code &#123;</span><br><span class="line">                            case 5:</span><br><span class="line">                                throw CustomError.needLogin</span><br><span class="line">                            case 4:</span><br><span class="line">                                throw CustomError.needMoney</span><br><span class="line">                            default:</span><br><span class="line">                                throw CustomError.netError(description: statusMsg)</span><br><span class="line">                            &#125;</span><br><span class="line">                            </span><br><span class="line">                        &#125; else &#123;</span><br><span class="line">                            return response</span><br><span class="line">                        &#125;</span><br><span class="line">                    &#125;</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">            </span><br><span class="line">            throw CustomError.mapJsonError</span><br><span class="line">        &#125;)</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>如果状态码返回的是没有问题的, 那么接下来就可以转成对应的结果了<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br></pre></td><td class="code"><pre><span class="line">extension Observable where E == Dictionary&lt;String, Any&gt; &#123;</span><br><span class="line">    </span><br><span class="line">    func mapToBool() -&gt; Observable&lt;Bool&gt; &#123;</span><br><span class="line">        return self.map(&#123; reponse in</span><br><span class="line">            return true</span><br><span class="line">        &#125;)</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    func mapToObject&lt;T: Mappable&gt;(_ key: String) -&gt; Observable&lt;T&gt; &#123;</span><br><span class="line">        </span><br><span class="line">        return self.map(&#123; response in</span><br><span class="line">            </span><br><span class="line">            var data = response</span><br><span class="line">            </span><br><span class="line">            if !key.isEmpty, let specialDict = data[key] as? [String: Any] &#123;</span><br><span class="line">                data = specialDict</span><br><span class="line">            &#125;</span><br><span class="line">            </span><br><span class="line">            if let result = Mapper&lt;T&gt;().map(JSON: data) &#123;</span><br><span class="line">                return result</span><br><span class="line">            &#125;</span><br><span class="line">            </span><br><span class="line">            throw CustomError.mapJsonError</span><br><span class="line">        &#125;)</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    func mapToCollection&lt;T: Mappable&gt;(_ key: String) -&gt; Observable&lt;[T]&gt; &#123;</span><br><span class="line">        </span><br><span class="line">        return self.map(&#123; response in</span><br><span class="line">            </span><br><span class="line">            var data = response</span><br><span class="line">            </span><br><span class="line">            if !key.isEmpty, let specialDict = data[key] as? Array&lt;Dictionary&lt;String, Any&gt;&gt; &#123;</span><br><span class="line">                return Mapper&lt;T&gt;().mapArray(JSONArray: specialDict)</span><br><span class="line">            &#125;</span><br><span class="line">            </span><br><span class="line">            if let datas = data[&quot;data&quot;] as? Array&lt;[String: Any]&gt; &#123;</span><br><span class="line">                return Mapper&lt;T&gt;().mapArray(JSONArray: datas)</span><br><span class="line">            &#125;</span><br><span class="line">            </span><br><span class="line">            throw CustomError.mapJsonError</span><br><span class="line">        &#125;)</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>接下来就是NetService的实现类了</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br></pre></td><td class="code"><pre><span class="line">import Foundation</span><br><span class="line">import RxSwift</span><br><span class="line">import ObjectMapper</span><br><span class="line"></span><br><span class="line">final class WDBookNetService: NetWorkService&lt;WDBookAPI&gt; &#123; // 这里的 WDBookAPI 是一个实现了 TargetType 协议的 enum</span><br><span class="line"></span><br><span class="line">    func bookInfo&lt;T: Mappable&gt;(bookId: Int) -&gt; Observable&lt;T&gt; &#123;</span><br><span class="line">        var params = Dictionary&lt;String, Any&gt;()</span><br><span class="line">        params[&quot;bid&quot;] = bookId</span><br><span class="line">        </span><br><span class="line">        return requestObject(reqType: .bookInfo(params), byKey: &quot;books&quot;)</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    // 直接获取小说内容</span><br><span class="line">    func chapter&lt;T: Mappable&gt;(bookId: Int, cId: Int) -&gt; Observable&lt;T&gt; &#123;</span><br><span class="line">        var params = Dictionary&lt;String, Any&gt;()</span><br><span class="line">        params[&quot;bid&quot;] = bookId</span><br><span class="line">        params[&quot;cid&quot;] = cId</span><br><span class="line">        params[&quot;access_token&quot;] = WDAccountService.share.token</span><br><span class="line">        </span><br><span class="line">        return requestObject(reqType: .chapter(params))</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    // 全量更新</span><br><span class="line">    func chapterList&lt;T: Mappable&gt;(bookId: Int) -&gt; Observable&lt;[T]&gt; &#123;</span><br><span class="line">        var params = Dictionary&lt;String, Any&gt;()</span><br><span class="line">        params[&quot;bid&quot;] = bookId</span><br><span class="line">        params[&quot;page&quot;] = 1</span><br><span class="line">        params[&quot;perpage&quot;] = 1</span><br><span class="line">        </span><br><span class="line">        return requestCollection(reqType: .chapterList(params), byKey: &quot;chapters&quot;)</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    // 增量更新</span><br><span class="line">    func checekChapterList&lt;T: Mappable&gt;(bookInfos: [(String, String, String)]) -&gt; Observable&lt;[T]&gt; &#123;</span><br><span class="line">        var params = Dictionary&lt;String, Any&gt;()</span><br><span class="line">        </span><br><span class="line">        params[&quot;bstring&quot;] = bookInfos.map &#123; &quot;\($0.0)_\($0.1)_\($0.2)&quot; &#125;.joined(separator: &quot;|&quot;)</span><br><span class="line">        </span><br><span class="line">        return requestCollection(reqType: .checkChapterList(params))</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    // 下载免费章节</span><br><span class="line">    func downloadFreeChapters&lt;T: Mappable&gt;(bookId: Int, sNum: Int, length: Int) -&gt; Observable&lt;[T]&gt; &#123;</span><br><span class="line">        var params = Dictionary&lt;String, Any&gt;()</span><br><span class="line">        </span><br><span class="line">        params[&quot;bid&quot;] = bookId</span><br><span class="line">        params[&quot;s_num&quot;] = sNum</span><br><span class="line">        params[&quot;num&quot;] = length</span><br><span class="line">        params[&quot;format&quot;] = &quot;json&quot;</span><br><span class="line">        </span><br><span class="line">        return requestCollection(reqType: .downloadFreeChapters(params), byKey: &quot;chapter_list&quot;)</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    // 询价</span><br><span class="line">    func price&lt;T: Mappable&gt;(bookId: Int, cid: Int) -&gt; Observable&lt;T&gt; &#123;</span><br><span class="line">        var params = Dictionary&lt;String, Any&gt;()</span><br><span class="line">        params[&quot;bid&quot;] = bookId</span><br><span class="line">        params[&quot;cid&quot;] = cid</span><br><span class="line">        params[&quot;access_token&quot;] = WDAccountService.share.token</span><br><span class="line">        </span><br><span class="line">        return requestObject(reqType: .chapterSinglePrice(params))</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    // 添加收藏</span><br><span class="line">    func collect(bookId: Int) -&gt; Observable&lt;Bool&gt; &#123;</span><br><span class="line">        var params = Dictionary&lt;String, Any&gt;()</span><br><span class="line">        params[&quot;bid&quot;] = bookId</span><br><span class="line">        params[&quot;access_token&quot;] = WDAccountService.share.token</span><br><span class="line">        return requestBool(reqType: .collectBook(params))</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    // 删除收藏</span><br><span class="line">    func delCollect(bookId: Int) -&gt; Observable&lt;Bool&gt; &#123;</span><br><span class="line">        var params = Dictionary&lt;String, Any&gt;()</span><br><span class="line">        params[&quot;bid&quot;] = bookId</span><br><span class="line">        params[&quot;access_token&quot;] = WDAccountService.share.token</span><br><span class="line">        return requestBool(reqType: .delCollectBook(params))</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    func syncReadProcess(bookId: Int, chapterId: Int) -&gt; Observable&lt;Bool&gt; &#123;</span><br><span class="line">        var params = Dictionary&lt;String, Any&gt;()</span><br><span class="line">        params[&quot;access_token&quot;] = WDAccountService.share.token</span><br><span class="line">        params[&quot;bid&quot;] = bookId</span><br><span class="line">        params[&quot;cid&quot;] = chapterId</span><br><span class="line">        return requestBool(reqType: .setReadProcess(params))</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    func login(token: String) -&gt; Observable&lt;WDLoginModel&gt; &#123;</span><br><span class="line">        var params = Dictionary&lt;String, Any&gt;()</span><br><span class="line">        </span><br><span class="line">        params[&quot;code&quot;] = &quot;nwb_\(token)&quot;</span><br><span class="line">        return requestObject(reqType: .login(params))</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>这样, C层| P层| VM层 中就不需要关心请求的path, 参数装配等细节了.</p>
+
+      
+    </div>
+
+    
+
+    
+    
+    
+
+    
+
+    
+      
+    
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2017/10/18/一个阅读器-一/" rel="next" title="一个阅读器(一)">
+                <i class="fa fa-chevron-left"></i> 一个阅读器(一)
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2017/10/24/Single/" rel="prev" title="Single">
+                Single <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+  </div>
+
+
+          </div>
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            Table of Contents
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            Overview
+          </li>
+        </ul>
+      
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <p class="site-author-name" itemprop="name">Author</p>
+              <div class="site-description motion-element" itemprop="description"></div>
+          </div>
+
+          
+            <nav class="site-state motion-element">
+              
+                <div class="site-state-item site-state-posts">
+                
+                  <a href="/archives/">
+                
+                    <span class="site-state-item-count">129</span>
+                    <span class="site-state-item-name">posts</span>
+                  </a>
+                </div>
+              
+
+              
+                
+                
+                <div class="site-state-item site-state-categories">
+                  
+                    
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                    <span class="site-state-item-count">14</span>
+                    <span class="site-state-item-name">categories</span>
+                  
+                </div>
+              
+
+              
+                
+                
+                <div class="site-state-item site-state-tags">
+                  
+                    
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                    <span class="site-state-item-count">111</span>
+                    <span class="site-state-item-name">tags</span>
+                  
+                </div>
+              
+            </nav>
+          
+
+          
+
+          
+
+          
+
+          
+
+          
+          
+
+          
+            
+          
+          
+
+        </div>
+      </div>
+
+      
+      <!--noindex-->
+        <div class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+            
+            
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#Begin"><span class="nav-number">1.</span> <span class="nav-text">Begin</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Moya-amp-BaseNetService"><span class="nav-number">2.</span> <span class="nav-text">Moya &amp; BaseNetService</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#BaseNetService"><span class="nav-number">2.1.</span> <span class="nav-text">BaseNetService</span></a></li></ol></li></ol></div>
+            
+
+          </div>
+        </div>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+  
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2019</span>
+  <span class="with-love" id="animate">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Author</span>
+
+  
+
+  
+</div>
+
+
+  <div class="powered-by">Powered by <a href="https://hexo.io" class="theme-link" rel="noopener" target="_blank">Hexo</a> v3.8.0</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">Theme – <a href="https://theme-next.org" class="theme-link" rel="noopener" target="_blank">NexT.Muse</a> v7.1.0</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+    
+
+    
+  </div>
+
+  
+
+<script>
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  <script src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+
+  
+
+
+  <script src="/js/utils.js?v=7.1.0"></script>
+
+  <script src="/js/motion.js?v=7.1.0"></script>
+
+
+
+  
+  
+
+
+  <script src="/js/schemes/muse.js?v=7.1.0"></script>
+
+
+
+  
+  <script src="/js/scrollspy.js?v=7.1.0"></script>
+<script src="/js/post-details.js?v=7.1.0"></script>
+
+
+
+  
+
+
+  <script src="/js/next-boot.js?v=7.1.0"></script>
+
+
+  
+
+  
+
+  
+
+  
+
+
+  
+
+
+  
+
+
+
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

@@ -1,0 +1,1147 @@
+<!DOCTYPE html>
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+<html class="theme-next muse use-motion" lang="zh-Hans">
+<head><meta name="generator" content="Hexo 3.8.0">
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2">
+
+<link rel="stylesheet" href="/css/main.css?v=7.1.0">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=7.1.0">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=7.1.0">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=7.1.0">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=7.1.0" color="#222">
+
+
+
+
+
+
+
+<script id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Muse',
+    version: '7.1.0',
+    sidebar: {"position":"left","display":"post","offset":12,"onmobile":false,"dimmer":false},
+    back2top: true,
+    back2top_sidebar: false,
+    fancybox: false,
+    fastclick: false,
+    lazyload: false,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+  
+
+
+
+
+  <meta name="description" content="Cache提到缓存这个词, 我们并不陌生, 从硬件到软件, 从服务端到客户端, 我们都有用到各种各样的缓存. 甚至在面试中, 也会有类似的问题. 今天, 我们就通过将一个大家熟悉的库–YYCache, 由OC改写成Swift, 来学习如何设计一个Cache">
+<meta property="og:type" content="article">
+<meta property="og:title" content="从YYCache学习设计一个CaChe in Swift">
+<meta property="og:url" content="http://yoursite.com/2018/09/19/从YYCache学习设计一个CaChe-in-Swift/index.html">
+<meta property="og:site_name" content="ArthurChi&#39;s Blog">
+<meta property="og:description" content="Cache提到缓存这个词, 我们并不陌生, 从硬件到软件, 从服务端到客户端, 我们都有用到各种各样的缓存. 甚至在面试中, 也会有类似的问题. 今天, 我们就通过将一个大家熟悉的库–YYCache, 由OC改写成Swift, 来学习如何设计一个Cache">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:updated_time" content="2018-11-21T11:46:48.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="从YYCache学习设计一个CaChe in Swift">
+<meta name="twitter:description" content="Cache提到缓存这个词, 我们并不陌生, 从硬件到软件, 从服务端到客户端, 我们都有用到各种各样的缓存. 甚至在面试中, 也会有类似的问题. 今天, 我们就通过将一个大家熟悉的库–YYCache, 由OC改写成Swift, 来学习如何设计一个Cache">
+
+
+
+
+
+  
+  
+  <link rel="canonical" href="http://yoursite.com/2018/09/19/从YYCache学习设计一个CaChe-in-Swift/">
+
+
+
+<script id="page.configurations">
+  CONFIG.page = {
+    sidebar: "",
+  };
+</script>
+
+  <title>从YYCache学习设计一个CaChe in Swift | ArthurChi's Blog</title>
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .motion-element,
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-title { opacity: initial; }
+
+  .use-motion .logo,
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">ArthurChi's Blog</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+    
+      
+        <p class="site-subtitle">Yesterday you said tomorrow</p>
+      
+    
+    
+  </div>
+
+  <div class="site-nav-toggle">
+    <button aria-label="Toggle navigation bar">
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  
+    <ul id="menu" class="menu">
+      
+        
+        
+        
+          
+          <li class="menu-item menu-item-home">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/" rel="section"><i class="menu-item-icon fa fa-fw fa-home"></i> <br>Home</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-archives">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/archives/" rel="section"><i class="menu-item-icon fa fa-fw fa-archive"></i> <br>Archives</a>
+
+  </li>
+
+      
+      
+    </ul>
+  
+
+  
+    
+
+  
+
+  
+</nav>
+
+
+
+  
+
+
+
+</div>
+    </header>
+
+    
+
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/09/19/从YYCache学习设计一个CaChe-in-Swift/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Author">
+      <meta itemprop="description" content>
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="ArthurChi's Blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">从YYCache学习设计一个CaChe in Swift
+
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+
+            
+            
+            
+
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Posted on</span>
+              
+
+              
+                
+              
+
+              <time title="Created: 2018-09-19 22:39:36" itemprop="dateCreated datePublished" datetime="2018-09-19T22:39:36+08:00">2018-09-19</time>
+            
+
+            
+              
+
+              
+                
+                <span class="post-meta-divider">|</span>
+                
+
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">Edited on</span>
+                
+                <time title="Modified: 2018-11-21 19:46:48" itemprop="dateModified" datetime="2018-11-21T19:46:48+08:00">2018-11-21</time>
+              
+            
+          </span>
+
+          
+
+          
+            
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h1 id="Cache"><a href="#Cache" class="headerlink" title="Cache"></a>Cache</h1><p>提到缓存这个词, 我们并不陌生, 从硬件到软件, 从服务端到客户端, 我们都有用到各种各样的缓存. 甚至在面试中, 也会有类似的问题. 今天, 我们就通过将一个大家熟悉的库–YYCache, 由OC改写成Swift, 来学习如何设计一个Cache<br><a id="more"></a></p>
+<h1 id="Swift"><a href="#Swift" class="headerlink" title="Swift"></a>Swift</h1><p>抛开项目本身, 说到将OC转成Swift, 这个过程并不是将代码换个语言搬运过去. 无论是自然语言, 还是编程语言, 一种语言代表的是一种思维方式. 同样, 对于OC和Swift来说, 也是如此. 他们都有自己的侧重点. 对于OC, 我们常听到的就是运行时, 没错, OC的魅力在于运行时. 但是Swift呢? 它也有一些运行时特性, 例如KeyPath, Mirro, 但最直观的感受就是一些编译时的特性, 比如泛型. 所以我们的要做的不是只是把OC直译成Swift, 而是要达到信, 达, 雅</p>
+<h1 id="分析"><a href="#分析" class="headerlink" title="分析"></a>分析</h1><p>从代码的类上来看, 主体可以分为两类, Memory Cache 和 Disk Cache, 最终, 用一个类将这两个种Cache方式组合起来. 而不论是Memory Cache还是Disk Cache或是最终把它们组合到一起的Cache, 他们的行为都是CRUD, 而且这些操作有同步和异步两种方式. 那么, 我们首先可以建立一个protocol来定义这些方法. 因为我们要遵循一个设计原则, 依赖倒置原则(Dependency Inversion Principle)<br>一个强壮的代码离不开单元测试, 为了使代码达到可测试性的标准, 在这里, 我会为一系列行为定义一个协议(protocol), 同时, 我会引入一些单元测试来测这个代码是否符合预期. 这是必要的, 因为在发开过程中, 我通过单元测试发现了几处bug.</p>
+<h2 id="Cache协议标准"><a href="#Cache协议标准" class="headerlink" title="Cache协议标准"></a>Cache协议标准</h2><p>在动手写这个协议之前, 让我们看看, 这个协议都需要包含什么.</p>
+<ul>
+<li>增加一个对象的方法</li>
+<li>查询一个对象的方法</li>
+<li>删除一个对象的方法</li>
+<li>删除所有对象的方法</li>
+<li>判断一个对象是否存在的方法</li>
+</ul>
+<p>这里有两个疑问点:<br>第一个点, 我们通过什么来查找对象<br>第二个点, 既然有查询一个对象的方法, 为什么还需要判断一个对象是否存在的方法.(稍后解释)</p>
+<h2 id="缓存算法"><a href="#缓存算法" class="headerlink" title="缓存算法"></a>缓存算法</h2><p>看起来, 字典可以解决上面列的这些方法和第一个问题点, 但是我们要实现的缓存并不只是存储对象, 重要的是, 我们需要这个存储结构可以实现一些缓存算法, 这里我们使用的LRU(Least Recently Used)算法. </p>
+<blockquote>
+<p>LRU算法是不断将最近使用的对象放到列表的头部, 当需要释放一些空间的时候, 从尾部开始删除, 直到符合预期. </p>
+</blockquote>
+<p>从上面的描述来看, 我们就知道为什么一个查询方法的同时, 还需要一个判断对象是否存在的方法, 因为查询一个对象, 代表这个对象的最近被使用过, 是要放到列表头部的, 而如果你只是想判断一个对象是否存在的时候, 你并不想引入这样的副作用.</p>
+<h2 id="数据组织方式"><a href="#数据组织方式" class="headerlink" title="数据组织方式"></a>数据组织方式</h2><p>很显然, 我们现在确定了, 需要一个hash表, 来标记每一对要存储的key-value对, 同时, 我们要保证这些kv对符合一定的顺序. 这里我们需要一个字典, 而为了实现顺序, 我们需要一个顺序集合. 因为我们要频繁的插入和删除, 同时, 当我们需要释放一些资源的时候, 我们需要从尾部向头部遍历删除, 显然, 双向链表是一个不错的选择. </p>
+<h1 id="开始着手"><a href="#开始着手" class="headerlink" title="开始着手"></a>开始着手</h1><h2 id="定义一个Protocol"><a href="#定义一个Protocol" class="headerlink" title="定义一个Protocol"></a>定义一个Protocol</h2><p>确定了协议内容, 数据组织方式, 终于到了要动手写点什么的时候了. 首先我们要定义一些插入和删除以及查询的方法, 并需要把Key-Value联系起来. 那么, 问题来了, Key和Value是什么类型的呢? 我们希望这个Cache足够通用, 可以存放任意类型, 但是, 我们要考虑两点:</p>
+<ol>
+<li>传入的key要作为我们内部Dictionary的key存储</li>
+<li>传入的value我们需要把它持久化, 那么它应该是一个codable</li>
+</ol>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">public protocol CacheStandard &#123;</span><br><span class="line">    associatedtype Value: Codable</span><br><span class="line">    associatedtype Key: Hashable</span><br><span class="line">    func containsObject(key: Key) -&gt; Bool</span><br><span class="line">    mutating func query(key: Key) -&gt; Value?</span><br><span class="line">    mutating func save(value: Value, for key: Key)</span><br><span class="line">    mutating func remove(key: Key)</span><br><span class="line">    mutating func removeAll()</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>首先, 我们定义一个类型Key, 它是任意类型, 但是要遵守Hashable协议; 然后我们再定义一个Value类型, 它也是任意类型, 但是要遵守Codable协议; 最后我们声明一些方法, 这里要注意<code>mutating</code>关键字, 如果是判断是否包含一个对象的方法, 并不需要修改自己. 而其他方法都需要修改自己的一些属性, 所以标记了<code>mutating</code>.</p>
+<p>上面是同步查询的协议, 异步查询的也可以如法炮制</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">public protocol CacheAsyncStandard &#123;</span><br><span class="line">    associatedtype Value: Codable</span><br><span class="line">    associatedtype Key: Hashable</span><br><span class="line">    func containsObject(key: Key, _ result: @escaping ((_ key: Key, _ contain: Bool) -&gt; Void))</span><br><span class="line">    mutating func query(key: Key, _ result: @escaping ((_ key: Key, _ value: Value?) -&gt; Void))</span><br><span class="line">    mutating func save(value: Value, for key: Key, _ result: @escaping (()-&gt;Void))</span><br><span class="line">    mutating func remove(key: Key, _ result: @escaping ((_ key: Key) -&gt; Void))</span><br><span class="line">    mutating func removeAll(_ result: @escaping (()-&gt;Void))</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>这里并不建议将这两个协议合并, 虽然他们都有Key和Value并且逻辑上应该是同一种类型, 但是需要遵循接口分离原则(Interface Segregation Principle), 所以我们将他们分开了, 但是随之而来的问题是, 我们要如何约束使用同步和异步协议方法的Key和Value的协议类型要一致呢. 让我们来写一个struct来体验一下.</p>
+<h2 id="声明Cache"><a href="#声明Cache" class="headerlink" title="声明Cache"></a>声明Cache</h2><p>首先, 我们需要声明一个struct来遵守这两个协议, 这里之所以用struct而不是class, 因为在没有明确需要使用引用语义的情况下, 尽量使用struct.<br>在我们构造struct的时候, 仍然不知道我们要存什么样的数据, 同样需要由使用者来传入. 那么, struct或者class中的声明和protocol声明有什么不同呢? 让我们看下面的代码:</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">struct Cache&lt;K, V, M: CacheStandard, D: CacheStandard &amp; CacheAsyncStandard&gt; &#123;</span><br><span class="line">    </span><br><span class="line">    typealias Key = K</span><br><span class="line">    typealias Value = V</span><br><span class="line">    </span><br><span class="line">    private var memoryCache: M</span><br><span class="line">    private var diskCache: D</span><br><span class="line">    </span><br><span class="line">    init(memoryCache: M, diskCache: D) &#123;</span><br><span class="line">        self.memoryCache = memoryCache</span><br><span class="line">        self.diskCache = diskCache</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>这里, 我们传入一个memory cache和一个disk cache, 当然, 我们也可以给这两个变量一个默认值的, 这里使用传入的方式而不是内置的方式, 是为了依赖注入, 这样稍后就可以引入单元测试了. </p>
+<p>但是到这里, 我们还有一个问题, 逻辑上, memory cache 和 disk cache所传入的key和value的类型应该是一样的, 这里我们应该怎么做才能体现这个逻辑并让编译器帮我们检查呢? 让我们继续看下面的代码:</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">struct Cache&lt;K, V, M: CacheStandard, D: CacheStandard &amp; CacheAsyncStandard&gt; where M.Value == V, D.Value == V, M.Key == K, D.Key == K &#123;</span><br><span class="line">    </span><br><span class="line">    typealias Key = K</span><br><span class="line">    typealias Value = V</span><br><span class="line">    </span><br><span class="line">    private var memoryCache: M</span><br><span class="line">    private var diskCache: D</span><br><span class="line">    </span><br><span class="line">    init(memoryCache: M, diskCache: D) &#123;</span><br><span class="line">        self.memoryCache = memoryCache</span><br><span class="line">        self.diskCache = diskCache</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>看到这么一大堆, 估计你会脑阔疼, 那么让我们一点一点的来分析那行声明:</p>
+<ol>
+<li>我们声明了一个K类型(for Key), 一个V类型(for Value), 一个M类型(for Memory Cache), 一个D类型(for Disk Cache). </li>
+<li>这里M需要遵守CacheStandard, D需要遵守CacheStandard &amp; CacheAsyncStandard两个协议</li>
+<li>添加类型约束, 要M中的Key, D中的Key与传入的K相同</li>
+<li>要M中的Value, D中的Value与传入的V相同</li>
+</ol>
+<p>在设计代码时, 需要考虑使用者的感受, 当使用者要使用这个struct的时候, 需要传入四个类型, 这是一件反人类的事情. 为了让使用的人用着舒服些, 或者让我们自己维护的舒服些, 我们需要做点什么.</p>
+<p>分析, 这其中的Key和Value相等的约束, 我们可以用协议声明一下, 成为一种代码的强约束. 同时我们发现, 这里的Key和Value可以通过传入的Memory Cache与 Disk Cache推导获得.</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">public protocol Cacheable &#123;</span><br><span class="line">    associatedtype M: CacheStandard</span><br><span class="line">    associatedtype D: CacheStandard &amp; CacheAsyncStandard where M.Key == D.Key, M.Value == D.Value</span><br><span class="line">    init(memoryCache: M, diskCache: D)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>在这个协议中, 我们只有一个初始化方法, 但是对传入参数进行了一些约束. 接下来让我们改写一些Cache这个struct</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">public struct Cache&lt;MT, DT&gt;: Cacheable where MT: CacheStandard, DT: CacheStandard &amp; CacheAsyncStandard, MT.Key == DT.Key, MT.Value == DT.Value &#123;</span><br><span class="line">    </span><br><span class="line">    public typealias M = MT</span><br><span class="line">    public typealias D = DT</span><br><span class="line">    </span><br><span class="line">    public typealias Value = M.Value</span><br><span class="line">    public typealias Key = M.Key</span><br><span class="line">    </span><br><span class="line">    private var memoryCache: M</span><br><span class="line">    private var diskCache: D</span><br><span class="line">    </span><br><span class="line">    public init(memoryCache: M, diskCache: D) &#123;</span><br><span class="line">        self.memoryCache = memoryCache</span><br><span class="line">        self.diskCache = diskCache</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>为了清晰, 我在尖括号中声明类型, 而在类型声明的最后, 使用where对这些声明的类型进行约束, 包括这些类型需要遵守的协议, 类型之间的一些约束. 这样一来, 无论是维护的人还是使用的人来说, 都清爽了许多, 使用者并不需要在类声明的时候传入一大堆的类型, 在这里, 他们甚至一个类型都不需要传入, MT和DT可以进行推导获得. 接下来的事情就容易些了, 我们的Cache有一个遵守了CacheStandard的对象, 和一个遵守了CacheStandard &amp; CacheAsyncStandard的对象, 同时, 他本身也遵守了这两个协议, 那么在实现里, 就将持有的这两个对象进行操作即可.</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br></pre></td><td class="code"><pre><span class="line">extension Cache: CacheStandard &#123;</span><br><span class="line"></span><br><span class="line">    public func containsObject(key: Key) -&gt; Bool &#123;</span><br><span class="line">        return memoryCache.containsObject(key: key) || diskCache.containsObject(key: key)</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    mutating public func query(key: Key) -&gt; Value? &#123;</span><br><span class="line">        var value: Value? = memoryCache.query(key: key)</span><br><span class="line">        if value == nil &#123;</span><br><span class="line">            value = diskCache.query(key: key)</span><br><span class="line">            if let value = value &#123;</span><br><span class="line">                memoryCache.save(value: value, for: key)</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        return value</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    mutating public func save(value: Value, for key: Key) &#123;</span><br><span class="line">        memoryCache.save(value: value, for: key)</span><br><span class="line">        diskCache.save(value: value, for: key)</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    mutating public func remove(key: Key) &#123;</span><br><span class="line">        memoryCache.remove(key: key)</span><br><span class="line">        diskCache.remove(key: key)</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    mutating public func removeAll() &#123;</span><br><span class="line">        memoryCache.removeAll()</span><br><span class="line">        diskCache.removeAll()</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">extension Cache: CacheAsyncStandard &#123;</span><br><span class="line">    public func containsObject(key: Key, _ result: @escaping ((Key, Bool) -&gt; Void)) &#123;</span><br><span class="line">        if memoryCache.containsObject(key: key) &#123;</span><br><span class="line">            DispatchQueue.global().async &#123;</span><br><span class="line">                result(key, true)</span><br><span class="line">            &#125;</span><br><span class="line">        &#125; else &#123;</span><br><span class="line">            diskCache.containsObject(key: key, result)</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    mutating public func query(key: Key, _ result: @escaping ((Key, Value?) -&gt; Void)) &#123;</span><br><span class="line">        if let value: Value = memoryCache.query(key: key) &#123;</span><br><span class="line">            DispatchQueue.global().async &#123;</span><br><span class="line">                result(key, value)</span><br><span class="line">            &#125;</span><br><span class="line">        &#125; else &#123;</span><br><span class="line">            diskCache.query(key: key, result)</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    mutating public func save(value: Value, for key: Key, _ result: @escaping (() -&gt; Void)) &#123;</span><br><span class="line">        memoryCache.save(value: value, for: key)</span><br><span class="line">        diskCache.save(value: value, for: key, result)</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    mutating public func remove(key: Key, _ result: @escaping ((Key) -&gt; Void)) &#123;</span><br><span class="line">        memoryCache.remove(key: key)</span><br><span class="line">        diskCache.remove(key: key, result)</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    mutating public func removeAll(_ result: @escaping (() -&gt; Void)) &#123;</span><br><span class="line">        memoryCache.removeAll()</span><br><span class="line">        diskCache.removeAll(result)</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h1 id="Memory-Cache"><a href="#Memory-Cache" class="headerlink" title="Memory Cache"></a>Memory Cache</h1><p>接下来, 让我们来实现一下Memory Cache<br>在之前的分析中, 我们知道, memory cache中需要一个dictionary, 同时它还要有一个双向链表, 在缓存这种可以并发读写的组件中, 锁也是必不可少的一部分. 字典和锁我们都可以直接使用系统的. 现在我们需要实现一个双向链表.</p>
+<h2 id="Link"><a href="#Link" class="headerlink" title="Link"></a>Link</h2><p>对于link, 我们有两个方面要考虑, 一个是如何实现, 一个是暴露给使用者什么内容:<br>对于一个链表, 我们需要一个Node, 然后把它们按照一定规律链接起来. 然后暴露一些插入和删除以及查询的操作. 这里, 我们只会暴露给用户Key和Value, 而不想暴露link是如何组织的这些细节.</p>
+<h3 id="操作接口"><a href="#操作接口" class="headerlink" title="操作接口"></a>操作接口</h3><p>要实现一个link, 首先, 我们需要一个link结点来承载数据以及和其它几点之间的关系</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">final public class LinkNode&lt;K: Hashable, V&gt; &#123;</span><br><span class="line">    public typealias Key = K</span><br><span class="line">    public typealias Value = V</span><br><span class="line">    </span><br><span class="line">    public private(set) var key: Key</span><br><span class="line">    public private(set) var value: Value</span><br><span class="line">    public fileprivate(set) weak var pre: LinkNode?</span><br><span class="line">    public fileprivate(set) weak var next: LinkNode?</span><br><span class="line">    </span><br><span class="line">    public init(key: Key, value: Value, pre: LinkNode? = nil, next: LinkNode? = nil) &#123;</span><br><span class="line">        self.key = key</span><br><span class="line">        self.value = value</span><br><span class="line">        self.pre = pre</span><br><span class="line">        self.next = next</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>然后, 我们声明一个LinkedList来承载链表</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">public struct LinkedList&lt;K: Hashable, V&gt; &#123;</span><br><span class="line">    public typealias Key = K</span><br><span class="line">    public typealias Value = V</span><br><span class="line">    public typealias Node = LinkNode&lt;K, V&gt;</span><br><span class="line">    </span><br><span class="line">    public var head: Node?</span><br><span class="line">    public var trail: Node?</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="添加结点"><a href="#添加结点" class="headerlink" title="添加结点"></a>添加结点</h3><p>为了表明我们的方法是使用头插法, 我们给添加结点的名字叫<code>push</code>. 对于普通链表添加我们这样写:<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">public mutating func push(_ value: Value, for key: Key) &#123;</span><br><span class="line">    let node = Node(key: key, value: value, next: head)</span><br><span class="line">        dictContainer[key] = node</span><br><span class="line">        head?.pre = node</span><br><span class="line">        head = node</span><br><span class="line">        if trail == nil &#123;</span><br><span class="line">            trail = head</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure></p>
+<p>之前提到, 我们的缓存策略是LRU, 为了实现这个策略, 在加入新的结点的之前, 先检查结点是否存在, 如果存在, 那么就把它挪到head位置上.</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line">private mutating func bringNodeToHead(_ node: Node) &#123;</span><br><span class="line">    if node == head &#123; return &#125;</span><br><span class="line">    </span><br><span class="line">    if node == trail &#123;</span><br><span class="line">        trail = trail?.pre</span><br><span class="line">        trail?.next = nil</span><br><span class="line">    &#125; else &#123;</span><br><span class="line">        node.next?.pre = node.pre</span><br><span class="line">        node.pre?.next = node.next</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    node.next = head</span><br><span class="line">    head?.pre = node</span><br><span class="line">    head = node</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">public mutating func push(_ value: Value, for key: Key) &#123;</span><br><span class="line">    if let node = dictContainer[key] &#123;</span><br><span class="line">        bringNodeToHead(node)</span><br><span class="line">    &#125; else &#123;</span><br><span class="line">        let node = Node(key: key, value: value, next: head)</span><br><span class="line">        dictContainer[key] = node</span><br><span class="line">        head?.pre = node</span><br><span class="line">        head = node</span><br><span class="line">        if trail == nil &#123;</span><br><span class="line">            trail = head</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="查询结点"><a href="#查询结点" class="headerlink" title="查询结点"></a>查询结点</h3><p>对于被查询的结点, 如果有值, 我们也需要把它提到head位置上<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">public mutating func value(for key: Key) -&gt; V? &#123;</span><br><span class="line">    if let node = dictContainer[key] &#123;</span><br><span class="line">        bringNodeToHead(node)</span><br><span class="line">        return node.value</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    return nil</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<h3 id="删除单个结点"><a href="#删除单个结点" class="headerlink" title="删除单个结点"></a>删除单个结点</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line">@discardableResult</span><br><span class="line">public mutating func remove(for key: Key) -&gt; (Key, Value)? &#123;</span><br><span class="line">    if let node = dictContainer.removeValue(forKey: key) &#123;</span><br><span class="line">        if node == head &#123;</span><br><span class="line">            node.next?.pre = nil</span><br><span class="line">            head = node.next</span><br><span class="line">            node.next = nil</span><br><span class="line">        &#125; else if node == trail &#123;</span><br><span class="line">            node.pre?.next = nil</span><br><span class="line">            trail = node.pre</span><br><span class="line">            node.pre = nil</span><br><span class="line">        &#125; else &#123;</span><br><span class="line">            node.pre?.next = node.next</span><br><span class="line">            node.next?.pre = node.pre</span><br><span class="line">        &#125;</span><br><span class="line">        </span><br><span class="line">        return (node.key, node.value)</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    return nil</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="删除所有结点"><a href="#删除所有结点" class="headerlink" title="删除所有结点"></a>删除所有结点</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">public mutating func removeAll() &#123;</span><br><span class="line">    head = nil</span><br><span class="line">    trail = nil</span><br><span class="line">    dictContainer.removeAll()</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="删除最后的结点"><a href="#删除最后的结点" class="headerlink" title="删除最后的结点"></a>删除最后的结点</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line">@discardableResult</span><br><span class="line">public mutating func removeTrail() -&gt; (Key, Value)? &#123;</span><br><span class="line">    let removedNode = trail</span><br><span class="line">    if trail == head &#123;</span><br><span class="line">        trail = nil</span><br><span class="line">        head = nil</span><br><span class="line">    &#125; else &#123;</span><br><span class="line">        trail = trail?.pre</span><br><span class="line">        trail?.next?.pre = nil</span><br><span class="line">        trail?.next = nil</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    if let removedNode = removedNode &#123;</span><br><span class="line">        dictContainer.removeValue(forKey: removedNode.key)</span><br><span class="line">        return (removedNode.key, removedNode.value)</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    return nil</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="组织方式"><a href="#组织方式" class="headerlink" title="组织方式"></a>组织方式</h3><p>有了操作的规范后, 我们的可以思考一下, 那些常见的集合, 例如Array, Set, Dictionary, 他们都是数据的一种组织方式, 那么, 我们的链表也是一种组织方式, 换句话说, 他也是一种集合, 为了把它做得更通用一些, 我想让这个链表变成一个集合.<br>我们要为数据组织定一个规范. 在Swift的集合协议中, 有一个<code>BidirectionalCollection</code>, 正如它的名字一样, 它定义了一个集合如何双向访问, 让我们看看要遵守这个协议必须实现的几个方法:</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">subscript(position: Index) -&gt; Element &#123; get &#125;</span><br><span class="line">var startIndex: Index &#123; get &#125;</span><br><span class="line">var endIndex: Index &#123; get &#125;</span><br><span class="line"></span><br><span class="line">func index(after i: Index) -&gt; Index</span><br><span class="line">func index(before i: Index) -&gt; Index</span><br></pre></td></tr></table></figure>
+<p>想一下, 如果要实现一个链表, 我们需要什么呢?</p>
+<ol>
+<li><p>定义一个Node类型</p>
+<p> a. 这个Node里面应该有一个Key, 一个Value<br> b. 指向前一个node的指针, 指向后一个node的指针</p>
+</li>
+<li>一个node类型的头结点</li>
+<li>一个node类型的尾结点</li>
+<li>一个遵守了Comparable的Index类型作为一个游标</li>
+</ol>
+<p>通过上面所列的, 实现一个BidirectionalCollection必须实现的方法来看, 这个Index是一个关键, 接下来, 我们实现一个Index的结构. 我们需要分析一下BidirectionalCollection必须实现的方法描述了一个什么事情</p>
+<ol>
+<li>func index(after i: Index) -&gt; Index 给定元素与它后面元素的关系</li>
+<li>func index(before i: Index) -&gt; Index 给定元素与它前面元素的关系</li>
+<li>subscript(position: Index) -&gt; Element { get } 索引和值对应关系</li>
+</ol>
+<p>这么看, 除了我们缺少一个Index以外, 这个协议和我们的需求很配</p>
+<p>那么, 让我们继续定义我们的Link所需要的protocol, 不过在这之前, 我们需要先建立一个Index. 因为Index需要描述自己和前后node的关系, 以及和数据的联系. 显然, 这个Index包含一个node就可以实现了:</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">public struct LinkedNodeListIndex&lt;K: Hashable, V&gt; &#123;</span><br><span class="line">    var node: LinkNode&lt;K, V&gt;?</span><br><span class="line">    init(node: LinkNode&lt;K, V&gt;?) &#123;</span><br><span class="line">        self.node = node</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>同时, 我们需要一个Compareable的实现. 通常POP的思想会让我们直接让这个struct进行实现. 但是这里, 我们将使用OOP的方式来进行实现.</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">protocol LinkedNodeListIndexStandard: Comparable &#123;</span><br><span class="line">    associatedtype Node: NodeStandard</span><br><span class="line">    var node: Node? &#123; get &#125;</span><br><span class="line">    init(node: Node?)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line">protocol NodeStandard: class, Equatable, CustomStringConvertible &#123;</span><br><span class="line">    associatedtype Key where Key: Hashable</span><br><span class="line">    associatedtype Value</span><br><span class="line">    </span><br><span class="line">    var key: Key &#123; get &#125;</span><br><span class="line">    var value: Value &#123; get &#125;</span><br><span class="line">    var pre: Self? &#123; get &#125;</span><br><span class="line">    var next: Self? &#123; get &#125;</span><br><span class="line">    init(key: Key, value: Value, pre: Self?, next: Self?)</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">extension NodeStandard &#123;</span><br><span class="line">    public var description: String &#123;</span><br><span class="line">        guard let next = next else &#123; return &quot;\(value)&quot; &#125;</span><br><span class="line">        return &quot;\(value) -&gt; \(next)&quot;</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    public static func == (lhs: Self, rhs: Self) -&gt; Bool &#123;</span><br><span class="line">        return lhs.key == rhs.key</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>接下来, 为<code>LinkedNodeListIndexStandard</code>的Comparable添加默认实现</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line">extension LinkedNodeListIndexStandard &#123;</span><br><span class="line">    static public func == (lhs: Self, rhs: Self) -&gt; Bool &#123;</span><br><span class="line">        switch (lhs.node, rhs.node) &#123;</span><br><span class="line">        case let (left?, right?):</span><br><span class="line">            return left.next === right.next</span><br><span class="line">        case (nil, nil):</span><br><span class="line">            return true</span><br><span class="line">        default:</span><br><span class="line">            return false</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    static public func &lt; (lhs: Self, rhs: Self) -&gt; Bool &#123;</span><br><span class="line">        guard lhs != rhs else &#123; return false &#125;</span><br><span class="line">        let nodes = sequence(first: lhs.node, next: &#123; $0?.next &#125;)</span><br><span class="line">        return nodes.contains(where: &#123; $0 === rhs.node &#125;)</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>在这里, 使用了协议里的另一个关键字Self, 注意, 这里大写S, Self来代替当前类型, 当然, 只限于protocol中.<br>这个和JAVA中的抽象类很类似, 但是却比抽象类更加灵活, 因为一个类型可以遵守多个这样的protocol.<br>已经有了Index后, 我们就可以来把这个link做成一个Collection</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">protocol LinkedNodeListStandard: BidirectionalCollection where Index: LinkedNodeListIndexStandard &#123;</span><br><span class="line">    associatedtype Node where Self.Node == Index.Node</span><br><span class="line">    associatedtype Key where Self.Key == Node.Key</span><br><span class="line">    associatedtype Value where Self.Value == Node.Value</span><br><span class="line">    </span><br><span class="line">    subscript(key: Key) -&gt; Value? &#123; mutating get set &#125;</span><br><span class="line">    </span><br><span class="line">    func contains(where predicate: (Key) throws -&gt; Bool) rethrows -&gt; Bool</span><br><span class="line">    mutating func push(_ value: Value, for key: Key)</span><br><span class="line">    mutating func remove(for key: Key) -&gt; (Key, Value)?</span><br><span class="line">    mutating func removeAll()</span><br><span class="line">    mutating func removeTrail() -&gt; (Key, Value)?</span><br><span class="line">    mutating func value(for key: Key) -&gt; Value?</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>这里, 我们的返回值是一个Key, Value的元组, 虽然可以返回Node类型, 但是并不想暴露给用户太多没有必要的信息. 接下来, 就来做一个实现类:</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">public struct LinkedList&lt;K: Hashable, V&gt;: LinkedNodeListStandard &#123;</span><br><span class="line">    public typealias Key = K</span><br><span class="line">    public typealias Value = V</span><br><span class="line">    public typealias Node = LinkNode&lt;K, V&gt;</span><br><span class="line">    public typealias Index = LinkedNodeListIndex&lt;K, V&gt;</span><br><span class="line">    </span><br><span class="line">    public var head: Node?</span><br><span class="line">    public var trail: Node?</span><br><span class="line">    </span><br><span class="line">    private var dictContainer = Dictionary&lt;K, Node&gt;()</span><br><span class="line">    </span><br><span class="line">    public init() &#123;&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line">extension LinkedList: BidirectionalCollection &#123;</span><br><span class="line">    public var startIndex: Index &#123;</span><br><span class="line">        return Index(node: head)</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    public var endIndex: Index &#123;</span><br><span class="line">        return Index(node: trail?.next)</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    public func index(before i: Index) -&gt; Index &#123;</span><br><span class="line">        if i == endIndex &#123; return Index(node: trail) &#125;</span><br><span class="line">        return Index(node: i.node?.pre)</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    public func index(after i: Index) -&gt; Index &#123;</span><br><span class="line">        return Index(node: i.node?.next)</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    public subscript(position: Index) -&gt; Value &#123;</span><br><span class="line">        return position.node!.value</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="看看源码"><a href="#看看源码" class="headerlink" title="看看源码"></a>看看源码</h2><p>这里, 有两点需要注意:</p>
+<ol>
+<li>endIndex需要返回trail.next</li>
+<li>对于<code>public func index(before i: Index) -&gt; Index</code>方法, 需要有一个判断, i是否是endIndex</li>
+</ol>
+<p>接下来, 我们解释一下上面的两个注意点的原因: 因为endIndex绑定的trail.next, 而trail.next是一个nil, 那么, 当我们用这个nil找前一个node的时候, 就会什么也找不到. 那么, 问题集中在了为什么endIndex绑定的是trail.next而不是trail. 为了回答这个问题, 我们最好看点源码.</p>
+<h3 id="endIndex"><a href="#endIndex" class="headerlink" title="endIndex"></a>endIndex</h3><p>让我们从一个我们常用的方法获取一个集合的count入手, 来看看原因.</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line">public var count: Int &#123;</span><br><span class="line">    return distance(from: startIndex, to: endIndex)</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">public func distance(from start: Index, to end: Index) -&gt; Int &#123;</span><br><span class="line">    _precondition(start &lt;= end,</span><br><span class="line">      &quot;Only BidirectionalCollections can have end come before start&quot;)</span><br><span class="line"></span><br><span class="line">    var start = start</span><br><span class="line">    var count = 0</span><br><span class="line">    while start != end &#123;</span><br><span class="line">      count = count + 1</span><br><span class="line">      formIndex(after: &amp;start)</span><br><span class="line">    &#125;</span><br><span class="line">    return count</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">public func formIndex(after i: inout Index) &#123;</span><br><span class="line">    i = index(after: i)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>count 是通过计算startIndex和endIndex之间的距离获得的, 而这个距离, 是通过不断获取下一个Index然后判断startIndex和endIndex是否相等得到的. 那么, 我们就很容易理解上面的设置了, 如果设置endIndex绑定的node为trail, 那你总会少数一个元素.</p>
+<h2 id="常规操作"><a href="#常规操作" class="headerlink" title="常规操作"></a>常规操作</h2><p>接下来, 就是一些增删改查的常规操作, 不过建议还是通过extension区分一下, 这样不论是写的人还是读的人都会很舒心<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br></pre></td><td class="code"><pre><span class="line">// MARK: - add</span><br><span class="line">extension LinkedList &#123;</span><br><span class="line">    // head-first insertion</span><br><span class="line">    public mutating func push(_ value: Value, for key: Key) &#123;</span><br><span class="line">        if let node = dictContainer[key] &#123;</span><br><span class="line">            bringNodeToHead(node)</span><br><span class="line">        &#125; else &#123;</span><br><span class="line">            let node = Node(key: key, value: value, next: head)</span><br><span class="line">            dictContainer[key] = node</span><br><span class="line">            head?.pre = node</span><br><span class="line">            head = node</span><br><span class="line">            if trail == nil &#123;</span><br><span class="line">                trail = head</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    private mutating func push(_ node: Node) &#123;</span><br><span class="line">        push(node.value, for: node.key)</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">// MARK: - remove</span><br><span class="line">extension LinkedList &#123;</span><br><span class="line">    @discardableResult</span><br><span class="line">    public mutating func remove(for key: Key) -&gt; (Key, Value)? &#123;</span><br><span class="line">        if let node = dictContainer.removeValue(forKey: key) &#123;</span><br><span class="line">            if node == head &#123;</span><br><span class="line">                node.next?.pre = nil</span><br><span class="line">                head = node.next</span><br><span class="line">                node.next = nil</span><br><span class="line">            &#125; else if node == trail &#123;</span><br><span class="line">                node.pre?.next = nil</span><br><span class="line">                trail = node.pre</span><br><span class="line">                node.pre = nil</span><br><span class="line">            &#125; else &#123;</span><br><span class="line">                node.pre?.next = node.next</span><br><span class="line">                node.next?.pre = node.pre</span><br><span class="line">            &#125;</span><br><span class="line">            </span><br><span class="line">            return (node.key, node.value)</span><br><span class="line">        &#125;</span><br><span class="line">        </span><br><span class="line">        return nil</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    @discardableResult</span><br><span class="line">    private mutating func remove(_ node: Node) -&gt; (Key, Value)? &#123;</span><br><span class="line">        return remove(for: node.key)</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    public mutating func removeAll() &#123;</span><br><span class="line">        head = nil</span><br><span class="line">        trail = nil</span><br><span class="line">        dictContainer.removeAll()</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    @discardableResult</span><br><span class="line">    public mutating func removeTrail() -&gt; (Key, Value)? &#123;</span><br><span class="line">        let removedNode = trail</span><br><span class="line">        if trail == head &#123;</span><br><span class="line">            trail = nil</span><br><span class="line">            head = nil</span><br><span class="line">        &#125; else &#123;</span><br><span class="line">            trail = trail?.pre</span><br><span class="line">            trail?.next?.pre = nil</span><br><span class="line">            trail?.next = nil</span><br><span class="line">        &#125;</span><br><span class="line">        </span><br><span class="line">        if let removedNode = removedNode &#123;</span><br><span class="line">            dictContainer.removeValue(forKey: removedNode.key)</span><br><span class="line">            return (removedNode.key, removedNode.value)</span><br><span class="line">        &#125;</span><br><span class="line">        </span><br><span class="line">        return nil</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">// MARK: - query</span><br><span class="line">extension LinkedList &#123;</span><br><span class="line">    public mutating func value(for key: Key) -&gt; V? &#123;</span><br><span class="line">        if let node = dictContainer[key] &#123;</span><br><span class="line">            bringNodeToHead(node)</span><br><span class="line">            return node.value</span><br><span class="line">        &#125;</span><br><span class="line">        </span><br><span class="line">        return nil</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">// MARK: - update</span><br><span class="line">extension LinkedList &#123;</span><br><span class="line">    private mutating func bringNodeToHead(_ node: Node) &#123;</span><br><span class="line">        if node == head &#123; return &#125;</span><br><span class="line">        </span><br><span class="line">        if node == trail &#123;</span><br><span class="line">            trail = trail?.pre</span><br><span class="line">            trail?.next = nil</span><br><span class="line">        &#125; else &#123;</span><br><span class="line">            node.next?.pre = node.pre</span><br><span class="line">            node.pre?.next = node.next</span><br><span class="line">        &#125;</span><br><span class="line">        </span><br><span class="line">        node.next = head</span><br><span class="line">        head?.pre = node</span><br><span class="line">        head = node</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>一个判断元素是否存在的方法<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">public func contains(where predicate: (Key) throws -&gt; Bool) rethrows -&gt; Bool &#123;</span><br><span class="line">    do &#123;</span><br><span class="line">        for key in dictContainer.keys where try predicate(key) &#123;</span><br><span class="line">            return true</span><br><span class="line">        &#125;</span><br><span class="line">        </span><br><span class="line">        return false</span><br><span class="line">    &#125; catch &#123;</span><br><span class="line">        return false</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>一个提供快速设置值和查询值的方法</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">public subscript(key: K) -&gt; V? &#123;</span><br><span class="line">    mutating get &#123;</span><br><span class="line">        return value(for: key)</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    set &#123;</span><br><span class="line">        if let value = newValue &#123;</span><br><span class="line">            push(value, for: key)</span><br><span class="line">        &#125; else &#123;</span><br><span class="line">            remove(for: key)</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="类型擦除"><a href="#类型擦除" class="headerlink" title="类型擦除"></a>类型擦除</h2><p>至此, 我们的Memory可以进行一些结点的操作了, 但是仍然有一些改进的空间, 我们注意到, 在remove的操作的时候, 按照国际惯例, 应该返回被删除的对象, 但是很遗憾, 这里我不能这样做, 因为如果这样做, 外面就会得到更多内部(node)的信息, 例如pre和next指针信息, 尽管我为他们增加了访问权限控制, 但是暴露这些属性不符合我们的设计规则. 接下来我们就要着手改造这里.<br>这里, 我们使用类型擦除来抹去这些不必要的细节. 首先, 我们要定义一个类, 包含我们想暴露的属性, 根据Swift的命名规则, 我将它命名为AnyLinkNode:</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">public class AnyLinkNode&lt;K: Hashable, V&gt; &#123;</span><br><span class="line">    public typealias Key = K</span><br><span class="line">    public typealias Value = V</span><br><span class="line">    </span><br><span class="line">    public private(set) var key: Key</span><br><span class="line">    public private(set) var value: Value</span><br><span class="line">    </span><br><span class="line">    init(key: Key, value: Value) &#123;</span><br><span class="line">        self.key = key</span><br><span class="line">        self.value = value</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>然后让之前的LinkNode继承这个类:</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">final public class LinkNode&lt;K: Hashable, V&gt;: AnyLinkNode&lt;K, V&gt;, NodeStandard &#123;</span><br><span class="line">    public fileprivate(set) weak var pre: LinkNode?</span><br><span class="line">    public fileprivate(set) weak var next: LinkNode?</span><br><span class="line">    </span><br><span class="line">    public init(key: Key, value: Value, pre: LinkNode? = nil, next: LinkNode? = nil) &#123;</span><br><span class="line">        self.pre = pre</span><br><span class="line">        self.next = next</span><br><span class="line">        super.init(key: key, value: value)</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>修改协议:</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">mutating func remove(for key: Key) -&gt; AnyLinkNode&lt;Key, Value&gt;?</span><br><span class="line">mutating func removeTrail() -&gt; AnyLinkNode&lt;Key, Value&gt;?</span><br></pre></td></tr></table></figure>
+<p>接下来就是哪里报错改哪里就好了.</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br></pre></td><td class="code"><pre><span class="line">// MARK: - remove</span><br><span class="line">extension LinkedList &#123;</span><br><span class="line">    @discardableResult</span><br><span class="line">    public mutating func remove(for key: Key) -&gt; AnyLinkNode&lt;Key, Value&gt;? &#123;</span><br><span class="line">        if let node = dictContainer.removeValue(forKey: key) &#123;</span><br><span class="line">            if node == head &#123;</span><br><span class="line">                node.next?.pre = nil</span><br><span class="line">                head = node.next</span><br><span class="line">                node.next = nil</span><br><span class="line">            &#125; else if node == trail &#123;</span><br><span class="line">                node.pre?.next = nil</span><br><span class="line">                trail = node.pre</span><br><span class="line">                node.pre = nil</span><br><span class="line">            &#125; else &#123;</span><br><span class="line">                node.pre?.next = node.next</span><br><span class="line">                node.next?.pre = node.pre</span><br><span class="line">            &#125;</span><br><span class="line">            </span><br><span class="line">            return node</span><br><span class="line">        &#125;</span><br><span class="line">        </span><br><span class="line">        return nil</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    @discardableResult</span><br><span class="line">    private mutating func remove(_ node: Node) -&gt; AnyLinkNode&lt;Key, Value&gt;? &#123;</span><br><span class="line">        return remove(for: node.key)</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    public mutating func removeAll() &#123;</span><br><span class="line">        head = nil</span><br><span class="line">        trail = nil</span><br><span class="line">        dictContainer.removeAll()</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    @discardableResult</span><br><span class="line">    public mutating func removeTrail() -&gt; AnyLinkNode&lt;Key, Value&gt;? &#123;</span><br><span class="line">        let removedNode = trail</span><br><span class="line">        if trail == head &#123;</span><br><span class="line">            trail = nil</span><br><span class="line">            head = nil</span><br><span class="line">        &#125; else &#123;</span><br><span class="line">            trail = trail?.pre</span><br><span class="line">            trail?.next?.pre = nil</span><br><span class="line">            trail?.next = nil</span><br><span class="line">        &#125;</span><br><span class="line">        </span><br><span class="line">        if let removedNode = removedNode &#123;</span><br><span class="line">            return dictContainer.removeValue(forKey: removedNode.key)</span><br><span class="line">        &#125;</span><br><span class="line">        </span><br><span class="line">        return nil</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>让我们把目光移到<code>LinkNode</code>上来, 这个类上面还有一个public修饰, 这意味着, 在这个framework外面, 仍然能够访问到这个类, 这并不是我们想要的, 接下来, 来改造这块.<br>首先, 把public修饰符删除, 然后在LinkedList中添加private typealias RealNode 类型声明<code>private typealias RealNode = LinkNode&lt;K, V&gt;</code>, 然后, 将Node改为AnyLinkNode<code>public typealias Index = LinkedNodeListIndex&lt;K, V&gt;</code>, 之后的修改规则, 就是将内部存储用的Node类型都换为RealNode, 将返回类型都换为Node, 包括刚才的remove系列的方法.<br>最后, 由于我们将remove的返回类型都已经指定为AnyLinkNode了, 所以协议<code>LinkedNodeListStandard</code>就可以不需要那么多的约束了</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">protocol LinkedNodeListStandard: BidirectionalCollection where Index: LinkedNodeListIndexStandard &#123;</span><br><span class="line">    associatedtype Key: Hashable</span><br><span class="line">    associatedtype Value</span><br><span class="line">    </span><br><span class="line">    subscript(key: Key) -&gt; Value? &#123; mutating get set &#125;</span><br><span class="line">    </span><br><span class="line">    func contains(where predicate: (Key) throws -&gt; Bool) rethrows -&gt; Bool</span><br><span class="line">    mutating func push(_ value: Value, for key: Key)</span><br><span class="line">    mutating func remove(for key: Key) -&gt; AnyLinkNode&lt;Key, Value&gt;?</span><br><span class="line">    mutating func removeAll()</span><br><span class="line">    mutating func removeTrail() -&gt; AnyLinkNode&lt;Key, Value&gt;?</span><br><span class="line">    mutating func value(for key: Key) -&gt; Value?</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="Trim"><a href="#Trim" class="headerlink" title="Trim"></a>Trim</h2><p>一个内存缓存需要实现的, 除了上面所说的存取以外, 在需要的时候, 对持有的对象进行释放, 在YYCache中, 有三个维度, 分别是存活时间, 数量, 大小. 在这里, 并未和YYCache一样, 将cost和time存入到link的node中, 而是由MemoryCache进行处理. 因为在设计上, 我将Link作为一个Collection对待, 它只负责数据的组织和操作. 另一方面, 如果我让node负责cost和time的记录, 我就不得不在删除的时候将node传出来, 这样, 对外面暴露了太多信息. 违反了迪米特法则(Law of Demeter). 尽管可以使用类型擦除来屏蔽一些细节, 但是相比将cost和time由memoryCache来管理, 我更倾向于后者, 因为这样更符合逻辑且更符合单一职责原则(Single Responsibility Principle). 当然, 这是要付出一些代价的, 在MemoryCache中, 我们需要一个Dictionary去存储key和cost, time之间的关系. 但是我认为这样是值得的.</p>
+<h3 id="Trim-by"><a href="#Trim-by" class="headerlink" title="Trim by"></a>Trim by</h3><p>同样, 我们用protocol来规定这些trim的规则</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">// MARK: - Trim</span><br><span class="line">protocol AutoTrimable &#123;</span><br><span class="line">    var countLimit: Int &#123; get &#125;</span><br><span class="line">    var costLimit: Int &#123; get &#125;</span><br><span class="line">    var ageLimit: TimeInterval &#123; get &#125;</span><br><span class="line">    var autoTrimInterval: TimeInterval &#123; get &#125;</span><br><span class="line">    var shouldAutoTrim: Bool &#123; get set &#125;</span><br><span class="line">    mutating func trimToAge(_ age: TimeInterval)</span><br><span class="line">    mutating func trimToCost(_ cost: Int)</span><br><span class="line">    mutating func trimToCount(_ count: Int)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>同时, 可以为这个协议添加一个扩展, 来实现自动trim的方法</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">extension AutoTrimable &#123;</span><br><span class="line">    mutating func autoTrim() &#123;</span><br><span class="line">        DispatchQueue.global().asyncAfter(deadline: DispatchTime.now() + autoTrimInterval) &#123;</span><br><span class="line">            self.trimToAge(self.ageLimit)</span><br><span class="line">            self.trimToCost(self.costLimit)</span><br><span class="line">            self.trimToCount(self.countLimit)</span><br><span class="line">            if self.shouldAutoTrim &#123; self.autoTrim() &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>上面的代码, 有些问题, 如果是class, 没有什么问题, 但是如果用在struct, 那么就行不通了. 编译是无法通过的, 你会得到一个<code>Closure cannot implicitly capture a mutating self parameter</code>的编译错误, 在这里, 我们需要一个引用语义的类型, 而不是值语义. 那么, 我们来修改一下之前的协议, 让<code>AutoTrimable</code>协议约束为引用语义.</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">protocol AutoTrimable: class &#123;</span><br><span class="line">    var countLimit: Int &#123; get &#125;</span><br><span class="line">    var costLimit: Int &#123; get &#125;</span><br><span class="line">    var ageLimit: TimeInterval &#123; get &#125;</span><br><span class="line">    var autoTrimInterval: TimeInterval &#123; get &#125;</span><br><span class="line">    var shouldAutoTrim: Bool &#123; get set &#125;</span><br><span class="line">    </span><br><span class="line">    func trimToAge(_ age: TimeInterval)</span><br><span class="line">    func trimToCost(_ cost: Int)</span><br><span class="line">    func trimToCount(_ count: Int)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>这里我们使用协议扩展, 来实践OOP, 这样, 所有实现这个协议的对象, 都会默认有这样的一个方法了, 而正如协议的名字那样, 这是一个名副其实的autoTrimable. 接下来, 继续Memory Cache的实现. 对于一个memory cache, 一个锁是必不可少的, 接下来, 我们来添加一个锁. 对于锁的抽象, 它有两个方法, lock和unlock. 这里, 我们封装一个Mutex. </p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line">protocol Lock &#123;</span><br><span class="line">    func lock()</span><br><span class="line">    func unLock()</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">final class Mutex: Lock &#123;</span><br><span class="line">    private var mutex: pthread_mutex_t = &#123;</span><br><span class="line">        var mutex = pthread_mutex_t()</span><br><span class="line">        pthread_mutex_init(&amp;mutex, nil)</span><br><span class="line">        return mutex</span><br><span class="line">    &#125;()</span><br><span class="line">    </span><br><span class="line">    func lock() &#123;</span><br><span class="line">        pthread_mutex_lock(&amp;mutex)</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    func unLock() &#123;</span><br><span class="line">        pthread_mutex_unlock(&amp;mutex)</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>东西都已经齐备了, 接下来, 终于可以实现这个Memory Cache了. 首先我们需要一个模型, 把key, cost, time关联起来, 这个类我希望只在Memory Cache类里面使用, 于是我这样写:</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">extension MemoryCache &#123;</span><br><span class="line">    private struct TrimNode: Hashable &#123;</span><br><span class="line">        private(set) var cost: Int</span><br><span class="line">        private(set) var age: TimeInterval = Date().timeIntervalSince1970</span><br><span class="line">        </span><br><span class="line">        mutating func updateAge() &#123;</span><br><span class="line">            self.age = Date().timeIntervalSince1970</span><br><span class="line">        &#125;</span><br><span class="line">        </span><br><span class="line">        init(cost: Int) &#123;</span><br><span class="line">            self.cost = cost</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>接下来就是一些初始化, 以及常规操作的方法了:</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br></pre></td><td class="code"><pre><span class="line">public protocol MemoryCacheable: CacheStandard &#123;</span><br><span class="line">    mutating func save(value: Value, for key: Key, cost: Int)</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">public class MemoryCache&lt;K: Hashable, V: Codable&gt; &#123;</span><br><span class="line">    </span><br><span class="line">    private let lock: Lock = Mutex()</span><br><span class="line">    private var link = LinkedList&lt;K, V&gt;()</span><br><span class="line">    private var trimDict = [K:TrimNode]()</span><br><span class="line">    </span><br><span class="line">    private(set) var countLimit: Int</span><br><span class="line">    private(set) var costLimit: Int</span><br><span class="line">    private(set) var ageLimit: TimeInterval</span><br><span class="line">    private(set) var autoTrimInterval: TimeInterval</span><br><span class="line">    </span><br><span class="line">    public private(set) var totalCost: Int = 0</span><br><span class="line">    public var totalCount: Int &#123;</span><br><span class="line">        return link.count</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    var shouldAutoTrim: Bool &#123;</span><br><span class="line">        didSet &#123;</span><br><span class="line">            if oldValue == shouldAutoTrim &#123; return &#125;</span><br><span class="line">            if shouldAutoTrim &#123;</span><br><span class="line">                autoTrim()</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    public var first: V? &#123;</span><br><span class="line">        return link.first</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    public var last: V? &#123;</span><br><span class="line">        return link.last</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    public init(countLimit: Int = Int.max, costLimit: Int = Int.max, ageLimit: TimeInterval = Double.greatestFiniteMagnitude, autoTrimInterval: TimeInterval = 5) &#123;</span><br><span class="line">        self.countLimit = countLimit</span><br><span class="line">        self.costLimit = costLimit</span><br><span class="line">        self.ageLimit = ageLimit</span><br><span class="line">        self.autoTrimInterval = autoTrimInterval</span><br><span class="line">        self.shouldAutoTrim = self.autoTrimInterval &gt; 0</span><br><span class="line">        if shouldAutoTrim &#123; autoTrim() &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">extension MemoryCache: MemoryCacheable &#123;</span><br><span class="line">    public func containsObject(key: K) -&gt; Bool &#123;</span><br><span class="line">        return link.contains(where: &#123; $0 == key &#125;)</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    public func query(key: K) -&gt; V? &#123;</span><br><span class="line">        lock.lock()</span><br><span class="line">        </span><br><span class="line">        defer &#123;</span><br><span class="line">            lock.unLock()</span><br><span class="line">        &#125;</span><br><span class="line">        </span><br><span class="line">        trimDict[key]?.updateAge()</span><br><span class="line">        return link.value(for: key)</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    // MARK: - save</span><br><span class="line">    public func save(value: V, for key: K) &#123;</span><br><span class="line">        save(value: value, for: key, cost: 0)</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    public func save(value: V, for key: K, cost: Int) &#123;</span><br><span class="line">        lock.lock()</span><br><span class="line"></span><br><span class="line">        defer &#123;</span><br><span class="line">            lock.unLock()</span><br><span class="line">        &#125;</span><br><span class="line">        </span><br><span class="line">        trimDict[key] = TrimNode(cost: cost)</span><br><span class="line">        totalCost += cost</span><br><span class="line">        </span><br><span class="line">        link.push(value, for: key)</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    // MARK: - remove</span><br><span class="line">    public func remove(key: K) &#123;</span><br><span class="line">        lock.lock()</span><br><span class="line">        </span><br><span class="line">        defer &#123;</span><br><span class="line">            lock.unLock()</span><br><span class="line">        &#125;</span><br><span class="line">        </span><br><span class="line">        let cost = trimDict.removeValue(forKey: key)?.cost ?? 0</span><br><span class="line">        totalCost -= cost</span><br><span class="line">        link.remove(for: key)</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    public func removeAll() &#123;</span><br><span class="line">        lock.lock()</span><br><span class="line">        </span><br><span class="line">        defer &#123;</span><br><span class="line">            lock.unLock()</span><br><span class="line">        &#125;</span><br><span class="line">        </span><br><span class="line">        trimDict.removeAll()</span><br><span class="line">        totalCost = 0</span><br><span class="line">        link.removeAll()</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    private func removeLast() &#123;</span><br><span class="line">        lock.lock()</span><br><span class="line">        </span><br><span class="line">        defer &#123;</span><br><span class="line">            lock.unLock()</span><br><span class="line">        &#125;</span><br><span class="line">        </span><br><span class="line">        if let key = link.removeTrail()?.key, let cost = trimDict.removeValue(forKey: key)?.cost &#123;</span><br><span class="line">            totalCost -= cost</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>这里的lock和unlock, 我使用了defer, 保证自己不会忘记lock后进行unlock<br>接下来遵守trim协议</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br></pre></td><td class="code"><pre><span class="line">extension MemoryCache: AutoTrimable &#123;</span><br><span class="line">    public func trimToCount(_ countLimit: Int) &#123;</span><br><span class="line">        if countLimit &lt;= 0 &#123;</span><br><span class="line">            self.removeAll()</span><br><span class="line">        &#125; else &#123;</span><br><span class="line">            while link.count &gt; countLimit, !link.isEmpty &#123;</span><br><span class="line">                self.removeLast()</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    public func trimToCost(_ costLimit: Int) &#123;</span><br><span class="line">        if costLimit &lt;= 0 &#123;</span><br><span class="line">            self.removeAll()</span><br><span class="line">        &#125; else &#123;</span><br><span class="line">            while totalCost &gt; costLimit, totalCost &gt; 0 &#123;</span><br><span class="line">                self.removeLast()</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    public func trimToAge(_ ageLimit: TimeInterval) &#123;</span><br><span class="line">        if ageLimit &lt;= 0 &#123;</span><br><span class="line">            self.removeAll()</span><br><span class="line">        &#125; else &#123;</span><br><span class="line">            let now = Date().timeIntervalSince1970</span><br><span class="line">            while</span><br><span class="line">                let lastNodeKey = link.index(before: link.endIndex).node?.key,</span><br><span class="line">                let lastTrimNode = trimDict[lastNodeKey],</span><br><span class="line">                now - lastTrimNode.age &gt; ageLimit &#123;</span><br><span class="line">                self.removeLast()</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h1 id="Unit-test"><a href="#Unit-test" class="headerlink" title="Unit test"></a>Unit test</h1><p>这样, 我们的功能就完成了. 但是一些简单的单元测试还是有必要的, 在写的过程中, 我使用单元测试测出了好几处bug. 在编写测试的时候, 需要知道自己在做什么, 包括:</p>
+<ol>
+<li>前置条件是什么</li>
+<li>预期是什么</li>
+<li>测试的是一段自己写的逻辑</li>
+</ol>
+<p>第三个问题要辨证的看, 例如在平时, 我声明一个array, 然后去测试它的count, 这绝对不是一个好主意, 因为没有必要, 这个功能就在那里. 它一直都是真. 我这里要写一个测试我link的count的单元测试是有必要的, 因为我要保证我的startIndex和endIndex是正确设置的. 接下来, 我挑选几个典型的单元测试用例来讲解, 项目地址会在结尾贴出, 那里有所有的用例</p>
+<h2 id="开始测试"><a href="#开始测试" class="headerlink" title="开始测试"></a>开始测试</h2><h3 id="测试count"><a href="#测试count" class="headerlink" title="测试count"></a>测试count</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">func test_count() &#123;</span><br><span class="line">    let count = 30</span><br><span class="line">    var link = LinkedList&lt;String, Int&gt;()</span><br><span class="line">    for i in 0..&lt;count &#123;</span><br><span class="line">        link.push(i, for: &quot;\(i)&quot;)</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    XCTAssert(link.count == count)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>这里我们输入30个元素, 然后判断link计算出的count和我们预期的个数是一样的</p>
+<h3 id="测试isEmpty"><a href="#测试isEmpty" class="headerlink" title="测试isEmpty"></a>测试isEmpty</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">func test_empty() &#123;</span><br><span class="line">    var link = LinkedList&lt;String, Int&gt;()</span><br><span class="line">    XCTAssert(link.isEmpty)</span><br><span class="line">    link.push(1, for: &quot;1&quot;)</span><br><span class="line">    XCTAssert(!link.isEmpty)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>这里引入这个测试, 要测的逻辑在swift源码中体现:</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">public var isEmpty: Bool &#123;</span><br><span class="line">  return startIndex == endIndex</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>这里要测试isEmpty因为count以及一些其他函数在计算之前, 都会判断isEmpty. 另一个原因, 要验证我们的Index类型中的Comparable协议实现是否正确</p>
+<h3 id="线程安全测试"><a href="#线程安全测试" class="headerlink" title="线程安全测试"></a>线程安全测试</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line">func test_memory_contain_thread_safe() &#123;</span><br><span class="line">        let memoryCache = MemoryCache&lt;String, User&gt;()</span><br><span class="line">        </span><br><span class="line">        let ext = self.expectation(description: &quot;ext&quot;)</span><br><span class="line">        </span><br><span class="line">        let exeCount = 10000</span><br><span class="line">        </span><br><span class="line">        DispatchQueue.concurrentPerform(iterations: exeCount) &#123; (index) in</span><br><span class="line">            </span><br><span class="line">            let user = User(isActive: true, account: Account(alias: &quot;test\(index)&quot;))</span><br><span class="line">            memoryCache.save(value: user, for: &quot;abc\(index)&quot;)</span><br><span class="line">            print(&quot;write is \(index)&quot;)</span><br><span class="line">            </span><br><span class="line">            print(Thread.current)</span><br><span class="line">            </span><br><span class="line">            DispatchQueue.global().async &#123;</span><br><span class="line">                print(&quot;read is \(index)&quot;)</span><br><span class="line">                let _ = memoryCache.query(key: &quot;abc\(index)&quot;)</span><br><span class="line">                if index == exeCount - 1 &#123;</span><br><span class="line">                    ext.fulfill()</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        </span><br><span class="line">        wait(for: [ext], timeout: 200)</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+<p>这里要说明的是, 由于是异步的执行, 所以<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">if index == exeCount - 1 &#123;</span><br><span class="line">	ext.fulfill()</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>这段, 并不能等到所有的缓存被遍历到才结束, 但是尽管异步执行, 也可以保证大部分的都被执行, 所以这个用例是可信的.</p>
+<h1 id="Where-to-go-from-here"><a href="#Where-to-go-from-here" class="headerlink" title="Where to go from here"></a>Where to go from here</h1><p>至此, Memory已经有一个大体的样子了, 这里并没有完全还原YYCache的实现. 大家可以根据自己的理解进行填补. 至于剩下的Disk Cache以及Cache本身, 会在后面完成. <a href="https://github.com/ArthurChi/PracticeCache" target="_blank" rel="noopener">代码放在这里</a></p>
+
+      
+    </div>
+
+    
+
+    
+    
+    
+
+    
+
+    
+      
+    
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2018/09/13/TDD学习/" rel="next" title="TDD学习">
+                <i class="fa fa-chevron-left"></i> TDD学习
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+  </div>
+
+
+          </div>
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            Table of Contents
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            Overview
+          </li>
+        </ul>
+      
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <p class="site-author-name" itemprop="name">Author</p>
+              <div class="site-description motion-element" itemprop="description"></div>
+          </div>
+
+          
+            <nav class="site-state motion-element">
+              
+                <div class="site-state-item site-state-posts">
+                
+                  <a href="/archives/">
+                
+                    <span class="site-state-item-count">129</span>
+                    <span class="site-state-item-name">posts</span>
+                  </a>
+                </div>
+              
+
+              
+                
+                
+                <div class="site-state-item site-state-categories">
+                  
+                    
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                    <span class="site-state-item-count">14</span>
+                    <span class="site-state-item-name">categories</span>
+                  
+                </div>
+              
+
+              
+                
+                
+                <div class="site-state-item site-state-tags">
+                  
+                    
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                    <span class="site-state-item-count">111</span>
+                    <span class="site-state-item-name">tags</span>
+                  
+                </div>
+              
+            </nav>
+          
+
+          
+
+          
+
+          
+
+          
+
+          
+          
+
+          
+            
+          
+          
+
+        </div>
+      </div>
+
+      
+      <!--noindex-->
+        <div class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+            
+            
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#Cache"><span class="nav-number">1.</span> <span class="nav-text">Cache</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Swift"><span class="nav-number">2.</span> <span class="nav-text">Swift</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#分析"><span class="nav-number">3.</span> <span class="nav-text">分析</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#Cache协议标准"><span class="nav-number">3.1.</span> <span class="nav-text">Cache协议标准</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#缓存算法"><span class="nav-number">3.2.</span> <span class="nav-text">缓存算法</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#数据组织方式"><span class="nav-number">3.3.</span> <span class="nav-text">数据组织方式</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#开始着手"><span class="nav-number">4.</span> <span class="nav-text">开始着手</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#定义一个Protocol"><span class="nav-number">4.1.</span> <span class="nav-text">定义一个Protocol</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#声明Cache"><span class="nav-number">4.2.</span> <span class="nav-text">声明Cache</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Memory-Cache"><span class="nav-number">5.</span> <span class="nav-text">Memory Cache</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#Link"><span class="nav-number">5.1.</span> <span class="nav-text">Link</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#操作接口"><span class="nav-number">5.1.1.</span> <span class="nav-text">操作接口</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#添加结点"><span class="nav-number">5.1.2.</span> <span class="nav-text">添加结点</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#查询结点"><span class="nav-number">5.1.3.</span> <span class="nav-text">查询结点</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#删除单个结点"><span class="nav-number">5.1.4.</span> <span class="nav-text">删除单个结点</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#删除所有结点"><span class="nav-number">5.1.5.</span> <span class="nav-text">删除所有结点</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#删除最后的结点"><span class="nav-number">5.1.6.</span> <span class="nav-text">删除最后的结点</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#组织方式"><span class="nav-number">5.1.7.</span> <span class="nav-text">组织方式</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#看看源码"><span class="nav-number">5.2.</span> <span class="nav-text">看看源码</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#endIndex"><span class="nav-number">5.2.1.</span> <span class="nav-text">endIndex</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#常规操作"><span class="nav-number">5.3.</span> <span class="nav-text">常规操作</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#类型擦除"><span class="nav-number">5.4.</span> <span class="nav-text">类型擦除</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Trim"><span class="nav-number">5.5.</span> <span class="nav-text">Trim</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Trim-by"><span class="nav-number">5.5.1.</span> <span class="nav-text">Trim by</span></a></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Unit-test"><span class="nav-number">6.</span> <span class="nav-text">Unit test</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#开始测试"><span class="nav-number">6.1.</span> <span class="nav-text">开始测试</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#测试count"><span class="nav-number">6.1.1.</span> <span class="nav-text">测试count</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#测试isEmpty"><span class="nav-number">6.1.2.</span> <span class="nav-text">测试isEmpty</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#线程安全测试"><span class="nav-number">6.1.3.</span> <span class="nav-text">线程安全测试</span></a></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Where-to-go-from-here"><span class="nav-number">7.</span> <span class="nav-text">Where to go from here</span></a></li></ol></div>
+            
+
+          </div>
+        </div>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+  
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2019</span>
+  <span class="with-love" id="animate">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Author</span>
+
+  
+
+  
+</div>
+
+
+  <div class="powered-by">Powered by <a href="https://hexo.io" class="theme-link" rel="noopener" target="_blank">Hexo</a> v3.8.0</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">Theme – <a href="https://theme-next.org" class="theme-link" rel="noopener" target="_blank">NexT.Muse</a> v7.1.0</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+    
+
+    
+  </div>
+
+  
+
+<script>
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  <script src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+
+  
+
+
+  <script src="/js/utils.js?v=7.1.0"></script>
+
+  <script src="/js/motion.js?v=7.1.0"></script>
+
+
+
+  
+  
+
+
+  <script src="/js/schemes/muse.js?v=7.1.0"></script>
+
+
+
+  
+  <script src="/js/scrollspy.js?v=7.1.0"></script>
+<script src="/js/post-details.js?v=7.1.0"></script>
+
+
+
+  
+
+
+  <script src="/js/next-boot.js?v=7.1.0"></script>
+
+
+  
+
+  
+
+  
+
+  
+
+
+  
+
+
+  
+
+
+
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

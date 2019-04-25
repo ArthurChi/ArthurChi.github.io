@@ -1,0 +1,1070 @@
+<!DOCTYPE html>
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+<html class="theme-next muse use-motion" lang="zh-Hans">
+<head><meta name="generator" content="Hexo 3.8.0">
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2">
+
+<link rel="stylesheet" href="/css/main.css?v=7.1.0">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=7.1.0">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=7.1.0">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=7.1.0">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=7.1.0" color="#222">
+
+
+
+
+
+
+
+<script id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Muse',
+    version: '7.1.0',
+    sidebar: {"position":"left","display":"post","offset":12,"onmobile":false,"dimmer":false},
+    back2top: true,
+    back2top_sidebar: false,
+    fancybox: false,
+    fastclick: false,
+    lazyload: false,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+  
+
+
+
+
+  <meta name="description" content="开始我们接着上文书说, 上一篇我们说到Manager的初始化. 这次, 咱们接着说发送.">
+<meta name="keywords" content="AFNetworking">
+<meta property="og:type" content="article">
+<meta property="og:title" content="AFNetworking细嚼慢咽(二)">
+<meta property="og:url" content="http://yoursite.com/2017/01/05/AFNetworking细嚼慢咽-二/index.html">
+<meta property="og:site_name" content="ArthurChi&#39;s Blog">
+<meta property="og:description" content="开始我们接着上文书说, 上一篇我们说到Manager的初始化. 这次, 咱们接着说发送.">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:updated_time" content="2017-01-09T01:37:40.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="AFNetworking细嚼慢咽(二)">
+<meta name="twitter:description" content="开始我们接着上文书说, 上一篇我们说到Manager的初始化. 这次, 咱们接着说发送.">
+
+
+
+
+
+  
+  
+  <link rel="canonical" href="http://yoursite.com/2017/01/05/AFNetworking细嚼慢咽-二/">
+
+
+
+<script id="page.configurations">
+  CONFIG.page = {
+    sidebar: "",
+  };
+</script>
+
+  <title>AFNetworking细嚼慢咽(二) | ArthurChi's Blog</title>
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .motion-element,
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-title { opacity: initial; }
+
+  .use-motion .logo,
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">ArthurChi's Blog</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+    
+      
+        <p class="site-subtitle">Yesterday you said tomorrow</p>
+      
+    
+    
+  </div>
+
+  <div class="site-nav-toggle">
+    <button aria-label="Toggle navigation bar">
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  
+    <ul id="menu" class="menu">
+      
+        
+        
+        
+          
+          <li class="menu-item menu-item-home">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/" rel="section"><i class="menu-item-icon fa fa-fw fa-home"></i> <br>Home</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-archives">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/archives/" rel="section"><i class="menu-item-icon fa fa-fw fa-archive"></i> <br>Archives</a>
+
+  </li>
+
+      
+      
+    </ul>
+  
+
+  
+    
+
+  
+
+  
+</nav>
+
+
+
+  
+
+
+
+</div>
+    </header>
+
+    
+
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/01/05/AFNetworking细嚼慢咽-二/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Author">
+      <meta itemprop="description" content>
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="ArthurChi's Blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">AFNetworking细嚼慢咽(二)
+
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+
+            
+            
+            
+
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Posted on</span>
+              
+
+              
+                
+              
+
+              <time title="Created: 2017-01-05 14:46:16" itemprop="dateCreated datePublished" datetime="2017-01-05T14:46:16+08:00">2017-01-05</time>
+            
+
+            
+              
+
+              
+                
+                <span class="post-meta-divider">|</span>
+                
+
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">Edited on</span>
+                
+                <time title="Modified: 2017-01-09 09:37:40" itemprop="dateModified" datetime="2017-01-09T09:37:40+08:00">2017-01-09</time>
+              
+            
+          </span>
+
+          
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">In</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/iOS/" itemprop="url" rel="index"><span itemprop="name">iOS</span></a></span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h1 id="开始"><a href="#开始" class="headerlink" title="开始"></a>开始</h1><p>我们接着上文书说, <a href="http://sun-fox-cj.github.io/2017/01/04/AFNetworking%E7%BB%86%E5%9A%BC%E6%85%A2%E5%92%BD-%E4%B8%80/" target="_blank" rel="noopener">上一篇</a>我们说到Manager的初始化. 这次, 咱们接着说发送.<br><a id="more"></a></p>
+<h2 id="发送请求"><a href="#发送请求" class="headerlink" title="发送请求"></a>发送请求</h2><p>这里, 我们先说一下大概的思路和为什么.</p>
+<ul>
+<li>生成一个session task, 并给task发送resume</li>
+<li>task和代理建立起来一对一的关系</li>
+</ul>
+<h3 id="从一个GET请求开始"><a href="#从一个GET请求开始" class="headerlink" title="从一个GET请求开始"></a>从一个GET请求开始</h3><p>那, 我们开始从一个GET请求开始</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line">- (NSURLSessionDataTask *)GET:(NSString *)URLString</span><br><span class="line">                   parameters:(id)parameters</span><br><span class="line">                     progress:(void (^)(NSProgress * _Nonnull))downloadProgress</span><br><span class="line">                      success:(void (^)(NSURLSessionDataTask * _Nonnull, id _Nullable))success</span><br><span class="line">                      failure:(void (^)(NSURLSessionDataTask * _Nullable, NSError * _Nonnull))failure</span><br><span class="line">&#123;</span><br><span class="line"></span><br><span class="line">    NSURLSessionDataTask *dataTask = [self dataTaskWithHTTPMethod:@&quot;GET&quot;</span><br><span class="line">                                                        URLString:URLString</span><br><span class="line">                                                       parameters:parameters</span><br><span class="line">                                                   uploadProgress:nil</span><br><span class="line">                                                 downloadProgress:downloadProgress</span><br><span class="line">                                                          success:success</span><br><span class="line">                                                          failure:failure];</span><br><span class="line"></span><br><span class="line">    [dataTask resume];</span><br><span class="line"></span><br><span class="line">    return dataTask;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>上面这块, 我们最直观的就是产生了一个task, 然后启动. 接下来, 我们跟进去看一下如何生成的task</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br></pre></td><td class="code"><pre><span class="line">- (NSURLSessionDataTask *)dataTaskWithHTTPMethod:(NSString *)method</span><br><span class="line">                                       URLString:(NSString *)URLString</span><br><span class="line">                                      parameters:(id)parameters</span><br><span class="line">                                  uploadProgress:(nullable void (^)(NSProgress *uploadProgress)) uploadProgress</span><br><span class="line">                                downloadProgress:(nullable void (^)(NSProgress *downloadProgress)) downloadProgress</span><br><span class="line">                                         success:(void (^)(NSURLSessionDataTask *, id))success</span><br><span class="line">                                         failure:(void (^)(NSURLSessionDataTask *, NSError *))failure</span><br><span class="line">&#123;</span><br><span class="line">		// 这一块做了请求的校验, 为了不影响思路, 具体细节先不跟进去, 只说这里为`dataTaskWithRequest:` 方法, 提供一个正确的request</span><br><span class="line">    NSError *serializationError = nil;</span><br><span class="line">    NSMutableURLRequest *request = [self.requestSerializer requestWithMethod:method URLString:[[NSURL URLWithString:URLString relativeToURL:self.baseURL] absoluteString] parameters:parameters error:&amp;serializationError];</span><br><span class="line">    if (serializationError) &#123;</span><br><span class="line">        if (failure) &#123;</span><br><span class="line">            dispatch_async(self.completionQueue ?: dispatch_get_main_queue(), ^&#123;</span><br><span class="line">                failure(nil, serializationError);</span><br><span class="line">            &#125;);</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        return nil;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">		// 这里注意, 有个block</span><br><span class="line">    __block NSURLSessionDataTask *dataTask = nil;</span><br><span class="line">    </span><br><span class="line">		/* 把校验好的request传进去 </span><br><span class="line">			准备成功回调和失败回调</span><br><span class="line">		*/</span><br><span class="line">    dataTask = [self dataTaskWithRequest:request</span><br><span class="line">                          uploadProgress:uploadProgress</span><br><span class="line">                        downloadProgress:downloadProgress</span><br><span class="line">                       completionHandler:^(NSURLResponse * __unused response, id responseObject, NSError *error) &#123;</span><br><span class="line">        if (error) &#123;</span><br><span class="line">            if (failure) &#123;</span><br><span class="line">                failure(dataTask, error);</span><br><span class="line">            &#125;</span><br><span class="line">        &#125; else &#123;</span><br><span class="line">            if (success) &#123;</span><br><span class="line">                success(dataTask, responseObject);</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;];</span><br><span class="line"></span><br><span class="line">    return dataTask;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>上面这一块的注意点:</p>
+<ul>
+<li>那个block, 我想了好久, 都没想明白为啥, 把它删除掉, 也能正确执行. 于是, 我想, 这个是处于内存管理的原因, 才这么写的, 我们知道, 被__Block修饰的变量, 可以在block内部去修改, 但是他的本质是被弄到了block的内部, 那么我想, 这块应该是为了让block持有这个task. 放置task在block之前释放.</li>
+</ul>
+<p>至于request校验, 算是一个分支, 咱们先顺着思路往下看, 不要被干扰.</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">- (NSURLSessionDataTask *)dataTaskWithRequest:(NSURLRequest *)request</span><br><span class="line">                               uploadProgress:(nullable void (^)(NSProgress *uploadProgress)) uploadProgressBlock</span><br><span class="line">                             downloadProgress:(nullable void (^)(NSProgress *downloadProgress)) downloadProgressBlock</span><br><span class="line">                            completionHandler:(nullable void (^)(NSURLResponse *response, id _Nullable responseObject,  NSError * _Nullable error))completionHandler &#123;</span><br><span class="line"></span><br><span class="line">    __block NSURLSessionDataTask *dataTask = nil;</span><br><span class="line">    url_session_manager_create_task_safely(^&#123;</span><br><span class="line">			// 终于找到生成task的地方了</span><br><span class="line">        dataTask = [self.session dataTaskWithRequest:request];</span><br><span class="line">    &#125;);</span><br><span class="line">		// task和delegate进行对应</span><br><span class="line">    [self addDelegateForDataTask:dataTask uploadProgress:uploadProgressBlock downloadProgress:downloadProgressBlock completionHandler:completionHandler];</span><br><span class="line"></span><br><span class="line">    return dataTask;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>上面这段代码, 让task和delegate进行了绑定, 需要注意的地方是 :</p>
+<ul>
+<li><code>url_session_manager_create_task_safely</code>, 这里的目的是为了防止iOS8以前, dataTaskWithRequest: 方式创建task是并发的, 这样, 有可能生成两个taskID是一样的task. 这样, 就会引起task和delegate对应的混乱, 因为delegate所对应的是task的ID.</li>
+<li>这里还需要理解的一点是: 串行队列的同步执行. 对于这里晕的同学, 可以点击<a href="http://www.jianshu.com/p/201ccb40a3f8" target="_blank" rel="noopener">这里</a>. 这里使用到的队列是一个串行的队列, 也就是大家都要老老实实的排队, 排到了才能执行. 而且队列是一个静态的, 这样就保证了所有的任务都排同一个队.</li>
+<li>这里我也啰嗦一句, 不要以为主队列和主线程有什么关系, 主线程执行的, 是主队列, 但是反过来可就不行了, 想详细了解的同学可以看<a href="http://blog.benjamin-encz.de/post/main-queue-vs-main-thread/" target="_blank" rel="noopener">这里</a></li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">- (void)addDelegateForDataTask:(NSURLSessionDataTask *)dataTask</span><br><span class="line">                uploadProgress:(nullable void (^)(NSProgress *uploadProgress)) uploadProgressBlock</span><br><span class="line">              downloadProgress:(nullable void (^)(NSProgress *downloadProgress)) downloadProgressBlock</span><br><span class="line">             completionHandler:(void (^)(NSURLResponse *response, id responseObject, NSError *error))completionHandler</span><br><span class="line">&#123;</span><br><span class="line">    AFURLSessionManagerTaskDelegate *delegate = [[AFURLSessionManagerTaskDelegate alloc] initWithTask:dataTask];</span><br><span class="line">    delegate.manager = self;</span><br><span class="line">    delegate.completionHandler = completionHandler;</span><br><span class="line">		// 给task打上manager的标签, 主要用于通知里面去区分.</span><br><span class="line">    dataTask.taskDescription = self.taskDescriptionForSessionTasks;</span><br><span class="line">    	// delegate和dataTask建立起关系</span><br><span class="line">    [self setDelegate:delegate forTask:dataTask];</span><br><span class="line"></span><br><span class="line">    delegate.uploadProgressBlock = uploadProgressBlock;</span><br><span class="line">    delegate.downloadProgressBlock = downloadProgressBlock;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>上面这段代码, 算是把task和delegate联系起来了. 当然, 这里的delegate和session的delegate不是一回事, 因为我们封装的时候, 都是为了将要封装的东西隔离起来. 可以看到, 这里的delegate是一个自定义类. 那应该怎么理解这个结构呢?</p>
+<ul>
+<li>下载任务的回调, 会给Manager, 换句话说, manager才是session的delegate.</li>
+<li>manager通过刚才的那个映射字典中, 以task的ID为KEY, 取出对应的自定义delegate, 然后通知那个自定义的delegate做对应的事情. 这一点, 在AFURLSessionManager.m中可以看到</li>
+</ul>
+<h1 id="结束"><a href="#结束" class="headerlink" title="结束"></a>结束</h1><p>这里, 我们总结一下:</p>
+<ol>
+<li>传入一个url</li>
+<li>校验url合法性, 如果合法则构建Request</li>
+<li>用request构建task</li>
+<li>将task和自定义delegate绑定</li>
+<li>将task return, 并resume</li>
+</ol>
+<h1 id="Reference"><a href="#Reference" class="headerlink" title="Reference"></a>Reference</h1><blockquote>
+<p><a href="http://www.jianshu.com/p/856f0e26279d" target="_blank" rel="noopener">http://www.jianshu.com/p/856f0e26279d</a></p>
+</blockquote>
+
+      
+    </div>
+
+    
+
+    
+    
+    
+
+    
+
+    
+      
+    
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/AFNetworking/" rel="tag"># AFNetworking</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2017/01/04/AFNetworking细嚼慢咽-一/" rel="next" title="AFNetworking细嚼慢咽(一)">
+                <i class="fa fa-chevron-left"></i> AFNetworking细嚼慢咽(一)
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2017/01/09/AFNetworking细嚼慢咽-三/" rel="prev" title="AFNetworking细嚼慢咽-(三)">
+                AFNetworking细嚼慢咽-(三) <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+  </div>
+
+
+          </div>
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            Table of Contents
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            Overview
+          </li>
+        </ul>
+      
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <p class="site-author-name" itemprop="name">Author</p>
+              <div class="site-description motion-element" itemprop="description"></div>
+          </div>
+
+          
+            <nav class="site-state motion-element">
+              
+                <div class="site-state-item site-state-posts">
+                
+                  <a href="/archives/">
+                
+                    <span class="site-state-item-count">129</span>
+                    <span class="site-state-item-name">posts</span>
+                  </a>
+                </div>
+              
+
+              
+                
+                
+                <div class="site-state-item site-state-categories">
+                  
+                    
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                    <span class="site-state-item-count">14</span>
+                    <span class="site-state-item-name">categories</span>
+                  
+                </div>
+              
+
+              
+                
+                
+                <div class="site-state-item site-state-tags">
+                  
+                    
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                    <span class="site-state-item-count">111</span>
+                    <span class="site-state-item-name">tags</span>
+                  
+                </div>
+              
+            </nav>
+          
+
+          
+
+          
+
+          
+
+          
+
+          
+          
+
+          
+            
+          
+          
+
+        </div>
+      </div>
+
+      
+      <!--noindex-->
+        <div class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+            
+            
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#开始"><span class="nav-number">1.</span> <span class="nav-text">开始</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#发送请求"><span class="nav-number">1.1.</span> <span class="nav-text">发送请求</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#从一个GET请求开始"><span class="nav-number">1.1.1.</span> <span class="nav-text">从一个GET请求开始</span></a></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#结束"><span class="nav-number">2.</span> <span class="nav-text">结束</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Reference"><span class="nav-number">3.</span> <span class="nav-text">Reference</span></a></li></ol></div>
+            
+
+          </div>
+        </div>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+  
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2019</span>
+  <span class="with-love" id="animate">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Author</span>
+
+  
+
+  
+</div>
+
+
+  <div class="powered-by">Powered by <a href="https://hexo.io" class="theme-link" rel="noopener" target="_blank">Hexo</a> v3.8.0</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">Theme – <a href="https://theme-next.org" class="theme-link" rel="noopener" target="_blank">NexT.Muse</a> v7.1.0</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+    
+
+    
+  </div>
+
+  
+
+<script>
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  <script src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+
+  
+
+
+  <script src="/js/utils.js?v=7.1.0"></script>
+
+  <script src="/js/motion.js?v=7.1.0"></script>
+
+
+
+  
+  
+
+
+  <script src="/js/schemes/muse.js?v=7.1.0"></script>
+
+
+
+  
+  <script src="/js/scrollspy.js?v=7.1.0"></script>
+<script src="/js/post-details.js?v=7.1.0"></script>
+
+
+
+  
+
+
+  <script src="/js/next-boot.js?v=7.1.0"></script>
+
+
+  
+
+  
+
+  
+
+  
+
+
+  
+
+
+  
+
+
+
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>
