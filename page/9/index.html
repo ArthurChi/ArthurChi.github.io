@@ -290,7 +290,7 @@
   
   
   <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2016/06/03/NSURLSession与网络框架-五-AFNetworking初探/">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2016/03/02/这几天code所遇到的问题记录/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="Author">
@@ -310,7 +310,7 @@
           <h1 class="post-title" itemprop="name headline">
                 
                 
-                <a href="/2016/06/03/NSURLSession与网络框架-五-AFNetworking初探/" class="post-title-link" itemprop="url">NSURLSession与网络框架(五)AFNetworking初探</a>
+                <a href="/2016/03/02/这几天code所遇到的问题记录/" class="post-title-link" itemprop="url">这几天code所遇到的问题记录</a>
               
             
           </h1>
@@ -335,7 +335,7 @@
                 
               
 
-              <time title="Created: 2016-06-03 14:10:32" itemprop="dateCreated datePublished" datetime="2016-06-03T14:10:32+08:00">2016-06-03</time>
+              <time title="Created: 2016-03-02 13:52:53" itemprop="dateCreated datePublished" datetime="2016-03-02T13:52:53+08:00">2016-03-02</time>
             
 
             
@@ -352,7 +352,7 @@
                 
                   <span class="post-meta-item-text">Edited on</span>
                 
-                <time title="Modified: 2016-06-05 17:26:33" itemprop="dateModified" datetime="2016-06-05T17:26:33+08:00">2016-06-05</time>
+                <time title="Modified: 2016-03-25 21:06:43" itemprop="dateModified" datetime="2016-03-25T21:06:43+08:00">2016-03-25</time>
               
             
           </span>
@@ -405,879 +405,16 @@
 
       
         
-          <h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><p>这篇文章基于作者本人对于AFNetworking(以下简称AFN)的理解写的, 所有的理解都受作者当前水平的约束, 所以读者需要具有批判精神来读这篇文章, 如果你是一个不具有这样精神的人, 那么这篇文章不适合你. 作者所分析的是3.x版本.<br>
-          <!--noindex-->
           
-            <div class="post-button text-center">
-              <a class="btn" href="/2016/06/03/NSURLSession与网络框架-五-AFNetworking初探/#more" rel="contents">
-                Read more &raquo;
-              </a>
-            </div>
-          
-          <!--/noindex-->
-        
-      
-    </p></div>
+            <h3 id="状态栏颜色"><a href="#状态栏颜色" class="headerlink" title="状态栏颜色"></a>状态栏颜色</h3><h4 id="之前的解决方法"><a href="#之前的解决方法" class="headerlink" title="之前的解决方法"></a>之前的解决方法</h4><p>之前开发使用全局配置, 但是需要在plist里面加一条<br><br>‘View controller-based status bar appearance，并将其值设置为NO’, 但是在iOS9中不建议这样弄了</p>
+<h4 id="现在的解决方式"><a href="#现在的解决方式" class="headerlink" title="现在的解决方式"></a>现在的解决方式</h4><p>调用</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">func preferredStatusBarStyle() -&gt; UIStatusBarStyle</span><br></pre></td></tr></table></figure>
+<p>比如, 我的个人中心的vc要把状态栏改为浅色, 就override这个方法, 但是在我的项目中并没有作用, 打了断点看一下, 并没有进入该方法, stackoverflow了一下, 因为有navigationcontroller的原因, 有的说需要讲tabbar隐藏了, 可是这不适合我, 于是我复写了 navigationcontroller的这个方法</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">override func preferredStatusBarStyle() -&gt; UIStatusBarStyle &#123;</span><br><span class="line">        return topViewController?.preferredStatusBarStyle() ?? .LightContent</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+<p>这样就解决了</p>
+<h3 id="navigationBar的透明"><a href="#navigationBar的透明" class="headerlink" title="navigationBar的透明"></a>navigationBar的透明</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">navigationController?.navigationBar.setBackgroundImage(UIImage(), forBarMetrics: .Default)</span><br><span class="line">        navigationController?.navigationBar.shadowImage = UIImage()</span><br></pre></td></tr></table></figure>
+<h3 id="storyboard中添加的view从0点开始"><a href="#storyboard中添加的view从0点开始" class="headerlink" title="storyboard中添加的view从0点开始"></a>storyboard中添加的view从0点开始</h3><p><img src="http://7xpsbt.com1.z0.glb.clouddn.com/%E4%BB%8E%E9%9B%B6%E7%82%B9%E5%BC%80%E5%A7%8B%E5%B8%83%E5%B1%80.jpg" alt><br>选择的时候, 选view即可</p>
 
-    
-
-    
-    
-    
-
-    
-
-    
-      
-    
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
-      
-
-  
-
-  
-  
-  
-
-  
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2016/06/02/NSURLSession与网络框架-四-Delegate/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="Author">
-      <meta itemprop="description" content>
-      <meta itemprop="image" content="/images/avatar.gif">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="ArthurChi's Blog">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                
-                <a href="/2016/06/02/NSURLSession与网络框架-四-Delegate/" class="post-title-link" itemprop="url">NSURLSession与网络框架(四)Delegate</a>
-              
-            
-          </h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-
-            
-            
-            
-
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">Posted on</span>
-              
-
-              
-                
-              
-
-              <time title="Created: 2016-06-02 17:09:09" itemprop="dateCreated datePublished" datetime="2016-06-02T17:09:09+08:00">2016-06-02</time>
-            
-
-            
-              
-
-              
-                
-                <span class="post-meta-divider">|</span>
-                
-
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-calendar-check-o"></i>
-                </span>
-                
-                  <span class="post-meta-item-text">Edited on</span>
-                
-                <time title="Modified: 2016-06-05 17:26:16" itemprop="dateModified" datetime="2016-06-05T17:26:16+08:00">2016-06-05</time>
-              
-            
-          </span>
-
-          
-            <span class="post-category">
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">In</span>
-              
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/iOS/" itemprop="url" rel="index"><span itemprop="name">iOS</span></a></span>
-
-                
-                
-              
-            </span>
-          
-
-          
-            
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          <h2 id="NSURLSessionDelegate"><a href="#NSURLSessionDelegate" class="headerlink" title="NSURLSessionDelegate"></a>NSURLSessionDelegate</h2><h3 id="introduction"><a href="#introduction" class="headerlink" title="introduction"></a>introduction</h3><p><code>NSURLSessionDelegate</code>协议定义了<code>NSURLSession</code>对象调用对应的代理的session级别的方法. 另外, 该协议中定义的方法, 大部分的代理应该同时实现<code>NSURLSessionTaskDelegate</code>, <code>NSURLSessionDataDelegate</code>, <code>NSURLSessionDownloadDelegate</code>协议中的task级别的方法.<br>
-          <!--noindex-->
-          
-            <div class="post-button text-center">
-              <a class="btn" href="/2016/06/02/NSURLSession与网络框架-四-Delegate/#more" rel="contents">
-                Read more &raquo;
-              </a>
-            </div>
-          
-          <!--/noindex-->
-        
-      
-    </p></div>
-
-    
-
-    
-    
-    
-
-    
-
-    
-      
-    
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
-      
-
-  
-
-  
-  
-  
-
-  
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2016/05/31/NSURLSession与网络框架-三-NSURLSessionConfiguration/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="Author">
-      <meta itemprop="description" content>
-      <meta itemprop="image" content="/images/avatar.gif">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="ArthurChi's Blog">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                
-                <a href="/2016/05/31/NSURLSession与网络框架-三-NSURLSessionConfiguration/" class="post-title-link" itemprop="url">NSURLSession与网络框架(三)NSURLSessionConfiguration</a>
-              
-            
-          </h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-
-            
-            
-            
-
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">Posted on</span>
-              
-
-              
-                
-              
-
-              <time title="Created: 2016-05-31 17:20:33" itemprop="dateCreated datePublished" datetime="2016-05-31T17:20:33+08:00">2016-05-31</time>
-            
-
-            
-              
-
-              
-                
-                <span class="post-meta-divider">|</span>
-                
-
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-calendar-check-o"></i>
-                </span>
-                
-                  <span class="post-meta-item-text">Edited on</span>
-                
-                <time title="Modified: 2016-06-04 17:16:33" itemprop="dateModified" datetime="2016-06-04T17:16:33+08:00">2016-06-04</time>
-              
-            
-          </span>
-
-          
-
-          
-            
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          <h2 id="NSURLSessionConfiguration"><a href="#NSURLSessionConfiguration" class="headerlink" title="NSURLSessionConfiguration"></a>NSURLSessionConfiguration</h2><h3 id="introduct"><a href="#introduct" class="headerlink" title="introduct"></a>introduct</h3><p>当上传和下载的时候, 使用configuration来决定行为和策略. 当上传和下载的时候, 在创建一个task的第一步就是创建一个configuration. 你可以通过这个对象来设置超时时长, 缓存策略, 连接请求和一些其他你想要设置给NSURLSession的信息.<br>在你初始化一个session之前去设定你的sessionconfiguration, 这很重要, session对象会对你的configuration对象进行copy. 一旦你为这个session设置了configuration, 你就不能修改了. 如果你想修改, 那就只能新建一个session了.<br>
-          <!--noindex-->
-          
-            <div class="post-button text-center">
-              <a class="btn" href="/2016/05/31/NSURLSession与网络框架-三-NSURLSessionConfiguration/#more" rel="contents">
-                Read more &raquo;
-              </a>
-            </div>
-          
-          <!--/noindex-->
-        
-      
-    </p></div>
-
-    
-
-    
-    
-    
-
-    
-
-    
-      
-    
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
-      
-
-  
-
-  
-  
-  
-
-  
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2016/05/30/NSURLSession与网络框架-二-NSURLSession/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="Author">
-      <meta itemprop="description" content>
-      <meta itemprop="image" content="/images/avatar.gif">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="ArthurChi's Blog">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                
-                <a href="/2016/05/30/NSURLSession与网络框架-二-NSURLSession/" class="post-title-link" itemprop="url">NSURLSession与网络框架(二)NSURLSession</a>
-              
-            
-          </h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-
-            
-            
-            
-
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">Posted on</span>
-              
-
-              
-                
-              
-
-              <time title="Created: 2016-05-30 16:45:24" itemprop="dateCreated datePublished" datetime="2016-05-30T16:45:24+08:00">2016-05-30</time>
-            
-
-            
-              
-
-              
-                
-                <span class="post-meta-divider">|</span>
-                
-
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-calendar-check-o"></i>
-                </span>
-                
-                  <span class="post-meta-item-text">Edited on</span>
-                
-                <time title="Modified: 2016-06-04 17:16:13" itemprop="dateModified" datetime="2016-06-04T17:16:13+08:00">2016-06-04</time>
-              
-            
-          </span>
-
-          
-            <span class="post-category">
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">In</span>
-              
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/iOS/" itemprop="url" rel="index"><span itemprop="name">iOS</span></a></span>
-
-                
-                
-              
-            </span>
-          
-
-          
-            
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          <h2 id="NSURLSession"><a href="#NSURLSession" class="headerlink" title="NSURLSession"></a>NSURLSession</h2><h2 id="introduce"><a href="#introduce" class="headerlink" title="introduce"></a>introduce</h2><h3 id="initialize"><a href="#initialize" class="headerlink" title="initialize"></a>initialize</h3><p>初始化分为四种:</p>
-<ul>
-<li>单例Session</li>
-</ul>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">用于基本的请求. 它并不适合自定义session, 但是如果你只有几个简单的请求, 那么这是一个好主意. 你可以通过调用`sharedSession`的类方法去创建.</span><br></pre></td></tr></table></figure>
-<p>它有一些限制, 你可以看 <a href="urlsession">这里</a></p>
-<ul>
-<li>默认session</li>
-</ul>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">这种很像share session, 但是你可以通过代理来监控数据的增量. 你可以通过`defaultSessionConfiguration`方法来创建一个默认的NSURLSessionConfiguration</span><br></pre></td></tr></table></figure>
-<ul>
-<li>短连接</li>
-</ul>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">这种和默认session很像, 除了它不会在磁盘写入缓存, cookie, 认证消息. 你可以通过NSURLSessionConfiguration的`ephemeralSessionConfiguration`方法创建一个configuration</span><br></pre></td></tr></table></figure>
-<ul>
-<li>后台session</li>
-</ul>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">当你的app不在前台的时候, 在后台执行上传下载. 你需要通过调用NSURLSessionConfiguration的`backgroundSessionConfiguration: `方法来创建一个后台session configuration</span><br></pre></td></tr></table></figure>
-          <!--noindex-->
-          
-            <div class="post-button text-center">
-              <a class="btn" href="/2016/05/30/NSURLSession与网络框架-二-NSURLSession/#more" rel="contents">
-                Read more &raquo;
-              </a>
-            </div>
-          
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-
-    
-    
-    
-
-    
-
-    
-      
-    
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
-      
-
-  
-
-  
-  
-  
-
-  
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2016/05/30/NSURLSession与网络框架(一)NSURLSessionTask/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="Author">
-      <meta itemprop="description" content>
-      <meta itemprop="image" content="/images/avatar.gif">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="ArthurChi's Blog">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                
-                <a href="/2016/05/30/NSURLSession与网络框架(一)NSURLSessionTask/" class="post-title-link" itemprop="url">NSURLSession与网络框架(一)NSURLSessionTask</a>
-              
-            
-          </h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-
-            
-            
-            
-
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">Posted on</span>
-              
-
-              
-                
-              
-
-              <time title="Created: 2016-05-30 10:57:02" itemprop="dateCreated datePublished" datetime="2016-05-30T10:57:02+08:00">2016-05-30</time>
-            
-
-            
-              
-
-              
-                
-                <span class="post-meta-divider">|</span>
-                
-
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-calendar-check-o"></i>
-                </span>
-                
-                  <span class="post-meta-item-text">Edited on</span>
-                
-                <time title="Modified: 2016-06-04 17:16:04" itemprop="dateModified" datetime="2016-06-04T17:16:04+08:00">2016-06-04</time>
-              
-            
-          </span>
-
-          
-            <span class="post-category">
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">In</span>
-              
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/iOS/" itemprop="url" rel="index"><span itemprop="name">iOS</span></a></span>
-
-                
-                
-              
-            </span>
-          
-
-          
-            
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          <h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><p>本文记录本人学习NSURLSession的一些总结, 还有一些网络库的部分的工作原理的梳理, 请以批判的眼光看, 如有错误处请留言, 你我共同进步!</p>
-<h2 id="大纲"><a href="#大纲" class="headerlink" title="大纲"></a>大纲</h2><ul>
-<li>NSURLSessionTask</li>
-<li>NSURLSessionConfiguration</li>
-<li>NSURLSession</li>
-<li>AFNetWorking</li>
-<li>Alamofire
-          <!--noindex-->
-          
-            <div class="post-button text-center">
-              <a class="btn" href="/2016/05/30/NSURLSession与网络框架(一)NSURLSessionTask/#more" rel="contents">
-                Read more &raquo;
-              </a>
-            </div>
-          
-          <!--/noindex-->
-        
-      
-    </li></ul></div>
-
-    
-
-    
-    
-    
-
-    
-
-    
-      
-    
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
-      
-
-  
-
-  
-  
-  
-
-  
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2016/05/21/CALayer做背景图片时遇到的小问题/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="Author">
-      <meta itemprop="description" content>
-      <meta itemprop="image" content="/images/avatar.gif">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="ArthurChi's Blog">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                
-                <a href="/2016/05/21/CALayer做背景图片时遇到的小问题/" class="post-title-link" itemprop="url">CALayer做背景图片时遇到的小问题</a>
-              
-            
-          </h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-
-            
-            
-            
-
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">Posted on</span>
-              
-
-              
-                
-              
-
-              <time title="Created: 2016-05-21 17:10:45 / Modified: 17:14:45" itemprop="dateCreated datePublished" datetime="2016-05-21T17:10:45+08:00">2016-05-21</time>
-            
-
-            
-              
-
-              
-            
-          </span>
-
-          
-
-          
-            
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            <h2 id="描述"><a href="#描述" class="headerlink" title="描述"></a>描述</h2><p>问题比较小, 就直接记录一下, 再重构项目的过程中, 因为个人中心的头部背景图片不需要和用户交互, 所以想着使用layer进行展示, 但是弄了半天, 都无法展示图片, 搜索后, 想起来了, 需要把图片转成<code>CGImage</code></p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">let bgLayer = CALayer()</span><br><span class="line">bgLayer.contents = UIImage(named:&quot;personal_center_head_bg&quot;)?.CGImage</span><br></pre></td></tr></table></figure>
           
         
       
@@ -1333,7 +470,7 @@
   
   
   <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2016/05/09/WKWebView/">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2016/02/24/swift-protocol遇到的坑/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="Author">
@@ -1353,7 +490,7 @@
           <h1 class="post-title" itemprop="name headline">
                 
                 
-                <a href="/2016/05/09/WKWebView/" class="post-title-link" itemprop="url">WKWebView</a>
+                <a href="/2016/02/24/swift-protocol遇到的坑/" class="post-title-link" itemprop="url">swift protocol遇到的坑</a>
               
             
           </h1>
@@ -1378,7 +515,7 @@
                 
               
 
-              <time title="Created: 2016-05-09 11:23:19" itemprop="dateCreated datePublished" datetime="2016-05-09T11:23:19+08:00">2016-05-09</time>
+              <time title="Created: 2016-02-24 14:01:01" itemprop="dateCreated datePublished" datetime="2016-02-24T14:01:01+08:00">2016-02-24</time>
             
 
             
@@ -1395,7 +532,7 @@
                 
                   <span class="post-meta-item-text">Edited on</span>
                 
-                <time title="Modified: 2016-05-21 17:17:59" itemprop="dateModified" datetime="2016-05-21T17:17:59+08:00">2016-05-21</time>
+                <time title="Modified: 2016-03-25 21:06:43" itemprop="dateModified" datetime="2016-03-25T21:06:43+08:00">2016-03-25</time>
               
             
           </span>
@@ -1448,22 +585,18 @@
 
       
         
-          <h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><p>最近忙的也没有空写博客, 被产品玩死了, 妈蛋的, 学一下WKWebView<br><br>文章分为四个部分, 分别是:</p>
-<ul>
-<li>WKWebView</li>
-<li>WKWebViewConfiguration</li>
-<li>WKNavigationDelegate</li>
-<li>WKUIDelegate</li>
-</ul>
-          <!--noindex-->
           
-            <div class="post-button text-center">
-              <a class="btn" href="/2016/05/09/WKWebView/#more" rel="contents">
-                Read more &raquo;
-              </a>
-            </div>
+            <p>##起因<br>在对程序进行内存分析的时候, 发现有内存泄漏<br><img src="http://7xpsbt.com1.z0.glb.clouddn.com/leak.png" alt><br><br>so easy 循环引用了, 只要把delegate设置成weak即可<br><br>协议如下</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">protocol NetworkDelegate &#123;</span><br><span class="line">  </span><br><span class="line">  func networkToolSuccessResponse&lt;T&gt;(response: T, request: NSURLRequest)</span><br><span class="line">  </span><br><span class="line">  func networkToolFailueResponse(error: NSError?, request: NSURLRequest)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>找到代理, 加上weak, !!!! 竟然编译报错了<br><br>‘weak’ cannot be applied to non-class type ‘NetworkDelegate’<br><br>上网查了一下, 因为swift中的协议, 枚举和结构体也可以遵守, 他们用weak修饰不合适, 因为他们是值类型, 不是引用类型, 也就不存在弱引用. 解决方法有二</p>
+<ol>
+<li>在protocol前面加@objc</li>
+<li>在协议后面加class</li>
+</ol>
+<h2 id="解决与注意"><a href="#解决与注意" class="headerlink" title="解决与注意"></a>解决与注意</h2><p>第一种并不是和我, 因为我的协议里有泛型, 而objc里面是没有泛型概念的, 所以我用了第二种方法</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">protocol NetworkDelegate: class &#123;</span><br><span class="line">  </span><br><span class="line">  func networkToolSuccessResponse&lt;T&gt;(response: T, request: NSURLRequest)</span><br><span class="line">  </span><br><span class="line">  func networkToolFailueResponse(error: NSError?, request: NSURLRequest)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
           
-          <!--/noindex-->
         
       
     </div>
@@ -1518,7 +651,7 @@
   
   
   <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2016/04/12/cocos-Creator编写类似menu记录/">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2016/02/23/Button文字的显示与隐藏/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="Author">
@@ -1538,7 +671,7 @@
           <h1 class="post-title" itemprop="name headline">
                 
                 
-                <a href="/2016/04/12/cocos-Creator编写类似menu记录/" class="post-title-link" itemprop="url">cocos Creator编写类似menu记录</a>
+                <a href="/2016/02/23/Button文字的显示与隐藏/" class="post-title-link" itemprop="url">Button文字的显示与隐藏</a>
               
             
           </h1>
@@ -1563,7 +696,7 @@
                 
               
 
-              <time title="Created: 2016-04-12 16:56:45" itemprop="dateCreated datePublished" datetime="2016-04-12T16:56:45+08:00">2016-04-12</time>
+              <time title="Created: 2016-02-23 09:05:05" itemprop="dateCreated datePublished" datetime="2016-02-23T09:05:05+08:00">2016-02-23</time>
             
 
             
@@ -1580,7 +713,7 @@
                 
                   <span class="post-meta-item-text">Edited on</span>
                 
-                <time title="Modified: 2016-04-13 21:16:26" itemprop="dateModified" datetime="2016-04-13T21:16:26+08:00">2016-04-13</time>
+                <time title="Modified: 2016-03-25 21:06:43" itemprop="dateModified" datetime="2016-03-25T21:06:43+08:00">2016-03-25</time>
               
             
           </span>
@@ -1597,7 +730,7 @@
                 <span class="post-meta-item-text">In</span>
               
               
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/cocos-Creator/" itemprop="url" rel="index"><span itemprop="name">cocos Creator</span></a></span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/iOS/" itemprop="url" rel="index"><span itemprop="name">iOS</span></a></span>
 
                 
                 
@@ -1634,12 +767,193 @@
       
         
           
-            <h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><p>在cocos2d-js中有Menu控件, 但是在Creator中, 完全找不到, 那么应该怎么做呢?</p>
-<h2 id="开始"><a href="#开始" class="headerlink" title="开始"></a>开始</h2><p>在Canvas上, 添加一个UI节点, ScrollView, 我们会看到它自带的一些东西, <code>scrollBar</code>, <code>view</code>, <code>content</code>. 看一下API上怎么说的.</p>
+            <p>##前言<br>之前和哥们吹牛说, 如果出去面试, 千万别说精通, 有一个哥们说, 就说精通UIButton, 现在想起来, 真不敢这么说</p>
+<h2 id="问题"><a href="#问题" class="headerlink" title="问题"></a>问题</h2><p>我想实现的是<br><img src="http://7xpsbt.com1.z0.glb.clouddn.com/UIButton1.gif" alt><br>可实现出来的是<br><img src="http://7xpsbt.com1.z0.glb.clouddn.com/UIButton.gif" alt></p>
+<h2 id="解决"><a href="#解决" class="headerlink" title="解决"></a>解决</h2><p>实际上也没啥难的, 只需要把那个button的Clip subviews的属性勾选上就好了so easy</p>
+
+          
+        
+      
+    </div>
+
+    
+
+    
+    
+    
+
+    
+
+    
+      
+    
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2016/02/02/循环引用的注意事项/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Author">
+      <meta itemprop="description" content>
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="ArthurChi's Blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                
+                <a href="/2016/02/02/循环引用的注意事项/" class="post-title-link" itemprop="url">Swift循环引用的注意事项</a>
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+
+            
+            
+            
+
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Posted on</span>
+              
+
+              
+                
+              
+
+              <time title="Created: 2016-02-02 09:13:15" itemprop="dateCreated datePublished" datetime="2016-02-02T09:13:15+08:00">2016-02-02</time>
+            
+
+            
+              
+
+              
+                
+                <span class="post-meta-divider">|</span>
+                
+
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">Edited on</span>
+                
+                <time title="Modified: 2016-03-25 21:06:43" itemprop="dateModified" datetime="2016-03-25T21:06:43+08:00">2016-03-25</time>
+              
+            
+          </span>
+
+          
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">In</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/iOS/" itemprop="url" rel="index"><span itemprop="name">iOS</span></a></span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <ol>
+<li>weak和oc中的weak是一样的, 在释放后, 会被置空, 所以, 若引用变量需要使用var来修饰</li>
+<li>非 class类型的协议不能被标识成weak。这里，我们必须让协议继承:class，从而使用一个类协议将代理属性标记为weak. </li>
+<li>本质上来讲，当你有着跟我上述代码一样的引用关系，你就用:class。在结构体和枚举的情况下，没有必要用:class，因为结构体和枚举是value semantics，而类是 reference semantics</li>
+<li>unowned引用有着非可选类型的优点</li>
+<li>这样相比于借助和使用optional binding更易于管理。这和隐式可选类型（Implicity Unwarpped Optionals）区别不大。此外，unowned引用是non-zeroing(非零的) ,这表示着当一个对象被销毁时，它指引的对象不会清零。也就是说使用unowned引用在某些情况下可能导致 dangling pointers(野指针url)。你是不是跟我一样想起了用Objective -C的时候, unowned引用映射到了 unsafe_unretained引用</li>
+<li>什么时候用weak, 什么时候用unowned – 在引用对象的生命周期内，如果它可能为nil，那么就用weak引用。反之，当你知道引用对象在初始化后永远都不会为nil就用unowned</li>
+<li>在懒加载变量中调用closure时，由于没有retain closure，所以不需要加 unowned self。变量只是简单的把闭包的结果assign 给了自己，闭包在使用后就被立即销毁了。下面的截图很好的证明了这点</li>
+</ol>
 <blockquote>
-<p>content: Node<br><br>可滚动的展示内容的节点</p>
+<p>摘抄自 <a href="http://www.cocoachina.com/swift/20160202/15182.html" target="_blank" rel="noopener">http://www.cocoachina.com/swift/20160202/15182.html</a><br><br>原文 <a href="http://krakendev.io/blog/weak-and-unowned-references-in-swift" target="_blank" rel="noopener">http://krakendev.io/blog/weak-and-unowned-references-in-swift</a></p>
 </blockquote>
-<p>很好, 先从他开始好了.</p>
 
           
         
@@ -1696,7 +1010,7 @@
   
   
   <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2016/04/11/cocos Creator节点与事件/">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2016/01/25/2016-1-25学习笔记/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="Author">
@@ -1716,7 +1030,7 @@
           <h1 class="post-title" itemprop="name headline">
                 
                 
-                <a href="/2016/04/11/cocos Creator节点与事件/" class="post-title-link" itemprop="url">cocos Creator节点与事件</a>
+                <a href="/2016/01/25/2016-1-25学习笔记/" class="post-title-link" itemprop="url">2016-1-25学习笔记</a>
               
             
           </h1>
@@ -1741,7 +1055,7 @@
                 
               
 
-              <time title="Created: 2016-04-11 10:17:38" itemprop="dateCreated datePublished" datetime="2016-04-11T10:17:38+08:00">2016-04-11</time>
+              <time title="Created: 2016-01-25 10:39:26" itemprop="dateCreated datePublished" datetime="2016-01-25T10:39:26+08:00">2016-01-25</time>
             
 
             
@@ -1758,7 +1072,7 @@
                 
                   <span class="post-meta-item-text">Edited on</span>
                 
-                <time title="Modified: 2016-04-13 21:16:26" itemprop="dateModified" datetime="2016-04-13T21:16:26+08:00">2016-04-13</time>
+                <time title="Modified: 2016-03-25 21:06:43" itemprop="dateModified" datetime="2016-03-25T21:06:43+08:00">2016-03-25</time>
               
             
           </span>
@@ -1775,7 +1089,7 @@
                 <span class="post-meta-item-text">In</span>
               
               
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/cocos-Creator/" itemprop="url" rel="index"><span itemprop="name">cocos Creator</span></a></span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/iOS/" itemprop="url" rel="index"><span itemprop="name">iOS</span></a></span>
 
                 
                 
@@ -1811,25 +1125,15 @@
 
       
         
-          <h2 id="节点"><a href="#节点" class="headerlink" title="节点"></a>节点</h2><ol>
-<li>创建节点 - new cc.Node()</li>
-<li>克隆节点 - cc.instantiate</li>
-<li>创建预置节点 - 同上, 只是type不同</li>
-<li>销毁节点 - node.destroy()</li>
-</ol>
-<h2 id="事件"><a href="#事件" class="headerlink" title="事件"></a>事件</h2><p>事件处理机制一般要注意三个方面: 事件, 事件源, 事件处理者, 可以联想iOS的target-action设计机制以及Android的Listener的机制.<br>
-          <!--noindex-->
           
-            <div class="post-button text-center">
-              <a class="btn" href="/2016/04/11/cocos Creator节点与事件/#more" rel="contents">
-                Read more &raquo;
-              </a>
-            </div>
+            <ul>
+<li>问题源于&lt;Swifter100个swift必备Tips(第二版)&gt;中的下标, Array与SliceArray的区别, 查到的<a href="http://blog.stablekernel.com/swift-subarrays-array-and-arrayslice" target="_blank" rel="noopener">有用的资料</a></li>
+</ul>
+
           
-          <!--/noindex-->
         
       
-    </p></div>
+    </div>
 
     
 
@@ -1881,7 +1185,7 @@
   
   
   <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2016/04/09/cocos Creator学习-阅读文档与总结/">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2016/01/22/Xcode插件记录/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="Author">
@@ -1901,7 +1205,7 @@
           <h1 class="post-title" itemprop="name headline">
                 
                 
-                <a href="/2016/04/09/cocos Creator学习-阅读文档与总结/" class="post-title-link" itemprop="url">cocos Creator学习-阅读文档与总结</a>
+                <a href="/2016/01/22/Xcode插件记录/" class="post-title-link" itemprop="url">Xcode插件记录</a>
               
             
           </h1>
@@ -1926,7 +1230,7 @@
                 
               
 
-              <time title="Created: 2016-04-09 11:05:14" itemprop="dateCreated datePublished" datetime="2016-04-09T11:05:14+08:00">2016-04-09</time>
+              <time title="Created: 2016-01-22 10:56:40" itemprop="dateCreated datePublished" datetime="2016-01-22T10:56:40+08:00">2016-01-22</time>
             
 
             
@@ -1943,7 +1247,7 @@
                 
                   <span class="post-meta-item-text">Edited on</span>
                 
-                <time title="Modified: 2016-04-13 21:16:26" itemprop="dateModified" datetime="2016-04-13T21:16:26+08:00">2016-04-13</time>
+                <time title="Modified: 2016-06-04 17:14:45" itemprop="dateModified" datetime="2016-06-04T17:14:45+08:00">2016-06-04</time>
               
             
           </span>
@@ -1960,7 +1264,7 @@
                 <span class="post-meta-item-text">In</span>
               
               
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/cocos-Creator/" itemprop="url" rel="index"><span itemprop="name">cocos Creator</span></a></span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/iOS/" itemprop="url" rel="index"><span itemprop="name">iOS</span></a></span>
 
                 
                 
@@ -1996,26 +1300,733 @@
 
       
         
-          <h2 id="环境"><a href="#环境" class="headerlink" title="环境"></a>环境</h2><p>在MAC环境下, 使用Cocos Creator进行开发</p>
-<h2 id="注意事项"><a href="#注意事项" class="headerlink" title="注意事项"></a>注意事项</h2><ol>
-<li>在编码的时候直接查看Cocos2d-JS的API</li>
-<li>希望将旧的Cocos2d-JS代码直接在Creator上进行运行</li>
-</ol>
-<p>已上是需要注意的地方, 根据官方的解释, 是因为</p>
-<blockquote>
-<p>Cocos Creator 可以说脱胎自 Cocos2d-JS，它们的 API 一脉相承，有很多相同的部分，但由于使用了全新的组件化框架，两者的 API 是有差异的，并且无法互相兼容<br>
-          <!--noindex-->
           
-            <div class="post-button text-center">
-              <a class="btn" href="/2016/04/09/cocos Creator学习-阅读文档与总结/#more" rel="contents">
-                Read more &raquo;
-              </a>
-            </div>
+            <h2 id="安装"><a href="#安装" class="headerlink" title="安装"></a>安装</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">-fsSL https://raw.github.com/alcatraz/Alcatraz/master/Scripts/install.sh | sh</span><br></pre></td></tr></table></figure>
+<h2 id="选择插件"><a href="#选择插件" class="headerlink" title="选择插件"></a>选择插件</h2><p>Window-&gt;Pakage Manage</p>
+<h2 id="推荐"><a href="#推荐" class="headerlink" title="推荐"></a>推荐</h2><ul>
+<li>backlight</li>
+<li>DXXcodeConsoleUnicodePlugin</li>
+<li>GitDiff</li>
+<li>KSImageNamed</li>
+<li>KZLinkedConsole</li>
+<li>SCXcodeMinimap</li>
+<li>VVDocumenter-Xcode</li>
+<li>XcodeColors</li>
+</ul>
+<p><a href="http://www.cocoachina.com/ios/20160122/15080.html" target="_blank" rel="noopener">原文地址</a></p>
+
           
-          <!--/noindex-->
         
       
-    </p></blockquote></div>
+    </div>
+
+    
+
+    
+    
+    
+
+    
+
+    
+      
+    
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2016/01/21/2016-1-21学习笔记/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Author">
+      <meta itemprop="description" content>
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="ArthurChi's Blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                
+                <a href="/2016/01/21/2016-1-21学习笔记/" class="post-title-link" itemprop="url">2016-1-21学习笔记</a>
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+
+            
+            
+            
+
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Posted on</span>
+              
+
+              
+                
+              
+
+              <time title="Created: 2016-01-21 11:20:53" itemprop="dateCreated datePublished" datetime="2016-01-21T11:20:53+08:00">2016-01-21</time>
+            
+
+            
+              
+
+              
+                
+                <span class="post-meta-divider">|</span>
+                
+
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">Edited on</span>
+                
+                <time title="Modified: 2016-03-25 21:06:43" itemprop="dateModified" datetime="2016-03-25T21:06:43+08:00">2016-03-25</time>
+              
+            
+          </span>
+
+          
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">In</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/iOS/" itemprop="url" rel="index"><span itemprop="name">iOS</span></a></span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <h2 id="声明"><a href="#声明" class="headerlink" title="声明"></a>声明</h2><blockquote>
+<p>摘录来自: 王巍 (onevcat). “Swifter - 100 个 Swift 必备 Tips (第二版)”。 iBooks.</p>
+</blockquote>
+<ul>
+<li><a href="http://oleb.net/blog/2014/07/swift-instance-methods-curried-functions/?utm_campaign=iOS_Dev_Weekly_Issue_157&amp;utm_medium=email&amp;utm_source=iOS%2BDev%2BWeekly" target="_blank" rel="noopener">柯理化</a></li>
+<li>将 protocol 的方法声明为 mutating</li>
+<li>字面量转换, 可以隐式的构造对象</li>
+<li>struct / enum中使用static, class中可以使用class和static, 在任何时候使用static, 都是没有问题的</li>
+<li>属性观察器, get, willset set didset的关系</li>
+<li>我们在使用 lazy 作为属性修饰符时，只能声明属性是变量。另外我们需要显式地指定属性类型，并使用一个可以对这个属性进行赋值的语句来在首次访问属性时运行</li>
+</ul>
+
+          
+        
+      
+    </div>
+
+    
+
+    
+    
+    
+
+    
+
+    
+      
+    
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2016/01/19/UITableView卡顿后查找的一些资料/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Author">
+      <meta itemprop="description" content>
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="ArthurChi's Blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                
+                <a href="/2016/01/19/UITableView卡顿后查找的一些资料/" class="post-title-link" itemprop="url">UITableView卡顿后查找的一些资料</a>
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+
+            
+            
+            
+
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Posted on</span>
+              
+
+              
+                
+              
+
+              <time title="Created: 2016-01-19 15:32:50" itemprop="dateCreated datePublished" datetime="2016-01-19T15:32:50+08:00">2016-01-19</time>
+            
+
+            
+              
+
+              
+                
+                <span class="post-meta-divider">|</span>
+                
+
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">Edited on</span>
+                
+                <time title="Modified: 2016-03-25 21:06:43" itemprop="dateModified" datetime="2016-03-25T21:06:43+08:00">2016-03-25</time>
+              
+            
+          </span>
+
+          
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">In</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/iOS/" itemprop="url" rel="index"><span itemprop="name">iOS</span></a></span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <p>由于最近改写一个界面, 运行后, 滑动并不丝滑, 感觉不爽, 遂查询了一些资料, 记录一下, 并非全都是和cell高度相关的, 也有autolayout相关的资料, by the way, 还是谷歌好用<br><br><a href="http://www.cocoachina.com/ios/20160115/15001.html" target="_blank" rel="noopener">tableView相关</a> <br><br><a href="http://zhangbuhuai.com/2015/07/16/beginning-auto-layout-part-1/" target="_blank" rel="noopener">autoLayout相关</a></p>
+
+          
+        
+      
+    </div>
+
+    
+
+    
+    
+    
+
+    
+
+    
+      
+    
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2016/01/18/invaild-context-0x0/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Author">
+      <meta itemprop="description" content>
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="ArthurChi's Blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                
+                <a href="/2016/01/18/invaild-context-0x0/" class="post-title-link" itemprop="url">invaild context 0x0</a>
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+
+            
+            
+            
+
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Posted on</span>
+              
+
+              
+                
+              
+
+              <time title="Created: 2016-01-18 17:39:52" itemprop="dateCreated datePublished" datetime="2016-01-18T17:39:52+08:00">2016-01-18</time>
+            
+
+            
+              
+
+              
+                
+                <span class="post-meta-divider">|</span>
+                
+
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">Edited on</span>
+                
+                <time title="Modified: 2016-03-25 21:06:43" itemprop="dateModified" datetime="2016-03-25T21:06:43+08:00">2016-03-25</time>
+              
+            
+          </span>
+
+          
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">In</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/iOS/" itemprop="url" rel="index"><span itemprop="name">iOS</span></a></span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <h2 id="问题描述"><a href="#问题描述" class="headerlink" title="问题描述"></a>问题描述</h2><p>在使用SDWebImage的时候, 会报错</p>
+<p><error>: CGContextDrawImage: invalid context 0x0. If you want to see the backtrace, please set CG_CONTEXT_SHOW_BACKTRACE environmental variable.</error></p>
+<p><error>: CGBitmapContextCreateImage: invalid context 0x0. If you want to see the backtrace, please set CG_CONTEXT_SHOW_BACKTRACE environmental variable.<br><img src="http://7xpsbt.com1.z0.glb.clouddn.com/console.png" alt="如图"><br><img src="http://7xpsbt.com1.z0.glb.clouddn.com/isNil.png" alt></error></p>
+<h2 id="解决办法"><a href="#解决办法" class="headerlink" title="解决办法"></a>解决办法</h2><p>需要添加一个类似全局断点的断点, 添加方法如下<br>cmd+7(到断点控制页面) -&gt; 点击”+” , 添加Symbolic断点 -&gt; 在Symbol中粘贴”CGPostError” (不带双引号), 这样, 就能找到哪里的问题了.</p>
+<h2 id="后续"><a href="#后续" class="headerlink" title="后续"></a>后续</h2><p>紧接着我issue了SDWebImage, 对方回复</p>
+<p>please enable the CG_CONTEXT_SHOW_BACKTRACE argument in the environment variable in your scheme so we can understand why the image is showing as nil.<br>My best guess is that it has to do with the CGImageGetBitsPerComponent(imageRef).<br>check <a href="https://github.com/rs/SDWebImage/issues/1401" target="_blank" rel="noopener">this</a><br>问题还在继续跟进, 至于怎么开启 CG_CONTEXT_SHOW_BACKTRACE , stackoverflow上面有一个帖子说明了, 详见<a href="http://stackoverflow.com/questions/31872650/how-can-i-set-cg-context-show-backtrace-environmental-variable" target="_blank" rel="noopener">第二条</a></p>
+
+          
+        
+      
+    </div>
+
+    
+
+    
+    
+    
+
+    
+
+    
+      
+    
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2016/01/15/group-tableviewHeader顶部留白问题/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Author">
+      <meta itemprop="description" content>
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="ArthurChi's Blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                
+                <a href="/2016/01/15/group-tableviewHeader顶部留白问题/" class="post-title-link" itemprop="url">group tableviewHeader顶部留白问题</a>
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+
+            
+            
+            
+
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Posted on</span>
+              
+
+              
+                
+              
+
+              <time title="Created: 2016-01-15 17:28:45" itemprop="dateCreated datePublished" datetime="2016-01-15T17:28:45+08:00">2016-01-15</time>
+            
+
+            
+              
+
+              
+                
+                <span class="post-meta-divider">|</span>
+                
+
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">Edited on</span>
+                
+                <time title="Modified: 2016-03-25 21:06:43" itemprop="dateModified" datetime="2016-03-25T21:06:43+08:00">2016-03-25</time>
+              
+            
+          </span>
+
+          
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">In</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/iOS/" itemprop="url" rel="index"><span itemprop="name">iOS</span></a></span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <h2 id="问题描述"><a href="#问题描述" class="headerlink" title="问题描述"></a>问题描述</h2><p>在使用collectionView作为tableview的tableHeaderView的时候, 上面总是有一块空, 不论怎么调都不起作用</p>
+<h2 id="解决方法"><a href="#解决方法" class="headerlink" title="解决方法"></a>解决方法</h2><p>在collectionView初始化的时候, frame不要填CGRectZero, 否则就会出问题<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">UICollectionView(frame: CGRect(x: 0, y: 0, width: 0, height: headerH), collectionViewLayout: bannerLayout)</span><br></pre></td></tr></table></figure></p>
+
+          
+        
+      
+    </div>
 
     
 
@@ -2056,7 +2067,7 @@
 
   
   <nav class="pagination">
-    <a class="extend prev" rel="prev" href="/page/8/"><i class="fa fa-angle-left" aria-label="Previous page"></i></a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/8/">8</a><span class="page-number current">9</span><a class="page-number" href="/page/10/">10</a><span class="space">&hellip;</span><a class="page-number" href="/page/12/">12</a><a class="extend next" rel="next" href="/page/10/"><i class="fa fa-angle-right" aria-label="Next page"></i></a>
+    <a class="extend prev" rel="prev" href="/page/8/"><i class="fa fa-angle-left" aria-label="Previous page"></i></a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/8/">8</a><span class="page-number current">9</span><a class="page-number" href="/page/10/">10</a><a class="extend next" rel="next" href="/page/10/"><i class="fa fa-angle-right" aria-label="Next page"></i></a>
   </nav>
 
 
@@ -2098,7 +2109,7 @@
                 
                   <a href="/archives/">
                 
-                    <span class="site-state-item-count">118</span>
+                    <span class="site-state-item-count">97</span>
                     <span class="site-state-item-name">posts</span>
                   </a>
                 </div>
@@ -2129,11 +2140,7 @@
                     
                       
                     
-                      
-                    
-                      
-                    
-                    <span class="site-state-item-count">11</span>
+                    <span class="site-state-item-count">9</span>
                     <span class="site-state-item-name">categories</span>
                   
                 </div>
@@ -2330,35 +2337,7 @@
                     
                       
                     
-                      
-                    
-                      
-                    
-                      
-                    
-                      
-                    
-                      
-                    
-                      
-                    
-                      
-                    
-                      
-                    
-                      
-                    
-                      
-                    
-                      
-                    
-                      
-                    
-                      
-                    
-                      
-                    
-                    <span class="site-state-item-count">106</span>
+                    <span class="site-state-item-count">92</span>
                     <span class="site-state-item-name">tags</span>
                   
                 </div>
