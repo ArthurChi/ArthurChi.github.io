@@ -1,0 +1,1192 @@
+<!DOCTYPE html>
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+<html class="theme-next muse use-motion" lang="zh-Hans">
+<head><meta name="generator" content="Hexo 3.9.0">
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2">
+
+<link rel="stylesheet" href="/css/main.css?v=7.1.0">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=7.1.0">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=7.1.0">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=7.1.0">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=7.1.0" color="#222">
+
+
+
+
+
+
+
+<script id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Muse',
+    version: '7.1.0',
+    sidebar: {"position":"left","display":"post","offset":12,"onmobile":false,"dimmer":false},
+    back2top: true,
+    back2top_sidebar: false,
+    fancybox: false,
+    fastclick: false,
+    lazyload: false,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+  
+
+
+
+
+  <meta name="description" content="开篇学习东西需要有一个连续的过程, 而且要学也要习, 所以, 有了这个系列, 作为一个学习笔记, 一来加深印象, 二来, 可以方便自己温习, 希望自己能通过一系列的学习, 成为一个高级工程师.">
+<meta name="keywords" content="algorithm">
+<meta property="og:type" content="article">
+<meta property="og:title" content="算法沉淀(一)">
+<meta property="og:url" content="http://yoursite.com/2018/08/05/算法沉淀-一/index.html">
+<meta property="og:site_name" content="ArthurChi&#39;s Blog">
+<meta property="og:description" content="开篇学习东西需要有一个连续的过程, 而且要学也要习, 所以, 有了这个系列, 作为一个学习笔记, 一来加深印象, 二来, 可以方便自己温习, 希望自己能通过一系列的学习, 成为一个高级工程师.">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:updated_time" content="2019-04-25T07:00:58.410Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="算法沉淀(一)">
+<meta name="twitter:description" content="开篇学习东西需要有一个连续的过程, 而且要学也要习, 所以, 有了这个系列, 作为一个学习笔记, 一来加深印象, 二来, 可以方便自己温习, 希望自己能通过一系列的学习, 成为一个高级工程师.">
+
+
+
+
+
+  
+  
+  <link rel="canonical" href="http://yoursite.com/2018/08/05/算法沉淀-一/">
+
+
+
+<script id="page.configurations">
+  CONFIG.page = {
+    sidebar: "",
+  };
+</script>
+
+  <title>算法沉淀(一) | ArthurChi's Blog</title>
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .motion-element,
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-title { opacity: initial; }
+
+  .use-motion .logo,
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">ArthurChi's Blog</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+    
+      
+        <p class="site-subtitle">Yesterday you said tomorrow</p>
+      
+    
+    
+  </div>
+
+  <div class="site-nav-toggle">
+    <button aria-label="Toggle navigation bar">
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  
+    <ul id="menu" class="menu">
+      
+        
+        
+        
+          
+          <li class="menu-item menu-item-home">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/" rel="section"><i class="menu-item-icon fa fa-fw fa-home"></i> <br>Home</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-archives">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/archives/" rel="section"><i class="menu-item-icon fa fa-fw fa-archive"></i> <br>Archives</a>
+
+  </li>
+
+      
+      
+    </ul>
+  
+
+  
+    
+
+  
+
+  
+</nav>
+
+
+
+  
+
+
+
+</div>
+    </header>
+
+    
+
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/08/05/算法沉淀-一/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Author">
+      <meta itemprop="description" content>
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="ArthurChi's Blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">算法沉淀(一)
+
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+
+            
+            
+            
+
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Posted on</span>
+              
+
+              
+                
+              
+
+              <time title="Created: 2018-08-05 09:47:53" itemprop="dateCreated datePublished" datetime="2018-08-05T09:47:53+08:00">2018-08-05</time>
+            
+
+            
+              
+
+              
+                
+                <span class="post-meta-divider">|</span>
+                
+
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">Edited on</span>
+                
+                <time title="Modified: 2019-04-25 15:00:58" itemprop="dateModified" datetime="2019-04-25T15:00:58+08:00">2019-04-25</time>
+              
+            
+          </span>
+
+          
+
+          
+            
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h1 id="开篇"><a href="#开篇" class="headerlink" title="开篇"></a>开篇</h1><p>学习东西需要有一个连续的过程, 而且要学也要习, 所以, 有了这个系列, 作为一个学习笔记, 一来加深印象, 二来, 可以方便自己温习, 希望自己能通过一系列的学习, 成为一个高级工程师.<br><a id="more"></a></p>
+<h1 id="认识时间复杂度"><a href="#认识时间复杂度" class="headerlink" title="认识时间复杂度"></a>认识时间复杂度</h1><p>衡量一个算法的好坏标准, 就是看一个算法的时间复杂度. 那么, 时间复杂度到底是什么呢? 怎么理解呢? </p>
+<h2 id="理解"><a href="#理解" class="headerlink" title="理解"></a>理解</h2><p>如果拿着这个关键字去<a href="https://zh.wikipedia.org/wiki/%E6%97%B6%E9%97%B4%E5%A4%8D%E6%9D%82%E5%BA%A6" target="_blank" rel="noopener">google</a>, 会看到这样的描述:</p>
+<blockquote>
+<p>算法的时间复杂度是一个函数，它定性描述该算法的运行时间。这是一个代表算法输入值的字符串的长度的函数。时间复杂度常用大O符号表述，不包括这个函数的低阶项和首项系数。</p>
+</blockquote>
+<p>那么, 这里要注意, <code>不包括</code> 低阶项 和 首项系数. 下面, 让我们通过一个具体的例子, 理解这个概念.</p>
+<h2 id="举例"><a href="#举例" class="headerlink" title="举例"></a>举例</h2><p>为了理解这句话, 我们来写一个选择排序.</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">var arr = [4, 6, 4, 7, 2, 10, 1, 5, 7]</span><br><span class="line"></span><br><span class="line">for i in 0 ..&lt; arr.count &#123;</span><br><span class="line">    var min = i</span><br><span class="line">    </span><br><span class="line">    for j in (i + 1) ..&lt; arr.count &#123;</span><br><span class="line">        if arr[j] &lt; arr[min] &#123;</span><br><span class="line">            min = j</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    arr.swapAt(i, min)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>我们来分析这个过程:</p>
+<ul>
+<li>i = 0, min记录i, j从i下一个开始遍历, 找到最小的, 并放到第一个 (假设arr长度为N, j经历了N次的比较)</li>
+<li>i = 1, 那么这次j还是从i的下一个开始遍历, 那么这次j走了N-1</li>
+<li>一直到i走到最后, j的轨迹是一个等差数列, 公差为1</li>
+<li>等差数列的前N项和 Sn=n*a1+n(n-1)d/2</li>
+<li>整理后, 关于N的二次方程中, 最高项为N^2, 系数为d/2, 有一个一次向, 和一个常数项. </li>
+<li>根据上面的描述, 只要最高项, 且不要系数, 那么, 复杂度就位O(N^2)</li>
+</ul>
+<h2 id="再来个举例"><a href="#再来个举例" class="headerlink" title="再来个举例"></a>再来个举例</h2><p>有了上面的分析过程, 让我们继续来看下面的例子<br>有序数组A长度为N, 无序数组B长度为M, 请打印所有B中不在A中的数.</p>
+<h3 id="方法一"><a href="#方法一" class="headerlink" title="方法一"></a>方法一</h3><p>对于数组B中的每一个数，都在A中通过遍历的方式找一下<br>最直白的方法, 复杂度也清晰明了, 双循环嵌套, O(M*N)</p>
+<h3 id="方法二"><a href="#方法二" class="headerlink" title="方法二"></a>方法二</h3><p>于数组B中的每一个数，都在A中通过二分的方式找一下<br>由于A是有序的了, 所以, 可以通过二分查找的方式来降低对比</p>
+<h3 id="方法三"><a href="#方法三" class="headerlink" title="方法三"></a>方法三</h3><p>先把数组B排序，然后用类似外排的方式打印所有在A中出现 的数 </p>
+<h1 id="冒泡"><a href="#冒泡" class="headerlink" title="冒泡"></a>冒泡</h1><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">var arr = [4, 6, 4, 7, 2, 10, 1, 5, 7]</span><br><span class="line">for i in 0 ..&lt; arr.count - 1 &#123;</span><br><span class="line">    for j in 0 ..&lt; arr.count - i - 1 where arr[j] &lt; arr[j + 1] &#123;</span><br><span class="line">        arr.swapAt(j, j + 1)</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h1 id="选择"><a href="#选择" class="headerlink" title="选择"></a>选择</h1><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">for i in 0 ..&lt; arr.count &#123;</span><br><span class="line">    var min = i</span><br><span class="line"></span><br><span class="line">    for j in (i + 1) ..&lt; arr.count &#123;</span><br><span class="line">        if arr[j] &lt; arr[min] &#123;</span><br><span class="line">            min = j</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    arr.swapAt(i, min)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h1 id="插入"><a href="#插入" class="headerlink" title="插入"></a>插入</h1><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">for i in 1..&lt;target.count &#123;</span><br><span class="line">        let tmp = target[i]</span><br><span class="line">        var j = i - 1</span><br><span class="line">        while j &gt;= 0 &amp;&amp; target[j] &gt; tmp &#123;</span><br><span class="line">            target[j+1] = target[j]</span><br><span class="line">            j -= 1</span><br><span class="line">        &#125;</span><br><span class="line">        </span><br><span class="line">        if j != i - 1 &#123;</span><br><span class="line">            target[j+1] = tmp</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+<p>这里的插入排序的复杂度和样本的情况有关</p>
+<h1 id="简化与通用"><a href="#简化与通用" class="headerlink" title="简化与通用"></a>简化与通用</h1><p>上面的算法中, 有一些我们可以提取出来的东西, 就是比较的东西. swift中, 我们可以通过传递一个closure来进行抽象, 他们的统一行为, 就是传入两个数, 进行比较, 然后返回比较结果. 那么, 对于这个行为, 我们可以将closure的类型定义为: (一个元素, 一个元素)-&gt; Bool, 那么问题来了, 这里的这个元素的类型应该怎么定义呢? 我们使用泛型来解决这个问题.</p>
+<h2 id="拓展"><a href="#拓展" class="headerlink" title="拓展"></a>拓展</h2><p>另外, 我们发现, 上面的排序都是创建一个Array, 然后来操作数组进行的, 那么我们就可以直接使用对Array进行扩展, 来定义这些排序方法. 那么, 这样, 就解决了刚才的泛型的问题, 因为Array中, 有对泛型的使用, 从它的定义中, 可以看到使用了Element来接收泛型. 在这里, 我们对于泛型的操作是要比较他们的大小, 然后返回一个布尔型来描述结果, 那么, 我们就要求, 在我们的扩展中, 泛型要遵守<code>Comparable</code>协议.</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">extension Array where Element: Comparable</span><br></pre></td></tr></table></figure>
+<h2 id="改造"><a href="#改造" class="headerlink" title="改造"></a>改造</h2><p>首先, 我们来对于上述的行为进行定义一个类, 来让代码变得清晰</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">typealias Order = (Element, Element) -&gt; Bool</span><br></pre></td></tr></table></figure>
+<p>对于我们的方法, 定位是操作当前给定的数组, 而不是返回一个新的数组, 同时, 我们知道swift中数组是一个struct, 那么, 如果要修改self, 方法需要mutating进行修饰.</p>
+<h2 id="改造冒泡"><a href="#改造冒泡" class="headerlink" title="改造冒泡"></a>改造冒泡</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">mutating func bubbleSort(by order: Order) &#123;</span><br><span class="line">        for i in 0 ..&lt; count - 1 &#123;</span><br><span class="line">            for j in 0 ..&lt; count - i - 1 where order(self[j], self[j + 1]) &#123;</span><br><span class="line">                swapAt(j, j + 1)</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+<blockquote>
+<p>tips: 在这里, 我们可以直接对下标进行操作, 因为我们扩展的Array, 如果你在操作Collection, 那就要另当别论了.</p>
+</blockquote>
+<h2 id="改造选择"><a href="#改造选择" class="headerlink" title="改造选择"></a>改造选择</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">mutating func selectionSort(by order: Order) &#123;</span><br><span class="line">        for i in 0 ..&lt; count &#123;</span><br><span class="line">            var min = i</span><br><span class="line">            </span><br><span class="line">            for j in (i + 1) ..&lt; count where order(self[min], self[j]) &#123;</span><br><span class="line">                min = j</span><br><span class="line">            &#125;</span><br><span class="line">            </span><br><span class="line">            guard i != min else &#123; continue &#125;</span><br><span class="line">            </span><br><span class="line">            swapAt(i, min)</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+<h2 id="改造插入"><a href="#改造插入" class="headerlink" title="改造插入"></a>改造插入</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">mutating func insertSort() &#123;</span><br><span class="line">        for i in 1..&lt;count &#123;</span><br><span class="line">            let tmp = self[i]</span><br><span class="line">            var j = i - 1</span><br><span class="line">            while j &gt;= 0 &amp;&amp; self[j] &gt; tmp &#123;</span><br><span class="line">                self[j+1] = self[j]</span><br><span class="line">                j -= 1</span><br><span class="line">            &#125;</span><br><span class="line">            </span><br><span class="line">            if j != i - 1 &#123;</span><br><span class="line">                self[j+1] = tmp</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+<blockquote>
+<p>tips: 这里需要注意, 传入order的数的顺序</p>
+</blockquote>
+<h1 id="递归的实质"><a href="#递归的实质" class="headerlink" title="递归的实质"></a>递归的实质</h1><p>对于通俗的说法, 递归就是自己调用自己. 但是, 这其中发生了很多事情. 比如我们要说的压栈.</p>
+<h2 id="一个例子"><a href="#一个例子" class="headerlink" title="一个例子"></a>一个例子</h2><p>我们还是通过一个具体的例子来分析这个事情, 我们要得到一个数组的最大值</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">extension Array where Element: Comparable &#123;</span><br><span class="line">    func maxValue(range: Range&lt;Index&gt;) -&gt; Element &#123;</span><br><span class="line">        </span><br><span class="line">        if range.count == 1 &#123;</span><br><span class="line">            return self[range.lowerBound]</span><br><span class="line">        &#125;</span><br><span class="line">        </span><br><span class="line">        let rangeMid = (range.lowerBound + range.upperBound) / 2</span><br><span class="line">        let leftMax = maxValue(range: range.lowerBound..&lt;rangeMid)</span><br><span class="line">        let rightMax = maxValue(range: rangeMid..&lt;range.upperBound)</span><br><span class="line">        </span><br><span class="line">        return leftMax &gt; rightMax ? leftMax : rightMax</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>首先, 描述一下这个过程:</p>
+<ol>
+<li>将数组分成两块, 左部分, 右部分.</li>
+<li><p>然后得到左部分的最大值, 右部分的最大值<br> a. 左边部分执行1.2步骤, 直到只剩下一个数, 直接返回</p>
+</li>
+<li><p>返回两个值的最大值</p>
+</li>
+</ol>
+<h2 id="过程"><a href="#过程" class="headerlink" title="过程"></a>过程</h2><p>当执行到<code>let leftMax = maxValue(range: range.lowerBound..&lt;rangeMid)</code>这句的时候</p>
+<ol>
+<li>当前函数执行的行数</li>
+<li>当前函数的变量</li>
+<li>当前函数信息</li>
+</ol>
+<p>全都压入栈, 然后调用子过程. 进入子过程后, 发现, 仍然需要调用调用子过程, 那么就会再次进行上述的压栈, 直到剩下一个数了. 然后返回, 将刚才的栈进行弹栈. 如此往复, 直到执行完毕.</p>
+<h1 id="递归事件复杂度计算"><a href="#递归事件复杂度计算" class="headerlink" title="递归事件复杂度计算"></a>递归事件复杂度计算</h1><p>通例:<br>T(N) = aT(n/b)+O(n^d)<br>n/b 为子过程的样本量<br>a为发生子过程的次数(这里并不是说总次数)<br>O(n^d) 为除去调用子过程之外的剩下的代价是多少</p>
+<h2 id="master公式"><a href="#master公式" class="headerlink" title="master公式"></a>master公式</h2><p>那么, 上述的这个公式就是master公式, 但是要注意, 应用这个公式的前提 <code>一个过程中分的子过程的样本量是一样的</code>, 在上述的例子中, 就是N/2. 另外, 通过这个判断复杂度的公式如下:</p>
+<ol>
+<li>log(b,a) &gt; d 则复杂度为O(N^log(b,a))</li>
+<li>log(b,a) = d 则复杂度为O(N^d*logN)</li>
+<li>log(b,a) &lt; d 则复杂度为O(N^d)</li>
+</ol>
+<h2 id="归并排序"><a href="#归并排序" class="headerlink" title="归并排序"></a>归并排序</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line">func mergeSort() -&gt; Array&lt;Element&gt; &#123;</span><br><span class="line">        guard self.count &gt; 1 else &#123; return self &#125;</span><br><span class="line">        let mid = count &gt;&gt; 1</span><br><span class="line">        let leftArray = Array(self[0..&lt;mid])</span><br><span class="line">        let rightArray = Array(self[mid..&lt;count])</span><br><span class="line">        </span><br><span class="line">        return leftArray.mergeSort().merge(with: rightArray.mergeSort())</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    private func merge(with otherArray: Array&lt;Element&gt;) -&gt; Array&lt;Element&gt; &#123;</span><br><span class="line">        </span><br><span class="line">        var tmpArr = Array&lt;Element&gt;()</span><br><span class="line">        var tmpLeft = self</span><br><span class="line">        var tmpRight = otherArray</span><br><span class="line">        </span><br><span class="line">        while let leftFirst = tmpLeft.first, let rightFirst = tmpRight.first &#123;</span><br><span class="line">            leftFirst &lt; rightFirst ? tmpArr.append(tmpLeft.removeFirst()) : tmpArr.append(tmpRight.removeFirst())</span><br><span class="line">        &#125;</span><br><span class="line">        </span><br><span class="line">        if !tmpLeft.isEmpty &#123;</span><br><span class="line">            tmpArr.append(contentsOf: tmpLeft)</span><br><span class="line">        &#125;</span><br><span class="line">        </span><br><span class="line">        if !tmpRight.isEmpty &#123;</span><br><span class="line">            tmpArr.append(contentsOf: tmpRight)</span><br><span class="line">        &#125;</span><br><span class="line">        </span><br><span class="line">        return tmpArr</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+<h3 id="复杂度分析"><a href="#复杂度分析" class="headerlink" title="复杂度分析"></a>复杂度分析</h3><p>在归并中, 额外的操作复杂度(merge)N, 则d为1, 一次操作, 将整体分为了两个N/2, 则a和b均为2. 那么, 符合log(b,a) = d, d为1, 则复杂度为O(N*logN)</p>
+<h1 id="快速排序与一般优化手段"><a href="#快速排序与一般优化手段" class="headerlink" title="快速排序与一般优化手段"></a>快速排序与一般优化手段</h1><p>快速排序的思想</p>
+<ul>
+<li>一般是选中数组最后一个作为key</li>
+<li>然后从左边给一个小于区域的指针, 右边给一个大于区域的指针, 一个当前的遍历的指针</li>
+<li>key的内容和current内容进行比较<ul>
+<li>如果小于, 则小于区域的下一个和current交换, 小于区域扩大一, current向下移动一</li>
+<li>如果大于, 则大于区域的前一个和current交换, 大于区域扩大一</li>
+<li>当current和大于区域没有碰到, 就一直执行上面的过程</li>
+<li>返回current的位置</li>
+</ul>
+</li>
+<li>对current的左边和右边递归执行上面的过程</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br></pre></td><td class="code"><pre><span class="line">mutating func quickSork(range: Range&lt;Index&gt;) &#123;</span><br><span class="line">        if self[range].count &lt;= 1 &#123; return &#125;</span><br><span class="line">        </span><br><span class="line">        let par = partion(range: range)</span><br><span class="line">        quickSork(range: range.lowerBound..&lt;par - 1)</span><br><span class="line">        quickSork(range: par..&lt;range.upperBound)</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    private mutating func partion(range: Range&lt;Index&gt;) -&gt; Int &#123;</span><br><span class="line">        </span><br><span class="line">        var lessIndex = range.lowerBound - 1</span><br><span class="line">        var moreIndex = range.upperBound</span><br><span class="line">        var currentIndex = range.lowerBound</span><br><span class="line">        </span><br><span class="line">        let key = self[range].last!</span><br><span class="line">        </span><br><span class="line">        while currentIndex != moreIndex &#123;</span><br><span class="line">            if self[currentIndex] &lt; key &#123;</span><br><span class="line">                lessIndex += 1</span><br><span class="line">                swapAt(lessIndex, currentIndex)</span><br><span class="line">                currentIndex += 1</span><br><span class="line">            &#125; else if self[currentIndex] &gt; key &#123;</span><br><span class="line">                moreIndex -= 1</span><br><span class="line">                swapAt(moreIndex, currentIndex)</span><br><span class="line">            &#125; else &#123;</span><br><span class="line">                currentIndex += 1</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        </span><br><span class="line">        return currentIndex</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+<blockquote>
+<p>tips: 注意递归过程中输入的range边界</p>
+</blockquote>
+<h2 id="优化一"><a href="#优化一" class="headerlink" title="优化一"></a>优化一</h2><p>当数组中有相等的情况, 就会一些浪费. 浪费点在于, 一次只能搞定一个数, 数组中的相等的部分会再次参与到下一次partion过程中去, 那么我们放出一个优化方案, 优化方式为<code>返回current的位置</code>的步骤, 改为返回大于区域和小于区域. 用来下次partion</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br></pre></td><td class="code"><pre><span class="line">mutating func quickSork(range: Range&lt;Index&gt;) &#123;</span><br><span class="line">        if self[range].count &lt;= 1 &#123; return &#125;</span><br><span class="line">        </span><br><span class="line">        let par = partion(range: range)</span><br><span class="line">        quickSork(range: range.lowerBound..&lt;par.0 + 1)</span><br><span class="line">        quickSork(range: par.1..&lt;range.upperBound)</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    private mutating func partion(range: Range&lt;Index&gt;) -&gt; (Int, Int) &#123;</span><br><span class="line">        </span><br><span class="line">        var lessIndex = range.lowerBound - 1</span><br><span class="line">        var moreIndex = range.upperBound</span><br><span class="line">        var currentIndex = range.lowerBound</span><br><span class="line">        </span><br><span class="line">        let key = self[range].last!</span><br><span class="line">        </span><br><span class="line">        while currentIndex != moreIndex &#123;</span><br><span class="line">            if self[currentIndex] &lt; key &#123;</span><br><span class="line">                lessIndex += 1</span><br><span class="line">                swapAt(lessIndex, currentIndex)</span><br><span class="line">                currentIndex += 1</span><br><span class="line">            &#125; else if self[currentIndex] &gt; key &#123;</span><br><span class="line">                moreIndex -= 1</span><br><span class="line">                swapAt(moreIndex, currentIndex)</span><br><span class="line">            &#125; else &#123;</span><br><span class="line">                currentIndex += 1</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        </span><br><span class="line">        return (lessIndex, moreIndex)</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+<blockquote>
+<p>tips: 注意递归过程中输入的range边界</p>
+</blockquote>
+<h2 id="优化二"><a href="#优化二" class="headerlink" title="优化二"></a>优化二</h2><p>对于上述的过程, 有一些反例, 例如, 数据情况为: [6, 5, 4, 3, 2, 1], 那么这个过程的复杂度就是O(N^2), 换句话说, 当前的过程和数据状况有关. 那么如何避免呢? 让我们引入随机快排</p>
+<h3 id="做法"><a href="#做法" class="headerlink" title="做法"></a>做法</h3><p>随机快排的做法是在当前执行的范围内, 随机选择一个位置, 和最后一个数交换, 然后再执行经典快排的过程. </p>
+<h3 id="原理"><a href="#原理" class="headerlink" title="原理"></a>原理</h3><p>如我们所看到的那样, 经典快排会受到数据状况的影响, 导致patition的过程分的很偏, 只有大于区域, 或这有小于区域, 那么, 如果我们让这个过程随机, 虽然也会出现上述情况, 但是从概率的长期期望来看, 复杂度就变成了O(NlogN)</p>
+<h3 id="实现"><a href="#实现" class="headerlink" title="实现"></a>实现</h3><p>首先, 实现一个生成随机数的函数</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">extension Int &#123;</span><br><span class="line">    static func random(in range: Range&lt;Int&gt;) -&gt; Int &#123;</span><br><span class="line">        return Int(arc4random_uniform(UInt32((range.upperBound - range.lowerBound) + range.lowerBound)))</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br></pre></td><td class="code"><pre><span class="line">// MARK: - 快排</span><br><span class="line">    mutating func quickSork(range: Range&lt;Index&gt;) &#123;</span><br><span class="line">        if self[range].count &lt;= 1 &#123; return &#125;</span><br><span class="line">        </span><br><span class="line">        let par = partion(range: range)</span><br><span class="line">        quickSork(range: range.lowerBound..&lt;par - 1)</span><br><span class="line">        quickSork(range: par..&lt;range.upperBound)</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    private mutating func partion(range: Range&lt;Index&gt;) -&gt; Int &#123;</span><br><span class="line">        </span><br><span class="line">        var lessIndex = range.lowerBound - 1</span><br><span class="line">        var moreIndex = range.upperBound</span><br><span class="line">        var currentIndex = range.lowerBound</span><br><span class="line">        </span><br><span class="line">        let randomIndex = Int.random(in: range)</span><br><span class="line">        swapAt(randomIndex, range.upperBound - 1)</span><br><span class="line">        let key = self[range].last!</span><br><span class="line">        </span><br><span class="line">        while currentIndex != moreIndex &#123;</span><br><span class="line">            if self[currentIndex] &lt; key &#123;</span><br><span class="line">                lessIndex += 1</span><br><span class="line">                swapAt(lessIndex, currentIndex)</span><br><span class="line">                currentIndex += 1</span><br><span class="line">            &#125; else if self[currentIndex] &gt; key &#123;</span><br><span class="line">                moreIndex -= 1</span><br><span class="line">                swapAt(moreIndex, currentIndex)</span><br><span class="line">            &#125; else &#123;</span><br><span class="line">                currentIndex += 1</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        </span><br><span class="line">        return currentIndex</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+<p>至此, 快速排序的优化改造完毕</p>
+<h1 id="堆排序"><a href="#堆排序" class="headerlink" title="堆排序"></a>堆排序</h1><p>在逻辑上, 对是一个完全二叉树, 根节点和子节点的下表对应关系,<br>左孩子: (根节点下标x2+1);<br>右孩子: (根节点下表x2+2)</p>
+<h2 id="大根堆"><a href="#大根堆" class="headerlink" title="大根堆"></a>大根堆</h2><p>大根堆, 任意一个子树的最大值都在树的头部, 小根堆同理</p>
+<p>建立大(小)根堆的时间复杂度收敛于O(N)</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br></pre></td><td class="code"><pre><span class="line">// MARK: - heap</span><br><span class="line">    private mutating func toHeap() &#123;</span><br><span class="line">        var heap = Array&lt;Element&gt;()</span><br><span class="line">        for item in self &#123;</span><br><span class="line">            heap.heapInsert(item: item)</span><br><span class="line">        &#125;</span><br><span class="line">        </span><br><span class="line">        self = heap</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    private mutating func heapInsert(item: Element) &#123;</span><br><span class="line">        append(item)</span><br><span class="line">        var currentIndex = endIndex - 1</span><br><span class="line">        while currentIndex != 0 &#123;</span><br><span class="line">            let fatherIndex = (currentIndex - 1) / 2</span><br><span class="line">            if self[fatherIndex] &lt; self[currentIndex] &#123;</span><br><span class="line">                swapAt(fatherIndex, currentIndex)</span><br><span class="line">                currentIndex = fatherIndex</span><br><span class="line">            &#125; else &#123;</span><br><span class="line">                break</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    private mutating func heapify(range: Range&lt;Index&gt;) &#123;</span><br><span class="line">        if self[range].count &lt;= 1 &#123; return &#125;</span><br><span class="line">        var currentIndex = range.lowerBound</span><br><span class="line"></span><br><span class="line">        while currentIndex != range.upperBound &#123;</span><br><span class="line">            let left = currentIndex * 2 + 1</span><br><span class="line">            let right = currentIndex * 2 + 2</span><br><span class="line">            </span><br><span class="line">            var largestIndex = left &lt; range.upperBound &amp;&amp; self[left] &gt; self[currentIndex] ? left : currentIndex</span><br><span class="line">            largestIndex = right &lt; range.upperBound &amp;&amp; self[right] &gt; self[largestIndex] ? right : largestIndex</span><br><span class="line">            </span><br><span class="line">            if largestIndex == currentIndex &#123; break &#125;</span><br><span class="line">            </span><br><span class="line">            swapAt(largestIndex, currentIndex)</span><br><span class="line">            currentIndex = largestIndex</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    mutating func heapSort() &#123;</span><br><span class="line">        self.toHeap()</span><br><span class="line">        </span><br><span class="line">        var lastIndex = endIndex - 1</span><br><span class="line">        </span><br><span class="line">        while lastIndex != startIndex &#123;</span><br><span class="line">            swapAt(0, lastIndex)</span><br><span class="line">            heapify(range: 0..&lt;lastIndex)</span><br><span class="line">            lastIndex -= 1</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+<h1 id="稳定性"><a href="#稳定性" class="headerlink" title="稳定性"></a>稳定性</h1><p>基于比较排序的算法稳定性</p>
+<h2 id="定义"><a href="#定义" class="headerlink" title="定义"></a>定义</h2><p>如果在即将排序的的记录序列中, 有多个相同的关键字的记录, 若经过排序, 这些记录的相对次序保持不变, 就说这种排序是稳定的.</p>
+<h3 id="冒泡排序稳定性"><a href="#冒泡排序稳定性" class="headerlink" title="冒泡排序稳定性"></a>冒泡排序稳定性</h3><p>网上的一些资料说冒泡是稳定的, 不过我觉得还是要看具体实现, 在我们的这个例子中, 取决于传入的比较规则, 如果规则是大于或者小于, 那么排序是稳定的, 如果规则是大于等于或者小于等于, 那么过程就是不稳定的了;</p>
+<h3 id="选择排序稳定性"><a href="#选择排序稳定性" class="headerlink" title="选择排序稳定性"></a>选择排序稳定性</h3><p>根据数组实现的方式, 我们可以看到, 选择排序是不稳定的, 因为在找到最小值后, 要和无序部分的第一个进行交换.</p>
+<h3 id="插入排序稳定性"><a href="#插入排序稳定性" class="headerlink" title="插入排序稳定性"></a>插入排序稳定性</h3><p>从无序部分拿出第一个数, 依次和有序部分比较, 直到大于等于或者小于等于就停止, 这样, 就可以实现为稳定的了</p>
+<h3 id="归并排序稳定性"><a href="#归并排序稳定性" class="headerlink" title="归并排序稳定性"></a>归并排序稳定性</h3><p>归并在比较的时候, 可以做到稳定, 即相等元素不予交换.</p>
+<h3 id="快速排序稳定性"><a href="#快速排序稳定性" class="headerlink" title="快速排序稳定性"></a>快速排序稳定性</h3><p>在partion的过程中, 在找大于区域的时候, 是一个不稳定的过程, 所以导致快排也是不稳定的; 理论上可以做到稳定(0 1 stable sort)</p>
+<h3 id="堆排序-1"><a href="#堆排序-1" class="headerlink" title="堆排序"></a>堆排序</h3><p>在建立堆的过程, 就已经不是稳定了, 所以, 堆排序是不稳定的</p>
+<h2 id="稳定性的意义"><a href="#稳定性的意义" class="headerlink" title="稳定性的意义"></a>稳定性的意义</h2><p>假如我们有一个表格, 我们按照不同的列进行排序, 如果有的数据的有些项是相同的, 那么, 在第二次做排序的时候, 就可以保留上一次排序的结果.</p>
+<table>
+<thead>
+<tr>
+<th style="text-align:center">id</th>
+<th style="text-align:center">age</th>
+<th style="text-align:center">score</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center">1</td>
+<td style="text-align:center">23</td>
+<td style="text-align:center">60</td>
+</tr>
+<tr>
+<td style="text-align:center">2</td>
+<td style="text-align:center">25</td>
+<td style="text-align:center">60</td>
+</tr>
+<tr>
+<td style="text-align:center">3</td>
+<td style="text-align:center">23</td>
+<td style="text-align:center">70</td>
+</tr>
+<tr>
+<td style="text-align:center">4</td>
+<td style="text-align:center">23</td>
+<td style="text-align:center">50</td>
+</tr>
+</tbody>
+</table>
+<p>例如, 我先按照年龄排序, 那么, id的顺序就是1, 3, 4, 2, 之后再按照得分排序, id就是4, 1, 2, 3; 1和2的相对位置没有变化</p>
+<table>
+<thead>
+<tr>
+<th style="text-align:center">排序</th>
+<th style="text-align:center">稳定性</th>
+<th style="text-align:center">时间复杂度</th>
+<th style="text-align:center">空间复杂度</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center">冒泡排序</td>
+<td style="text-align:center">Y</td>
+<td style="text-align:center">O(N^2)</td>
+<td style="text-align:center">O(1)</td>
+</tr>
+<tr>
+<td style="text-align:center">选择排序</td>
+<td style="text-align:center">N</td>
+<td style="text-align:center">O(N^2)</td>
+<td style="text-align:center">O(1)</td>
+</tr>
+<tr>
+<td style="text-align:center">插入排序</td>
+<td style="text-align:center">Y</td>
+<td style="text-align:center">O(N^2)</td>
+<td style="text-align:center">O(1)</td>
+</tr>
+<tr>
+<td style="text-align:center">归并排序</td>
+<td style="text-align:center">Y</td>
+<td style="text-align:center">O(NxLogN)</td>
+<td style="text-align:center">O(N)</td>
+</tr>
+<tr>
+<td style="text-align:center">快速排序</td>
+<td style="text-align:center">N(01 stable sort)</td>
+<td style="text-align:center">O(NxLogN)</td>
+<td style="text-align:center">O(LogN)</td>
+</tr>
+<tr>
+<td style="text-align:center">堆排序</td>
+<td style="text-align:center">N</td>
+<td style="text-align:center">O(NxLogN)</td>
+<td style="text-align:center">O(1)</td>
+</tr>
+</tbody>
+</table>
+<h1 id="工程排序"><a href="#工程排序" class="headerlink" title="工程排序"></a>工程排序</h1><p>在工程中, 排序的选择, 应当遵循以下方式<br>当样本量小于60的时候, 选择插入排序<br>当样本量大于60的时候, 且样本为基础类型, 使用快速排序<br>当样本量大于60的时候, 且样本为复合类型, 使用归并排序</p>
+<p>虽然插入排序的时间复杂度高, 但是常数项低, 在小样本情况下, 有优势<br>当样本为基础类型时, 无须考虑稳定性, 所以使用快速排序, 反之, 复合类型需要考虑稳定性, 所以使用归并, 没有使用堆排是因为堆排的常数项高于快排</p>
+<h1 id="Reference"><a href="#Reference" class="headerlink" title="Reference"></a>Reference</h1><blockquote>
+<p><a href="https://medium.com/@EnnioMa/back-to-the-fundamentals-sorting-algorithms-in-swift-from-scratch-fccf8a3daea3" target="_blank" rel="noopener">https://medium.com/@EnnioMa/back-to-the-fundamentals-sorting-algorithms-in-swift-from-scratch-fccf8a3daea3</a><br><a href="http://mindhacks.cn/2008/06/13/why-is-quicksort-so-quick/" target="_blank" rel="noopener">http://mindhacks.cn/2008/06/13/why-is-quicksort-so-quick/</a></p>
+</blockquote>
+
+      
+    </div>
+
+    
+
+    
+    
+    
+
+    
+
+    
+      
+    
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/algorithm/" rel="tag"># algorithm</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2018/06/13/Using-Collections-Effectively/" rel="next" title="Using Collections Effectively">
+                <i class="fa fa-chevron-left"></i> Using Collections Effectively
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2018/09/19/从YYCache学习设计一个CaChe-in-Swift/" rel="prev" title="从YYCache学习设计一个CaChe in Swift">
+                从YYCache学习设计一个CaChe in Swift <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+  </div>
+
+
+          </div>
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            Table of Contents
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            Overview
+          </li>
+        </ul>
+      
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <p class="site-author-name" itemprop="name">Author</p>
+              <div class="site-description motion-element" itemprop="description"></div>
+          </div>
+
+          
+            <nav class="site-state motion-element">
+              
+                <div class="site-state-item site-state-posts">
+                
+                  <a href="/archives/">
+                
+                    <span class="site-state-item-count">118</span>
+                    <span class="site-state-item-name">posts</span>
+                  </a>
+                </div>
+              
+
+              
+                
+                
+                <div class="site-state-item site-state-categories">
+                  
+                    
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                    <span class="site-state-item-count">11</span>
+                    <span class="site-state-item-name">categories</span>
+                  
+                </div>
+              
+
+              
+                
+                
+                <div class="site-state-item site-state-tags">
+                  
+                    
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                    <span class="site-state-item-count">106</span>
+                    <span class="site-state-item-name">tags</span>
+                  
+                </div>
+              
+            </nav>
+          
+
+          
+
+          
+
+          
+
+          
+
+          
+          
+
+          
+            
+          
+          
+
+        </div>
+      </div>
+
+      
+      <!--noindex-->
+        <div class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+            
+            
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#开篇"><span class="nav-number">1.</span> <span class="nav-text">开篇</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#认识时间复杂度"><span class="nav-number">2.</span> <span class="nav-text">认识时间复杂度</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#理解"><span class="nav-number">2.1.</span> <span class="nav-text">理解</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#举例"><span class="nav-number">2.2.</span> <span class="nav-text">举例</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#再来个举例"><span class="nav-number">2.3.</span> <span class="nav-text">再来个举例</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#方法一"><span class="nav-number">2.3.1.</span> <span class="nav-text">方法一</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#方法二"><span class="nav-number">2.3.2.</span> <span class="nav-text">方法二</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#方法三"><span class="nav-number">2.3.3.</span> <span class="nav-text">方法三</span></a></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#冒泡"><span class="nav-number">3.</span> <span class="nav-text">冒泡</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#选择"><span class="nav-number">4.</span> <span class="nav-text">选择</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#插入"><span class="nav-number">5.</span> <span class="nav-text">插入</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#简化与通用"><span class="nav-number">6.</span> <span class="nav-text">简化与通用</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#拓展"><span class="nav-number">6.1.</span> <span class="nav-text">拓展</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#改造"><span class="nav-number">6.2.</span> <span class="nav-text">改造</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#改造冒泡"><span class="nav-number">6.3.</span> <span class="nav-text">改造冒泡</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#改造选择"><span class="nav-number">6.4.</span> <span class="nav-text">改造选择</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#改造插入"><span class="nav-number">6.5.</span> <span class="nav-text">改造插入</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#递归的实质"><span class="nav-number">7.</span> <span class="nav-text">递归的实质</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#一个例子"><span class="nav-number">7.1.</span> <span class="nav-text">一个例子</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#过程"><span class="nav-number">7.2.</span> <span class="nav-text">过程</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#递归事件复杂度计算"><span class="nav-number">8.</span> <span class="nav-text">递归事件复杂度计算</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#master公式"><span class="nav-number">8.1.</span> <span class="nav-text">master公式</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#归并排序"><span class="nav-number">8.2.</span> <span class="nav-text">归并排序</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#复杂度分析"><span class="nav-number">8.2.1.</span> <span class="nav-text">复杂度分析</span></a></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#快速排序与一般优化手段"><span class="nav-number">9.</span> <span class="nav-text">快速排序与一般优化手段</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#优化一"><span class="nav-number">9.1.</span> <span class="nav-text">优化一</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#优化二"><span class="nav-number">9.2.</span> <span class="nav-text">优化二</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#做法"><span class="nav-number">9.2.1.</span> <span class="nav-text">做法</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#原理"><span class="nav-number">9.2.2.</span> <span class="nav-text">原理</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#实现"><span class="nav-number">9.2.3.</span> <span class="nav-text">实现</span></a></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#堆排序"><span class="nav-number">10.</span> <span class="nav-text">堆排序</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#大根堆"><span class="nav-number">10.1.</span> <span class="nav-text">大根堆</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#稳定性"><span class="nav-number">11.</span> <span class="nav-text">稳定性</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#定义"><span class="nav-number">11.1.</span> <span class="nav-text">定义</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#冒泡排序稳定性"><span class="nav-number">11.1.1.</span> <span class="nav-text">冒泡排序稳定性</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#选择排序稳定性"><span class="nav-number">11.1.2.</span> <span class="nav-text">选择排序稳定性</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#插入排序稳定性"><span class="nav-number">11.1.3.</span> <span class="nav-text">插入排序稳定性</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#归并排序稳定性"><span class="nav-number">11.1.4.</span> <span class="nav-text">归并排序稳定性</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#快速排序稳定性"><span class="nav-number">11.1.5.</span> <span class="nav-text">快速排序稳定性</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#堆排序-1"><span class="nav-number">11.1.6.</span> <span class="nav-text">堆排序</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#稳定性的意义"><span class="nav-number">11.2.</span> <span class="nav-text">稳定性的意义</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#工程排序"><span class="nav-number">12.</span> <span class="nav-text">工程排序</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Reference"><span class="nav-number">13.</span> <span class="nav-text">Reference</span></a></li></ol></div>
+            
+
+          </div>
+        </div>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+  
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2020</span>
+  <span class="with-love" id="animate">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Author</span>
+
+  
+
+  
+</div>
+
+
+  <div class="powered-by">Powered by <a href="https://hexo.io" class="theme-link" rel="noopener" target="_blank">Hexo</a> v3.9.0</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">Theme – <a href="https://theme-next.org" class="theme-link" rel="noopener" target="_blank">NexT.Muse</a> v7.1.0</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+    
+
+    
+  </div>
+
+  
+
+<script>
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  <script src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+
+  
+
+
+  <script src="/js/utils.js?v=7.1.0"></script>
+
+  <script src="/js/motion.js?v=7.1.0"></script>
+
+
+
+  
+  
+
+
+  <script src="/js/schemes/muse.js?v=7.1.0"></script>
+
+
+
+  
+  <script src="/js/scrollspy.js?v=7.1.0"></script>
+<script src="/js/post-details.js?v=7.1.0"></script>
+
+
+
+  
+
+
+  <script src="/js/next-boot.js?v=7.1.0"></script>
+
+
+  
+
+  
+
+  
+
+  
+
+
+  
+
+
+  
+
+
+
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

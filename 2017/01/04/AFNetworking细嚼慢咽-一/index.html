@@ -1,0 +1,1081 @@
+<!DOCTYPE html>
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+<html class="theme-next muse use-motion" lang="zh-Hans">
+<head><meta name="generator" content="Hexo 3.9.0">
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2">
+
+<link rel="stylesheet" href="/css/main.css?v=7.1.0">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=7.1.0">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=7.1.0">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=7.1.0">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=7.1.0" color="#222">
+
+
+
+
+
+
+
+<script id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Muse',
+    version: '7.1.0',
+    sidebar: {"position":"left","display":"post","offset":12,"onmobile":false,"dimmer":false},
+    back2top: true,
+    back2top_sidebar: false,
+    fancybox: false,
+    fastclick: false,
+    lazyload: false,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+  
+
+
+
+
+  <meta name="description" content="前言这篇文章和之前有一篇SDWEBIMAGE一样, 是一个学习笔记, 随着简书的一个作者一起学习的一个过程, 之前写过一个关于AF的小博客, 但是感觉有些肤浅, 借此机会, 深入学习一下. 顺便总结一下网络框架的开发的思路, 而不是简单的将别人的博客使用CV大法弄过来.">
+<meta name="keywords" content="AFNetworking">
+<meta property="og:type" content="article">
+<meta property="og:title" content="AFNetworking细嚼慢咽(一)">
+<meta property="og:url" content="http://yoursite.com/2017/01/04/AFNetworking细嚼慢咽-一/index.html">
+<meta property="og:site_name" content="ArthurChi&#39;s Blog">
+<meta property="og:description" content="前言这篇文章和之前有一篇SDWEBIMAGE一样, 是一个学习笔记, 随着简书的一个作者一起学习的一个过程, 之前写过一个关于AF的小博客, 但是感觉有些肤浅, 借此机会, 深入学习一下. 顺便总结一下网络框架的开发的思路, 而不是简单的将别人的博客使用CV大法弄过来.">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:updated_time" content="2017-01-09T01:34:56.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="AFNetworking细嚼慢咽(一)">
+<meta name="twitter:description" content="前言这篇文章和之前有一篇SDWEBIMAGE一样, 是一个学习笔记, 随着简书的一个作者一起学习的一个过程, 之前写过一个关于AF的小博客, 但是感觉有些肤浅, 借此机会, 深入学习一下. 顺便总结一下网络框架的开发的思路, 而不是简单的将别人的博客使用CV大法弄过来.">
+
+
+
+
+
+  
+  
+  <link rel="canonical" href="http://yoursite.com/2017/01/04/AFNetworking细嚼慢咽-一/">
+
+
+
+<script id="page.configurations">
+  CONFIG.page = {
+    sidebar: "",
+  };
+</script>
+
+  <title>AFNetworking细嚼慢咽(一) | ArthurChi's Blog</title>
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .motion-element,
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-title { opacity: initial; }
+
+  .use-motion .logo,
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">ArthurChi's Blog</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+    
+      
+        <p class="site-subtitle">Yesterday you said tomorrow</p>
+      
+    
+    
+  </div>
+
+  <div class="site-nav-toggle">
+    <button aria-label="Toggle navigation bar">
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  
+    <ul id="menu" class="menu">
+      
+        
+        
+        
+          
+          <li class="menu-item menu-item-home">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/" rel="section"><i class="menu-item-icon fa fa-fw fa-home"></i> <br>Home</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-archives">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/archives/" rel="section"><i class="menu-item-icon fa fa-fw fa-archive"></i> <br>Archives</a>
+
+  </li>
+
+      
+      
+    </ul>
+  
+
+  
+    
+
+  
+
+  
+</nav>
+
+
+
+  
+
+
+
+</div>
+    </header>
+
+    
+
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/01/04/AFNetworking细嚼慢咽-一/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Author">
+      <meta itemprop="description" content>
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="ArthurChi's Blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">AFNetworking细嚼慢咽(一)
+
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+
+            
+            
+            
+
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Posted on</span>
+              
+
+              
+                
+              
+
+              <time title="Created: 2017-01-04 12:06:35" itemprop="dateCreated datePublished" datetime="2017-01-04T12:06:35+08:00">2017-01-04</time>
+            
+
+            
+              
+
+              
+                
+                <span class="post-meta-divider">|</span>
+                
+
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">Edited on</span>
+                
+                <time title="Modified: 2017-01-09 09:34:56" itemprop="dateModified" datetime="2017-01-09T09:34:56+08:00">2017-01-09</time>
+              
+            
+          </span>
+
+          
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">In</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/iOS/" itemprop="url" rel="index"><span itemprop="name">iOS</span></a></span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h1 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h1><p>这篇文章和之前有一篇SDWEBIMAGE一样, 是一个学习笔记, 随着简书的一个作者一起学习的一个过程, 之前写过一个关于AF的小博客, 但是感觉有些肤浅, 借此机会, 深入学习一下. 顺便总结一下网络框架的开发的思路, 而不是简单的将别人的博客使用CV大法弄过来.<br><a id="more"></a></p>
+<h1 id="开始"><a href="#开始" class="headerlink" title="开始"></a>开始</h1><h2 id="网络层设计的不完全指南"><a href="#网络层设计的不完全指南" class="headerlink" title="网络层设计的不完全指南"></a>网络层设计的不完全指南</h2><p>我们要做的, 至少是下面几项:</p>
+<ul>
+<li>调用方式<ul>
+<li>集中调用, 即整个APP使用一个单例进行网络的请求</li>
+<li>非集中调用, 根据业务簇去划分建立对象. (我在实际开发中使用这样的方式)</li>
+</ul>
+</li>
+<li>发起请求<ul>
+<li>GET</li>
+<li>POST</li>
+<li>RESTFUL中的其他方式</li>
+</ul>
+</li>
+<li>回调方式<ul>
+<li>delegate</li>
+<li>callback</li>
+</ul>
+</li>
+</ul>
+<p>这里要注意的几项: </p>
+<ol>
+<li>维护一个请求队列, 保证不会因为用户的某些重复操作而导致发出重复的请求, 除了在UI上要做, 在网络层做处理也是必要的. 具体的做法, 可以参照SDWEBIMAGE.</li>
+<li>请求的嵌套, 对于<code>一个请求的参数是另一个请求的结果</code>时, 对于代理来说, 设计的时候, 需要将URL作为参数, 传递回来, 用于区分不同的行为, 而block则小心循环引用. 尽量将请求的过程封装起来, 做到调用时候简单, 这样, 容易读, 也容易维护. 例如, 之前开发过程中, 先从微博得到微博用户的头像和昵称, 然后作为参数, 登录我们系统, 然后再根据登录结果, 进行回调. 之前同事写成了一片, 维护起来非常头疼. 后来我将微博登录这一套逻辑封装成一个类, 对外暴露一个方法, 这样, 那些登录微博的细节就被隐藏起来了.</li>
+<li>和后台同事约定数据返回结构, 这点非常重要!!! 包括错误码, 信息, 数据, 分页参数结构, 这是你封装的基础.</li>
+</ol>
+<h2 id="AFNetworking"><a href="#AFNetworking" class="headerlink" title="AFNetworking"></a>AFNetworking</h2><p>上面所说的, 是跟实际开发过程中, 网络层和业务的中间件. 当然, 有的网络框架, 例如Android大名鼎鼎的OKHTTP, 就有一些重发等机制, 我们并不能准确的说出这样的行为应该是归工具类, 还是应该放在中间件中, 只能说中间件是为了让网络工具类更进一步的定制, 使得更符合当前正在开发的APP. 言归正传, 开始看AFNetworking</p>
+<h3 id="文件结构"><a href="#文件结构" class="headerlink" title="文件结构"></a>文件结构</h3><ul>
+<li>AFURLSessionManager<ul>
+<li>AFHTTPSessionManager</li>
+</ul>
+</li>
+<li>AFNetworkReachabilityManager</li>
+<li>AFSecurityPolicy</li>
+<li>AFURLRequestSerialization</li>
+<li>AFHTTPResponseSerializer</li>
+</ul>
+<p>这是主要的几个类, 包含的动作有这些:</p>
+<ol>
+<li>请求和响应</li>
+<li>网络状态</li>
+<li>网络安全</li>
+<li>网络请求发送的调度</li>
+</ol>
+<p>在这里, 主要是网络请求的发送和调度这里, 通过这个主线, 把其他的类连接到了一起, 那就先来看看这个Manager的初始化吧.</p>
+<h3 id="初始化"><a href="#初始化" class="headerlink" title="初始化"></a>初始化</h3><h4 id="AFHTTPSessionManager"><a href="#AFHTTPSessionManager" class="headerlink" title="AFHTTPSessionManager"></a>AFHTTPSessionManager</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br></pre></td><td class="code"><pre><span class="line">+ (instancetype)manager &#123;</span><br><span class="line">    return [[[self class] alloc] initWithBaseURL:nil];</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">- (instancetype)init &#123;</span><br><span class="line">    return [self initWithBaseURL:nil];</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">- (instancetype)initWithBaseURL:(NSURL *)url &#123;</span><br><span class="line">    return [self initWithBaseURL:url sessionConfiguration:nil];</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">- (instancetype)initWithSessionConfiguration:(NSURLSessionConfiguration *)configuration &#123;</span><br><span class="line">    return [self initWithBaseURL:nil sessionConfiguration:configuration];</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">- (instancetype)initWithBaseURL:(NSURL *)url</span><br><span class="line">           sessionConfiguration:(NSURLSessionConfiguration *)configuration</span><br><span class="line">&#123;</span><br><span class="line">    self = [super initWithSessionConfiguration:configuration];</span><br><span class="line">    if (!self) &#123;</span><br><span class="line">        return nil;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    // Ensure terminal slash for baseURL path, so that NSURL +URLWithString:relativeToURL: works as expected</span><br><span class="line">    if ([[url path] length] &gt; 0 &amp;&amp; ![[url absoluteString] hasSuffix:@&quot;/&quot;]) &#123;</span><br><span class="line">        url = [url URLByAppendingPathComponent:@&quot;&quot;];</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    self.baseURL = url;</span><br><span class="line"></span><br><span class="line">    self.requestSerializer = [AFHTTPRequestSerializer serializer];</span><br><span class="line">    self.responseSerializer = [AFJSONResponseSerializer serializer];</span><br><span class="line"></span><br><span class="line">    return self;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<ol>
+<li>这里的初始化方法, 在日常的开发过程中值得借鉴, 而swift中, 也为这样的形式加了关键字, <code>convenience</code></li>
+<li>保存了baseURL, 初始化了请求序列器, 和响应解析器(姑且这么叫吧).</li>
+</ol>
+<p>可以看到, 所有初始化方法, 最终都指向了这里, 那就从这里开始着手.</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br></pre></td><td class="code"><pre><span class="line">- (instancetype)initWithSessionConfiguration:(NSURLSessionConfiguration *)configuration &#123;</span><br><span class="line">    self = [super init];</span><br><span class="line">    if (!self) &#123;</span><br><span class="line">        return nil;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    if (!configuration) &#123;</span><br><span class="line">        configuration = [NSURLSessionConfiguration defaultSessionConfiguration];</span><br><span class="line">    &#125;</span><br><span class="line">	</span><br><span class="line">		// 默认的配置</span><br><span class="line">    self.sessionConfiguration = configuration;</span><br><span class="line">		// Queue的并发为1</span><br><span class="line">    self.operationQueue = [[NSOperationQueue alloc] init];</span><br><span class="line">    self.operationQueue.maxConcurrentOperationCount = 1;</span><br><span class="line"></span><br><span class="line">    self.session = [NSURLSession sessionWithConfiguration:self.sessionConfiguration delegate:self delegateQueue:self.operationQueue];</span><br><span class="line">		// 响应解析</span><br><span class="line">    self.responseSerializer = [AFJSONResponseSerializer serializer];</span><br><span class="line">		// 安全策略</span><br><span class="line">    self.securityPolicy = [AFSecurityPolicy defaultPolicy];</span><br><span class="line"></span><br><span class="line">#if !TARGET_OS_WATCH</span><br><span class="line">    self.reachabilityManager = [AFNetworkReachabilityManager sharedManager];</span><br><span class="line">#endif</span><br><span class="line"></span><br><span class="line">    self.mutableTaskDelegatesKeyedByTaskIdentifier = [[NSMutableDictionary alloc] init];</span><br><span class="line">		// 锁初始化</span><br><span class="line">    self.lock = [[NSLock alloc] init];</span><br><span class="line">    self.lock.name = AFURLSessionManagerLockName;</span><br><span class="line"></span><br><span class="line">		// 置空task相关的代理</span><br><span class="line">    [self.session getTasksWithCompletionHandler:^(NSArray *dataTasks, NSArray *uploadTasks, NSArray *downloadTasks) &#123;</span><br><span class="line">        for (NSURLSessionDataTask *task in dataTasks) &#123;</span><br><span class="line">            [self addDelegateForDataTask:task uploadProgress:nil downloadProgress:nil completionHandler:nil];</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        for (NSURLSessionUploadTask *uploadTask in uploadTasks) &#123;</span><br><span class="line">            [self addDelegateForUploadTask:uploadTask progress:nil completionHandler:nil];</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        for (NSURLSessionDownloadTask *downloadTask in downloadTasks) &#123;</span><br><span class="line">            [self addDelegateForDownloadTask:downloadTask progress:nil destination:nil completionHandler:nil];</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;];</span><br><span class="line"></span><br><span class="line">    return self;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p><a href="https://github.com/AFNetworking/AFNetworking/issues/3499" target="_blank" rel="noopener">这里说</a>, 置空代理, 是为了防止从后台回来, 重新初始化造成的崩溃. 但是找了好多资料, 都没有说这个怎么样能发生, 也就没法复现了. 但是, 在实现上, 我们注意到, 有这样的一个字典 <code>mutableTaskDelegatesKeyedByTaskIdentifier</code>, 这是为了将task和代理去进行绑定, 当然, 这里的代理, 并不是说session的那个代理, 因为我们不可能清空这个代理, 原因如下: </p>
+<pre><code>/*
+     * Customization of NSURLSession occurs during creation of a new session.
+     * If you only need to use the convenience routines with custom
+     * configuration options it is not necessary to specify a delegate.
+     * If you do specify a delegate, the delegate will be retained until after
+     * the delegate has been sent the URLSession:didBecomeInvalidWithError: message.
+     */
+</code></pre><p>这里引子苹果API文档的一段话, 意思是说, 除非你的session调用了<code>URLSession:didBecomeInvalidWithError:</code>方法, 否则代理会一直被持有. 所以, 如果说session的生命周期会大于代理的说法, 是解释不通的. </p>
+<h4 id="我的猜想"><a href="#我的猜想" class="headerlink" title="我的猜想"></a>我的猜想</h4><p>我的猜想是如果使用指定ID的方式去创建configuration, 然后通过这样的方式创建session, 有可能在系统维护了一个session池一样的东西(原理同cell复用), 这样就可以使得你的app到后台以后可以继续下载, 当我们要创建session的时候, 会从池中查找有没有, 恰好ID相同, 那就拿出来那个session, 而恰好session有一个没有执行完成的任务, 但是, 初始化方法中 <code>mutableTaskDelegatesKeyedByTaskIdentifier</code> 的指针重新指向了一个新内存空间, 代理的持有已经不复存在, 有可能已经释放了, 那么对应的task也就没有了存在的意义.</p>
+<h1 id="结束"><a href="#结束" class="headerlink" title="结束"></a>结束</h1><p>为了不让大家产生疲劳感, 这篇先到这里. 需要后台下载demo的同学可以看<a href="https://github.com/sun-fox-cj/iOSDownload" target="_blank" rel="noopener">这里</a>, Mac本身带了apache, 可以直接使用即可. 如果需要控制下载速度的同学, 可以参考<a href="https://www.devside.net/wamp-server/download-speed-limit-and-throttling-for-apache-2-4" target="_blank" rel="noopener">这里</a>, 已经验证, 可用</p>
+<h1 id="Reference"><a href="#Reference" class="headerlink" title="Reference"></a>Reference</h1><blockquote>
+<p><a href="http://www.jianshu.com/p/d2582a8ab548" target="_blank" rel="noopener">http://www.jianshu.com/p/d2582a8ab548</a><br><a href="http://www.jianshu.com/p/856f0e26279d" target="_blank" rel="noopener">http://www.jianshu.com/p/856f0e26279d</a></p>
+</blockquote>
+
+      
+    </div>
+
+    
+
+    
+    
+    
+
+    
+
+    
+      
+    
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/AFNetworking/" rel="tag"># AFNetworking</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2017/01/04/2016年总结/" rel="next" title="2016年总结">
+                <i class="fa fa-chevron-left"></i> 2016年总结
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2017/01/05/AFNetworking细嚼慢咽-二/" rel="prev" title="AFNetworking细嚼慢咽(二)">
+                AFNetworking细嚼慢咽(二) <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+  </div>
+
+
+          </div>
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            Table of Contents
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            Overview
+          </li>
+        </ul>
+      
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <p class="site-author-name" itemprop="name">Author</p>
+              <div class="site-description motion-element" itemprop="description"></div>
+          </div>
+
+          
+            <nav class="site-state motion-element">
+              
+                <div class="site-state-item site-state-posts">
+                
+                  <a href="/archives/">
+                
+                    <span class="site-state-item-count">118</span>
+                    <span class="site-state-item-name">posts</span>
+                  </a>
+                </div>
+              
+
+              
+                
+                
+                <div class="site-state-item site-state-categories">
+                  
+                    
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                    <span class="site-state-item-count">11</span>
+                    <span class="site-state-item-name">categories</span>
+                  
+                </div>
+              
+
+              
+                
+                
+                <div class="site-state-item site-state-tags">
+                  
+                    
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                    <span class="site-state-item-count">106</span>
+                    <span class="site-state-item-name">tags</span>
+                  
+                </div>
+              
+            </nav>
+          
+
+          
+
+          
+
+          
+
+          
+
+          
+          
+
+          
+            
+          
+          
+
+        </div>
+      </div>
+
+      
+      <!--noindex-->
+        <div class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+            
+            
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#前言"><span class="nav-number">1.</span> <span class="nav-text">前言</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#开始"><span class="nav-number">2.</span> <span class="nav-text">开始</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#网络层设计的不完全指南"><span class="nav-number">2.1.</span> <span class="nav-text">网络层设计的不完全指南</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#AFNetworking"><span class="nav-number">2.2.</span> <span class="nav-text">AFNetworking</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#文件结构"><span class="nav-number">2.2.1.</span> <span class="nav-text">文件结构</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#初始化"><span class="nav-number">2.2.2.</span> <span class="nav-text">初始化</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#AFHTTPSessionManager"><span class="nav-number">2.2.2.1.</span> <span class="nav-text">AFHTTPSessionManager</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#我的猜想"><span class="nav-number">2.2.2.2.</span> <span class="nav-text">我的猜想</span></a></li></ol></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#结束"><span class="nav-number">3.</span> <span class="nav-text">结束</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Reference"><span class="nav-number">4.</span> <span class="nav-text">Reference</span></a></li></ol></div>
+            
+
+          </div>
+        </div>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+  
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2020</span>
+  <span class="with-love" id="animate">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Author</span>
+
+  
+
+  
+</div>
+
+
+  <div class="powered-by">Powered by <a href="https://hexo.io" class="theme-link" rel="noopener" target="_blank">Hexo</a> v3.9.0</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">Theme – <a href="https://theme-next.org" class="theme-link" rel="noopener" target="_blank">NexT.Muse</a> v7.1.0</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+    
+
+    
+  </div>
+
+  
+
+<script>
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  <script src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+
+  
+
+
+  <script src="/js/utils.js?v=7.1.0"></script>
+
+  <script src="/js/motion.js?v=7.1.0"></script>
+
+
+
+  
+  
+
+
+  <script src="/js/schemes/muse.js?v=7.1.0"></script>
+
+
+
+  
+  <script src="/js/scrollspy.js?v=7.1.0"></script>
+<script src="/js/post-details.js?v=7.1.0"></script>
+
+
+
+  
+
+
+  <script src="/js/next-boot.js?v=7.1.0"></script>
+
+
+  
+
+  
+
+  
+
+  
+
+
+  
+
+
+  
+
+
+
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

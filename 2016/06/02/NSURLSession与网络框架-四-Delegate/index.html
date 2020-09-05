@@ -1,0 +1,1042 @@
+<!DOCTYPE html>
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+<html class="theme-next muse use-motion" lang="zh-Hans">
+<head><meta name="generator" content="Hexo 3.9.0">
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2">
+
+<link rel="stylesheet" href="/css/main.css?v=7.1.0">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=7.1.0">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=7.1.0">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=7.1.0">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=7.1.0" color="#222">
+
+
+
+
+
+
+
+<script id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Muse',
+    version: '7.1.0',
+    sidebar: {"position":"left","display":"post","offset":12,"onmobile":false,"dimmer":false},
+    back2top: true,
+    back2top_sidebar: false,
+    fancybox: false,
+    fastclick: false,
+    lazyload: false,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+  
+
+
+
+
+  <meta name="description" content="NSURLSessionDelegateintroductionNSURLSessionDelegate协议定义了NSURLSession对象调用对应的代理的session级别的方法. 另外, 该协议中定义的方法, 大部分的代理应该同时实现NSURLSessionTaskDelegate, NSURLSessionDataDelegate, NSURLSessionDownloadDelegate">
+<meta name="keywords" content="网络,NSURLSessionDelegate">
+<meta property="og:type" content="article">
+<meta property="og:title" content="NSURLSession与网络框架(四)Delegate">
+<meta property="og:url" content="http://yoursite.com/2016/06/02/NSURLSession与网络框架-四-Delegate/index.html">
+<meta property="og:site_name" content="ArthurChi&#39;s Blog">
+<meta property="og:description" content="NSURLSessionDelegateintroductionNSURLSessionDelegate协议定义了NSURLSession对象调用对应的代理的session级别的方法. 另外, 该协议中定义的方法, 大部分的代理应该同时实现NSURLSessionTaskDelegate, NSURLSessionDataDelegate, NSURLSessionDownloadDelegate">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:updated_time" content="2016-06-05T09:26:16.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="NSURLSession与网络框架(四)Delegate">
+<meta name="twitter:description" content="NSURLSessionDelegateintroductionNSURLSessionDelegate协议定义了NSURLSession对象调用对应的代理的session级别的方法. 另外, 该协议中定义的方法, 大部分的代理应该同时实现NSURLSessionTaskDelegate, NSURLSessionDataDelegate, NSURLSessionDownloadDelegate">
+
+
+
+
+
+  
+  
+  <link rel="canonical" href="http://yoursite.com/2016/06/02/NSURLSession与网络框架-四-Delegate/">
+
+
+
+<script id="page.configurations">
+  CONFIG.page = {
+    sidebar: "",
+  };
+</script>
+
+  <title>NSURLSession与网络框架(四)Delegate | ArthurChi's Blog</title>
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .motion-element,
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-title { opacity: initial; }
+
+  .use-motion .logo,
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">ArthurChi's Blog</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+    
+      
+        <p class="site-subtitle">Yesterday you said tomorrow</p>
+      
+    
+    
+  </div>
+
+  <div class="site-nav-toggle">
+    <button aria-label="Toggle navigation bar">
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  
+    <ul id="menu" class="menu">
+      
+        
+        
+        
+          
+          <li class="menu-item menu-item-home">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/" rel="section"><i class="menu-item-icon fa fa-fw fa-home"></i> <br>Home</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-archives">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/archives/" rel="section"><i class="menu-item-icon fa fa-fw fa-archive"></i> <br>Archives</a>
+
+  </li>
+
+      
+      
+    </ul>
+  
+
+  
+    
+
+  
+
+  
+</nav>
+
+
+
+  
+
+
+
+</div>
+    </header>
+
+    
+
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2016/06/02/NSURLSession与网络框架-四-Delegate/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Author">
+      <meta itemprop="description" content>
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="ArthurChi's Blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">NSURLSession与网络框架(四)Delegate
+
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+
+            
+            
+            
+
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Posted on</span>
+              
+
+              
+                
+              
+
+              <time title="Created: 2016-06-02 17:09:09" itemprop="dateCreated datePublished" datetime="2016-06-02T17:09:09+08:00">2016-06-02</time>
+            
+
+            
+              
+
+              
+                
+                <span class="post-meta-divider">|</span>
+                
+
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">Edited on</span>
+                
+                <time title="Modified: 2016-06-05 17:26:16" itemprop="dateModified" datetime="2016-06-05T17:26:16+08:00">2016-06-05</time>
+              
+            
+          </span>
+
+          
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">In</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/iOS/" itemprop="url" rel="index"><span itemprop="name">iOS</span></a></span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h2 id="NSURLSessionDelegate"><a href="#NSURLSessionDelegate" class="headerlink" title="NSURLSessionDelegate"></a>NSURLSessionDelegate</h2><h3 id="introduction"><a href="#introduction" class="headerlink" title="introduction"></a>introduction</h3><p><code>NSURLSessionDelegate</code>协议定义了<code>NSURLSession</code>对象调用对应的代理的session级别的方法. 另外, 该协议中定义的方法, 大部分的代理应该同时实现<code>NSURLSessionTaskDelegate</code>, <code>NSURLSessionDataDelegate</code>, <code>NSURLSessionDownloadDelegate</code>协议中的task级别的方法.<br><a id="more"></a></p>
+<h3 id="URLSession-didBecomeInvalidWithError"><a href="#URLSession-didBecomeInvalidWithError" class="headerlink" title="URLSession:didBecomeInvalidWithError:"></a>URLSession:didBecomeInvalidWithError:</h3><p>如果你通过调用<code>finishTasksAndInvalidate</code>方法去终止一个session, 那么, 这个session需要等到session中所有的task完成或者失败前调用代理的这个方法. 如果你调用的是<code>invalidateAndCancel</code>方法, 那么session会立刻调用这个代理的方法</p>
+<h3 id="URLSession-didReceiveChallenge-completionHandler"><a href="#URLSession-didReceiveChallenge-completionHandler" class="headerlink" title="URLSession:didReceiveChallenge:completionHandler:"></a>URLSession:didReceiveChallenge:completionHandler:</h3><p>这个方法再两种情况下会被调用:</p>
+<ul>
+<li>当远端系统要求客户端证书或者windows NT LAN Manager认证, 要求你提供合适的证书.</li>
+<li>当session开始使用的是<code>establishes</code>方式链接到一个远端SSL或者TLS服务器, 要求你的app炎症服务器的证书</li>
+</ul>
+<h3 id="URLSessionDidFinishEventsForBackgroundURLSession"><a href="#URLSessionDidFinishEventsForBackgroundURLSession" class="headerlink" title="URLSessionDidFinishEventsForBackgroundURLSession:"></a>URLSessionDidFinishEventsForBackgroundURLSession:</h3><p>在iOS中, 当一个后台传输完成或者需要认证的时候, 如果你的app不再运行了, 你的app会自动的在后台重新启动, 你的app代理会发送<code>application:handleEventsForBackgroundURLSession:completionHandler:</code>消息. 这个调用方法中包含了你app启动的这个session的ID. 你的应用应该再使用这个相同的id创建configuration, 并且用这个configuration创建爱你一个session之前去存住这个回调. 这个新创建出来的session会自动的在后台连接.</p>
+<h2 id="NSURLSessionTaskDelegate"><a href="#NSURLSessionTaskDelegate" class="headerlink" title="NSURLSessionTaskDelegate"></a>NSURLSessionTaskDelegate</h2><h3 id="introduction-1"><a href="#introduction-1" class="headerlink" title="introduction"></a>introduction</h3><p><code>NSURLSessionTaskDelegate</code>协议定义了当你使用<code>HSURLSession task</code>的时候, 一些指定task的你应该实现的方法.<br>如果你使用download task, 那么需要同时实现<code>NSURLSessionDownloadDelegate</code>中的方法.<br><br>如果你使用的是data或者upload task, 那么需要同时实现<code>NSURLSessionDataDelegate</code>中的方法.</p>
+<h3 id="URLSession-task-didCompleteWithError"><a href="#URLSession-task-didCompleteWithError" class="headerlink" title="URLSession:task:didCompleteWithError:"></a>URLSession:task:didCompleteWithError:</h3><p>通知代理task数据传输完成.<br><br>注意: 服务端的错误不会通过error参数传递过来, 你能通过代理抓取到的error仅仅是客户端的错误.</p>
+<h3 id="URLSession-task-didReceiveChallenge-completionHandler"><a href="#URLSession-task-didReceiveChallenge-completionHandler" class="headerlink" title="URLSession:task:didReceiveChallenge:completionHandler:"></a>URLSession:task:didReceiveChallenge:completionHandler:</h3><p>这个方法获取的是task级别的验证请求, <code>NSURLSessionDelegate</code>协议同时也提供了session级别的验证. 调用那种验证取决于验证的方式:</p>
+<ul>
+<li>NSURLAuthenticationMethodNTLM, NSURLAuthenticationMethodNegotiate, NSURLAuthenticationMethodClientCertificate, or NSURLAuthenticationMethodServerTrust这几种类型, 如果app没有提供代理方法, 那么session就会调用task级别的代理方法.</li>
+<li><p>对于非session级别的认证请求, session对象调用<code>URLSession:task:didReceiveChallenge:completionHandler:</code>方法, 去捕获认证请求. 如果你的app提供了session代理, 你需要捕获认证请求, 然后你必须要么捕获了task级别的认证请求, 要么提供task级别的回调, 在session前明确回调. session的代理<code>URLSession:didReceiveChallenge:completionHandler:</code>仅仅再session级别进行调用.</p>
+<h3 id="URLSession-task-didSendBodyData-totalBytesSent-totalBytesExpectedToSend"><a href="#URLSession-task-didSendBodyData-totalBytesSent-totalBytesExpectedToSend" class="headerlink" title="URLSession:task:didSendBodyData:totalBytesSent:totalBytesExpectedToSend:"></a>URLSession:task:didSendBodyData:totalBytesSent:totalBytesExpectedToSend:</h3><p>提供发送到服务器的body内容的进度, 也就是上传进度</p>
+<h3 id="URLSession-task-needNewBodyStream"><a href="#URLSession-task-needNewBodyStream" class="headerlink" title="URLSession:task:needNewBodyStream:"></a>URLSession:task:needNewBodyStream:</h3><p>当task需要发送一个新的请求体数据流给服务器的时候去调用<br><br>以下这两种方式会触发代理的这个方法:</p>
+</li>
+<li><p>当在使用<code>uploadTaskWithStreamedRequest:</code>创建task的时候, 提供请 求体数据流的初始化</p>
+</li>
+<li>当task需要再次发送一个由于需要请求认证或其他可回收的服务端错误的请求.<h3 id="URLSession-task-willPerformHTTPRedirection-newRequest-completionHandler"><a href="#URLSession-task-willPerformHTTPRedirection-newRequest-completionHandler" class="headerlink" title="URLSession:task:willPerformHTTPRedirection:newRequest:completionHandler:"></a>URLSession:task:willPerformHTTPRedirection:newRequest:completionHandler:</h3>当服务器需要你一个HTTP重定向的时候回调用.<br>这个方法只会在<code>default</code> 和 <code>ephemeral</code>session的情况下被调用. 后台的session会自动跟踪重定向.<h2 id="NSURLSessionDataDelegate"><a href="#NSURLSessionDataDelegate" class="headerlink" title="NSURLSessionDataDelegate"></a>NSURLSessionDataDelegate</h2><h3 id="URLSession-dataTask-didReceiveResponse-completionHandler"><a href="#URLSession-dataTask-didReceiveResponse-completionHandler" class="headerlink" title="URLSession:dataTask:didReceiveResponse:completionHandler:"></a>URLSession:dataTask:didReceiveResponse:completionHandler:</h3>这个方法不是必须要实现的, 你需要支持<code>multipart/x-mixed-replace</code>类型, 在这种类型下, 服务器会发送若干次数据, 每一次都会代替前一次. session在每一个部分的开头调用这个方法, 你应该或显示或丢弃或展示进度.<h3 id="URLSession-dataTask-didBecomeDownloadTask"><a href="#URLSession-dataTask-didBecomeDownloadTask" class="headerlink" title="URLSession:dataTask:didBecomeDownloadTask:"></a>URLSession:dataTask:didBecomeDownloadTask:</h3>当代理的<code>URLSession:dataTask:didReceiveResponse:completionHandler:</code>方法想要将data的请求转换成下载的请求的时候, 这个代理方法提供给你一个新的下载任务. 在这个方法调用之后, session不在收到原来任务相关的代理方法的调用<h3 id="URLSession-dataTask-didBecomeStreamTask"><a href="#URLSession-dataTask-didBecomeStreamTask" class="headerlink" title="URLSession:dataTask:didBecomeStreamTask:"></a>URLSession:dataTask:didBecomeStreamTask:</h3>当代理调用<code>URLSession:dataTask:didReceiveResponse:completionHandler:</code>方法后, 想要将数据任务转换为流请求, session调用代理的这个方法来提供给你心的数据流任务. 调用之后, 调用之后, session不再收到原来任务的相关代理的调用.<br><br>对于管道型的请求, 流任务是只读的. 并且会立刻调用<code>URLSession:writeClosedForStreamTask:</code> configuration中或request中设置<code>HTTPShouldUsePipelining</code>属性的, 管道不可用.<h3 id="URLSession-dataTask-didReceiveData"><a href="#URLSession-dataTask-didReceiveData" class="headerlink" title="URLSession:dataTask:didReceiveData:"></a>URLSession:dataTask:didReceiveData:</h3>由于NSData对象经常是由一些不同的data对象品接起来的, 使用NSDate的<code>enumerateByteRangesUsingBlock:</code>方法去遍历数据好过使用<code>bytes</code>方法. 代理方法可能会不止一次被调用, 每次调用都只提供刚刚接受到的数据. app需要自己去累加这个data.<h3 id="URLSession-dataTask-willCacheResponse-completionHandler"><a href="#URLSession-dataTask-willCacheResponse-completionHandler" class="headerlink" title="URLSession:dataTask:willCacheResponse:completionHandler:"></a>URLSession:dataTask:willCacheResponse:completionHandler:</h3>在任务完成接受到所有想要的数据后, session就会调用这个代理方法. 如果你不实现这个方法, 默认的使用session中的configuration的缓存策略. 这个方法的主要目的在于阻止指定的URL缓存或者修改<code>userInfo</code>字典.</li>
+</ul>
+<h2 id="NSURLSessionDownloadDelegate"><a href="#NSURLSessionDownloadDelegate" class="headerlink" title="NSURLSessionDownloadDelegate"></a>NSURLSessionDownloadDelegate</h2><h3 id="introduction-2"><a href="#introduction-2" class="headerlink" title="introduction"></a>introduction</h3><p><code>NSURLSessionDownloadDelegate</code>协议定义了当你使用session下载任务时候, 你需要实现的方法. 另外, 确保实现了<code>NSURLSessionTaskDelegate</code>和<code>NSURLSessionDelegate</code>协议中的方法, 来处理所有任务和session级别的事物.</p>
+<h3 id="URLSession-downloadTask-didResumeAtOffset-expectedTotalBytes"><a href="#URLSession-downloadTask-didResumeAtOffset-expectedTotalBytes" class="headerlink" title="URLSession:downloadTask:didResumeAtOffset:expectedTotalBytes:"></a>URLSession:downloadTask:didResumeAtOffset:expectedTotalBytes:</h3><p>如果一个支持断点续传的任务被取消或者失败了, 你可以获得到一个给你足够信息去急需的数据. 然后你可以调用<code>downloadTaskWithResumeData:</code>或<code>downloadTaskWithResumeData:completionHandler:</code><br><br>当你调用这些方法的时候, 你会得到一个新的下载任务. 当你开启这个任务的时候, session会调用代理的<code>URLSession:downloadTask:didResumeAtOffset:expectedTotalBytes:</code>方法来告诉你新的下载任务开始了.</p>
+<h3 id="URLSession-downloadTask-didWriteData-totalBytesWritten-totalBytesExpectedToWrite"><a href="#URLSession-downloadTask-didWriteData-totalBytesWritten-totalBytesExpectedToWrite" class="headerlink" title="URLSession:downloadTask:didWriteData:totalBytesWritten:totalBytesExpectedToWrite:"></a>URLSession:downloadTask:didWriteData:totalBytesWritten:totalBytesExpectedToWrite:</h3><p>提供下载的进度</p>
+<h3 id="URLSession-downloadTask-didFinishDownloadingToURL"><a href="#URLSession-downloadTask-didFinishDownloadingToURL" class="headerlink" title="URLSession:downloadTask:didFinishDownloadingToURL:"></a>URLSession:downloadTask:didFinishDownloadingToURL:</h3><p>下载完成后会被调用</p>
+
+      
+    </div>
+
+    
+
+    
+    
+    
+
+    
+
+    
+      
+    
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/网络/" rel="tag"># 网络</a>
+          
+            <a href="/tags/NSURLSessionDelegate/" rel="tag"># NSURLSessionDelegate</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2016/05/31/NSURLSession与网络框架-三-NSURLSessionConfiguration/" rel="next" title="NSURLSession与网络框架(三)NSURLSessionConfiguration">
+                <i class="fa fa-chevron-left"></i> NSURLSession与网络框架(三)NSURLSessionConfiguration
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2016/06/03/NSURLSession与网络框架-五-AFNetworking初探/" rel="prev" title="NSURLSession与网络框架(五)AFNetworking初探">
+                NSURLSession与网络框架(五)AFNetworking初探 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+  </div>
+
+
+          </div>
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            Table of Contents
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            Overview
+          </li>
+        </ul>
+      
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <p class="site-author-name" itemprop="name">Author</p>
+              <div class="site-description motion-element" itemprop="description"></div>
+          </div>
+
+          
+            <nav class="site-state motion-element">
+              
+                <div class="site-state-item site-state-posts">
+                
+                  <a href="/archives/">
+                
+                    <span class="site-state-item-count">118</span>
+                    <span class="site-state-item-name">posts</span>
+                  </a>
+                </div>
+              
+
+              
+                
+                
+                <div class="site-state-item site-state-categories">
+                  
+                    
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                    <span class="site-state-item-count">11</span>
+                    <span class="site-state-item-name">categories</span>
+                  
+                </div>
+              
+
+              
+                
+                
+                <div class="site-state-item site-state-tags">
+                  
+                    
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                    <span class="site-state-item-count">106</span>
+                    <span class="site-state-item-name">tags</span>
+                  
+                </div>
+              
+            </nav>
+          
+
+          
+
+          
+
+          
+
+          
+
+          
+          
+
+          
+            
+          
+          
+
+        </div>
+      </div>
+
+      
+      <!--noindex-->
+        <div class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+            
+            
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#NSURLSessionDelegate"><span class="nav-number">1.</span> <span class="nav-text">NSURLSessionDelegate</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#introduction"><span class="nav-number">1.1.</span> <span class="nav-text">introduction</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#URLSession-didBecomeInvalidWithError"><span class="nav-number">1.2.</span> <span class="nav-text">URLSession:didBecomeInvalidWithError:</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#URLSession-didReceiveChallenge-completionHandler"><span class="nav-number">1.3.</span> <span class="nav-text">URLSession:didReceiveChallenge:completionHandler:</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#URLSessionDidFinishEventsForBackgroundURLSession"><span class="nav-number">1.4.</span> <span class="nav-text">URLSessionDidFinishEventsForBackgroundURLSession:</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#NSURLSessionTaskDelegate"><span class="nav-number">2.</span> <span class="nav-text">NSURLSessionTaskDelegate</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#introduction-1"><span class="nav-number">2.1.</span> <span class="nav-text">introduction</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#URLSession-task-didCompleteWithError"><span class="nav-number">2.2.</span> <span class="nav-text">URLSession:task:didCompleteWithError:</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#URLSession-task-didReceiveChallenge-completionHandler"><span class="nav-number">2.3.</span> <span class="nav-text">URLSession:task:didReceiveChallenge:completionHandler:</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#URLSession-task-didSendBodyData-totalBytesSent-totalBytesExpectedToSend"><span class="nav-number">2.4.</span> <span class="nav-text">URLSession:task:didSendBodyData:totalBytesSent:totalBytesExpectedToSend:</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#URLSession-task-needNewBodyStream"><span class="nav-number">2.5.</span> <span class="nav-text">URLSession:task:needNewBodyStream:</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#URLSession-task-willPerformHTTPRedirection-newRequest-completionHandler"><span class="nav-number">2.6.</span> <span class="nav-text">URLSession:task:willPerformHTTPRedirection:newRequest:completionHandler:</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#NSURLSessionDataDelegate"><span class="nav-number">3.</span> <span class="nav-text">NSURLSessionDataDelegate</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#URLSession-dataTask-didReceiveResponse-completionHandler"><span class="nav-number">3.1.</span> <span class="nav-text">URLSession:dataTask:didReceiveResponse:completionHandler:</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#URLSession-dataTask-didBecomeDownloadTask"><span class="nav-number">3.2.</span> <span class="nav-text">URLSession:dataTask:didBecomeDownloadTask:</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#URLSession-dataTask-didBecomeStreamTask"><span class="nav-number">3.3.</span> <span class="nav-text">URLSession:dataTask:didBecomeStreamTask:</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#URLSession-dataTask-didReceiveData"><span class="nav-number">3.4.</span> <span class="nav-text">URLSession:dataTask:didReceiveData:</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#URLSession-dataTask-willCacheResponse-completionHandler"><span class="nav-number">3.5.</span> <span class="nav-text">URLSession:dataTask:willCacheResponse:completionHandler:</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#NSURLSessionDownloadDelegate"><span class="nav-number">4.</span> <span class="nav-text">NSURLSessionDownloadDelegate</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#introduction-2"><span class="nav-number">4.1.</span> <span class="nav-text">introduction</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#URLSession-downloadTask-didResumeAtOffset-expectedTotalBytes"><span class="nav-number">4.2.</span> <span class="nav-text">URLSession:downloadTask:didResumeAtOffset:expectedTotalBytes:</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#URLSession-downloadTask-didWriteData-totalBytesWritten-totalBytesExpectedToWrite"><span class="nav-number">4.3.</span> <span class="nav-text">URLSession:downloadTask:didWriteData:totalBytesWritten:totalBytesExpectedToWrite:</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#URLSession-downloadTask-didFinishDownloadingToURL"><span class="nav-number">4.4.</span> <span class="nav-text">URLSession:downloadTask:didFinishDownloadingToURL:</span></a></li></ol></li></ol></div>
+            
+
+          </div>
+        </div>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+  
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2020</span>
+  <span class="with-love" id="animate">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Author</span>
+
+  
+
+  
+</div>
+
+
+  <div class="powered-by">Powered by <a href="https://hexo.io" class="theme-link" rel="noopener" target="_blank">Hexo</a> v3.9.0</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">Theme – <a href="https://theme-next.org" class="theme-link" rel="noopener" target="_blank">NexT.Muse</a> v7.1.0</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+    
+
+    
+  </div>
+
+  
+
+<script>
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  <script src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+
+  
+
+
+  <script src="/js/utils.js?v=7.1.0"></script>
+
+  <script src="/js/motion.js?v=7.1.0"></script>
+
+
+
+  
+  
+
+
+  <script src="/js/schemes/muse.js?v=7.1.0"></script>
+
+
+
+  
+  <script src="/js/scrollspy.js?v=7.1.0"></script>
+<script src="/js/post-details.js?v=7.1.0"></script>
+
+
+
+  
+
+
+  <script src="/js/next-boot.js?v=7.1.0"></script>
+
+
+  
+
+  
+
+  
+
+  
+
+
+  
+
+
+  
+
+
+
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

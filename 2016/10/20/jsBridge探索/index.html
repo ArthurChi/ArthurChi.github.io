@@ -1,0 +1,1051 @@
+<!DOCTYPE html>
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+<html class="theme-next muse use-motion" lang="zh-Hans">
+<head><meta name="generator" content="Hexo 3.9.0">
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2">
+
+<link rel="stylesheet" href="/css/main.css?v=7.1.0">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=7.1.0">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=7.1.0">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=7.1.0">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=7.1.0" color="#222">
+
+
+
+
+
+
+
+<script id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Muse',
+    version: '7.1.0',
+    sidebar: {"position":"left","display":"post","offset":12,"onmobile":false,"dimmer":false},
+    back2top: true,
+    back2top_sidebar: false,
+    fancybox: false,
+    fastclick: false,
+    lazyload: false,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+  
+
+
+
+
+  <meta name="description" content="前言为了统一iOS端和Android端和js交互的方式, 所以写了一个小工具类, 没有用RN是因为RN太重了, 我们项目的需求只是简单的一些交互, 如果为此把RN引入, 有些本末倒置了.">
+<meta name="keywords" content="Android,jsBridge,iOS">
+<meta property="og:type" content="article">
+<meta property="og:title" content="jsBridge探索">
+<meta property="og:url" content="http://yoursite.com/2016/10/20/jsBridge探索/index.html">
+<meta property="og:site_name" content="ArthurChi&#39;s Blog">
+<meta property="og:description" content="前言为了统一iOS端和Android端和js交互的方式, 所以写了一个小工具类, 没有用RN是因为RN太重了, 我们项目的需求只是简单的一些交互, 如果为此把RN引入, 有些本末倒置了.">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:updated_time" content="2016-11-11T06:54:22.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="jsBridge探索">
+<meta name="twitter:description" content="前言为了统一iOS端和Android端和js交互的方式, 所以写了一个小工具类, 没有用RN是因为RN太重了, 我们项目的需求只是简单的一些交互, 如果为此把RN引入, 有些本末倒置了.">
+
+
+
+
+
+  
+  
+  <link rel="canonical" href="http://yoursite.com/2016/10/20/jsBridge探索/">
+
+
+
+<script id="page.configurations">
+  CONFIG.page = {
+    sidebar: "",
+  };
+</script>
+
+  <title>jsBridge探索 | ArthurChi's Blog</title>
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .motion-element,
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-title { opacity: initial; }
+
+  .use-motion .logo,
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">ArthurChi's Blog</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+    
+      
+        <p class="site-subtitle">Yesterday you said tomorrow</p>
+      
+    
+    
+  </div>
+
+  <div class="site-nav-toggle">
+    <button aria-label="Toggle navigation bar">
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  
+    <ul id="menu" class="menu">
+      
+        
+        
+        
+          
+          <li class="menu-item menu-item-home">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/" rel="section"><i class="menu-item-icon fa fa-fw fa-home"></i> <br>Home</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-archives">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/archives/" rel="section"><i class="menu-item-icon fa fa-fw fa-archive"></i> <br>Archives</a>
+
+  </li>
+
+      
+      
+    </ul>
+  
+
+  
+    
+
+  
+
+  
+</nav>
+
+
+
+  
+
+
+
+</div>
+    </header>
+
+    
+
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2016/10/20/jsBridge探索/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Author">
+      <meta itemprop="description" content>
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="ArthurChi's Blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">jsBridge探索
+
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+
+            
+            
+            
+
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Posted on</span>
+              
+
+              
+                
+              
+
+              <time title="Created: 2016-10-20 14:48:04" itemprop="dateCreated datePublished" datetime="2016-10-20T14:48:04+08:00">2016-10-20</time>
+            
+
+            
+              
+
+              
+                
+                <span class="post-meta-divider">|</span>
+                
+
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">Edited on</span>
+                
+                <time title="Modified: 2016-11-11 14:54:22" itemprop="dateModified" datetime="2016-11-11T14:54:22+08:00">2016-11-11</time>
+              
+            
+          </span>
+
+          
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">In</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/muti-platform/" itemprop="url" rel="index"><span itemprop="name">muti-platform</span></a></span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h1 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h1><p>为了统一iOS端和Android端和js交互的方式, 所以写了一个小工具类, 没有用RN是因为RN太重了, 我们项目的需求只是简单的一些交互, 如果为此把RN引入, 有些本末倒置了.<br><a id="more"></a></p>
+<h1 id="开始"><a href="#开始" class="headerlink" title="开始"></a>开始</h1><p>本工具<a href="https://github.com/sun-fox-cj/JSBridge" target="_blank" rel="noopener">地址是</a>, 最低需要iOS7, 如果你需要支持小于7, 可以使用<code>WebViewJavascriptBridge</code>这个工具, 但是本人觉得这个工具还有改进的空间, 因为工具逻辑会和业务逻辑搅和在一起, 我称之为代码逻辑污染, 我试着做了一些改进, 不过只是一个demo, 有兴趣的同学可以<a href="https://github.com/sun-fox-cj/JSMutiPlatform" target="_blank" rel="noopener">看这里</a>, 当然这个demo并不是一个完整的demo, 只是提供了一个分离思路而已, 至于为什么没有继续写下去, 是因为这里存在这样的一个问题</p>
+<h2 id="WebViewJavascriptBridge存在的问题"><a href="#WebViewJavascriptBridge存在的问题" class="headerlink" title="WebViewJavascriptBridge存在的问题"></a>WebViewJavascriptBridge存在的问题</h2><ul>
+<li>我们看到, <code>WebViewJavascriptBridge</code>的工作原理, 是在iframe下进行的, 那这样就会产生一个问题, 会有一定的延时, 让我们想象一个场景, 有时候, 你需要在window.onload中做点事情, 可是这时候很遗憾, 你的iframe还没有装载.</li>
+<li>我们知道UIWEBVIEW和JS交互的常规方法就是通过SCHEME来进行的, 但是<code>WebViewJavascriptBridge</code>将这些判断的逻辑代码必须要写到webview的Delegate, 然而, 这会给以后的维护买下隐患. </li>
+</ul>
+<h2 id="解决办法"><a href="#解决办法" class="headerlink" title="解决办法"></a>解决办法</h2><p>其实使用iframe和scheme进行交互, 这样的方法是无可厚非的, 因为这是主流, 我所能改进的, 也只不过是把这些逻辑分离出来, 降低耦合. 如果可以支持到iOS7的话, 那么可以使用iOS的特性javascriptcore, 下面, 我就这两方面说一下.</p>
+<h3 id="AOP"><a href="#AOP" class="headerlink" title="AOP"></a>AOP</h3><ul>
+<li>具体实现是建立一个类, 继承NSObject</li>
+<li>使用运行时为UIWebView添加一个这个类的属性</li>
+<li>在webview设置这个属性的时候, 来个偷天换日, 把webview的代理换成这个这个新绑定的对象</li>
+<li>但是, 为了不影响原有的业务逻辑, 应该让原来的代理继续原来的功能, 也就是说, 新加的这个对象, 对于业务逻辑是不可见的.</li>
+<li>接下来, 复写<code>- (BOOL)respondsToSelector:(SEL)aSelector;</code>方法. 为了告诉系统, 自己都可以响应哪些方法, 这里返回的当然是自己的和Webview代理的方法的总和</li>
+<li>那么问题来了, 是不是我们需要把webview的代理中的方法全都写一边, 然后转过去呢? 当然不需要, 我们使用消息转发机制的第二部, <code>- (id)forwardingTargetForSelector:(SEL)aSelector</code> 这样, 如果当前类响应不了的方法, 就自动去走消息转发机制了, 因为方法来自于两个地方, 自己和webview的代理, 所以只需要简单的将webview的代理返回就可以了.</li>
+<li>还有一个需要注意, 如果自己实现了webviewDelegate的方法后, 别忘了要调用一下之前的代理中的对应的方法, 因为你只是在中间劫持一下而已.</li>
+</ul>
+<h3 id="JavascriptCore"><a href="#JavascriptCore" class="headerlink" title="JavascriptCore"></a>JavascriptCore</h3><p>接下来, 只需要在我们的类中, 把JavascriptCore相关的类封装进来, 然后暴露接口就好了. 那么我们需要做什么呢?</p>
+<ol>
+<li>直接执行JS语句</li>
+<li>注册本地对象供JS调用</li>
+<li>提供: native调用JS调用native 模式</li>
+<li>提供: JS调用native调用JS 模式</li>
+</ol>
+<h4 id="上下文"><a href="#上下文" class="headerlink" title="上下文"></a>上下文</h4><p>首先获取到JS执行的上下文, 在开发过程总, 我们会经常遇到这个词, 上下文, 到底啥是个上下文, 我的理解是, 这个是你执行代码的一个环境. 而系统已经给你配置好了环境, 你就在这个环境下执行就O.K了.</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">[_webView valueForKeyPath:@&quot;documentView.webView.mainFrame.javaScriptContext&quot;];</span><br></pre></td></tr></table></figure>
+<p>然后, 暴露一些接口, 前两种就不赘述了, 因为直接调用系统的API, 没什么意思. 我们说说后两种回调. 首先, native -&gt; JS -&gt; native的这种. </p>
+<h4 id="回调一"><a href="#回调一" class="headerlink" title="回调一"></a>回调一</h4><p>首先, 这里不考虑多并发的情况. 这里使用了两种方法, 一种是通过SEL回调, 另一种是通过回调进行的. 思路是注册一个block, 然后在执行js的时候, 把block带过去. 让JS调用即可.</p>
+<h4 id="回调二"><a href="#回调二" class="headerlink" title="回调二"></a>回调二</h4><p>这一种是JS-&gt;native-&gt;JS的方式, 首先, 给一个类写一个方法, 当然, 这个类要遵守JSExport协议, 方法里面是执行一些内容, 然后把结果传递给JS, JS使用的时候, 直接调用即可. demo中的person类中的setcallback就是这样的</p>
+<h1 id="结束"><a href="#结束" class="headerlink" title="结束"></a>结束</h1><p>截止到现在, 只有Webview的封装, 下一步打算弄一下WKWEBVIEW的封装</p>
+<h1 id="Reference"><a href="#Reference" class="headerlink" title="Reference"></a>Reference</h1><blockquote>
+<p><a href="http://blog.csdn.net/sbsujjbcy/article/details/50752595" target="_blank" rel="noopener">http://blog.csdn.net/sbsujjbcy/article/details/50752595</a><br><a href="http://coolnuanfeng.github.io/jsbridge" target="_blank" rel="noopener">http://coolnuanfeng.github.io/jsbridge</a><br><a href="http://www.jianshu.com/p/9fd80b785de1" target="_blank" rel="noopener">http://www.jianshu.com/p/9fd80b785de1</a><br><a href="http://gold.xitu.io/entry/573c8f3e79bc44005c7c126e" target="_blank" rel="noopener">http://gold.xitu.io/entry/573c8f3e79bc44005c7c126e</a><br><a href="http://kittenyang.com/webview-javascript-bridge/" target="_blank" rel="noopener">http://kittenyang.com/webview-javascript-bridge/</a><br><a href="https://my.oschina.net/fwj/blog/471035" target="_blank" rel="noopener">https://my.oschina.net/fwj/blog/471035</a><br><a href="http://www.jianshu.com/p/a329cd4a67ee" target="_blank" rel="noopener">http://www.jianshu.com/p/a329cd4a67ee</a><br><a href="http://nshipster.cn/javascriptcore/" target="_blank" rel="noopener">http://nshipster.cn/javascriptcore/</a></p>
+</blockquote>
+
+      
+    </div>
+
+    
+
+    
+    
+    
+
+    
+
+    
+      
+    
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/Android/" rel="tag"># Android</a>
+          
+            <a href="/tags/jsBridge/" rel="tag"># jsBridge</a>
+          
+            <a href="/tags/iOS/" rel="tag"># iOS</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2016/10/17/否定结构/" rel="next" title="否定结构">
+                <i class="fa fa-chevron-left"></i> 否定结构
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2016/10/25/从句-名词性从句/" rel="prev" title="从句-名词性从句">
+                从句-名词性从句 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+  </div>
+
+
+          </div>
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            Table of Contents
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            Overview
+          </li>
+        </ul>
+      
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <p class="site-author-name" itemprop="name">Author</p>
+              <div class="site-description motion-element" itemprop="description"></div>
+          </div>
+
+          
+            <nav class="site-state motion-element">
+              
+                <div class="site-state-item site-state-posts">
+                
+                  <a href="/archives/">
+                
+                    <span class="site-state-item-count">118</span>
+                    <span class="site-state-item-name">posts</span>
+                  </a>
+                </div>
+              
+
+              
+                
+                
+                <div class="site-state-item site-state-categories">
+                  
+                    
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                    <span class="site-state-item-count">11</span>
+                    <span class="site-state-item-name">categories</span>
+                  
+                </div>
+              
+
+              
+                
+                
+                <div class="site-state-item site-state-tags">
+                  
+                    
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                    <span class="site-state-item-count">106</span>
+                    <span class="site-state-item-name">tags</span>
+                  
+                </div>
+              
+            </nav>
+          
+
+          
+
+          
+
+          
+
+          
+
+          
+          
+
+          
+            
+          
+          
+
+        </div>
+      </div>
+
+      
+      <!--noindex-->
+        <div class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+            
+            
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#前言"><span class="nav-number">1.</span> <span class="nav-text">前言</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#开始"><span class="nav-number">2.</span> <span class="nav-text">开始</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#WebViewJavascriptBridge存在的问题"><span class="nav-number">2.1.</span> <span class="nav-text">WebViewJavascriptBridge存在的问题</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#解决办法"><span class="nav-number">2.2.</span> <span class="nav-text">解决办法</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#AOP"><span class="nav-number">2.2.1.</span> <span class="nav-text">AOP</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#JavascriptCore"><span class="nav-number">2.2.2.</span> <span class="nav-text">JavascriptCore</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#上下文"><span class="nav-number">2.2.2.1.</span> <span class="nav-text">上下文</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#回调一"><span class="nav-number">2.2.2.2.</span> <span class="nav-text">回调一</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#回调二"><span class="nav-number">2.2.2.3.</span> <span class="nav-text">回调二</span></a></li></ol></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#结束"><span class="nav-number">3.</span> <span class="nav-text">结束</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Reference"><span class="nav-number">4.</span> <span class="nav-text">Reference</span></a></li></ol></div>
+            
+
+          </div>
+        </div>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+  
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2020</span>
+  <span class="with-love" id="animate">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Author</span>
+
+  
+
+  
+</div>
+
+
+  <div class="powered-by">Powered by <a href="https://hexo.io" class="theme-link" rel="noopener" target="_blank">Hexo</a> v3.9.0</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">Theme – <a href="https://theme-next.org" class="theme-link" rel="noopener" target="_blank">NexT.Muse</a> v7.1.0</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+    
+
+    
+  </div>
+
+  
+
+<script>
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  <script src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+
+  
+
+
+  <script src="/js/utils.js?v=7.1.0"></script>
+
+  <script src="/js/motion.js?v=7.1.0"></script>
+
+
+
+  
+  
+
+
+  <script src="/js/schemes/muse.js?v=7.1.0"></script>
+
+
+
+  
+  <script src="/js/scrollspy.js?v=7.1.0"></script>
+<script src="/js/post-details.js?v=7.1.0"></script>
+
+
+
+  
+
+
+  <script src="/js/next-boot.js?v=7.1.0"></script>
+
+
+  
+
+  
+
+  
+
+  
+
+
+  
+
+
+  
+
+
+
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

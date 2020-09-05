@@ -1,0 +1,1068 @@
+<!DOCTYPE html>
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+<html class="theme-next muse use-motion" lang="zh-Hans">
+<head><meta name="generator" content="Hexo 3.9.0">
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2">
+
+<link rel="stylesheet" href="/css/main.css?v=7.1.0">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=7.1.0">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=7.1.0">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=7.1.0">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=7.1.0" color="#222">
+
+
+
+
+
+
+
+<script id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Muse',
+    version: '7.1.0',
+    sidebar: {"position":"left","display":"post","offset":12,"onmobile":false,"dimmer":false},
+    back2top: true,
+    back2top_sidebar: false,
+    fancybox: false,
+    fastclick: false,
+    lazyload: false,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+  
+
+
+
+
+  <meta name="description" content="前言本文记录本人学习NSURLSession的一些总结, 还有一些网络库的部分的工作原理的梳理, 请以批判的眼光看, 如有错误处请留言, 你我共同进步! 大纲 NSURLSessionTask NSURLSessionConfiguration NSURLSession AFNetWorking Alamofire">
+<meta name="keywords" content="网络,NSURLSessionTask">
+<meta property="og:type" content="article">
+<meta property="og:title" content="NSURLSession与网络框架(一)NSURLSessionTask">
+<meta property="og:url" content="http://yoursite.com/2016/05/30/NSURLSession与网络框架(一)NSURLSessionTask/index.html">
+<meta property="og:site_name" content="ArthurChi&#39;s Blog">
+<meta property="og:description" content="前言本文记录本人学习NSURLSession的一些总结, 还有一些网络库的部分的工作原理的梳理, 请以批判的眼光看, 如有错误处请留言, 你我共同进步! 大纲 NSURLSessionTask NSURLSessionConfiguration NSURLSession AFNetWorking Alamofire">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:image" content="http://7xpsbt.com1.z0.glb.clouddn.com/NSURLSessionTask.png">
+<meta property="og:updated_time" content="2016-06-04T09:16:04.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="NSURLSession与网络框架(一)NSURLSessionTask">
+<meta name="twitter:description" content="前言本文记录本人学习NSURLSession的一些总结, 还有一些网络库的部分的工作原理的梳理, 请以批判的眼光看, 如有错误处请留言, 你我共同进步! 大纲 NSURLSessionTask NSURLSessionConfiguration NSURLSession AFNetWorking Alamofire">
+<meta name="twitter:image" content="http://7xpsbt.com1.z0.glb.clouddn.com/NSURLSessionTask.png">
+
+
+
+
+
+  
+  
+  <link rel="canonical" href="http://yoursite.com/2016/05/30/NSURLSession与网络框架(一)NSURLSessionTask/">
+
+
+
+<script id="page.configurations">
+  CONFIG.page = {
+    sidebar: "",
+  };
+</script>
+
+  <title>NSURLSession与网络框架(一)NSURLSessionTask | ArthurChi's Blog</title>
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .motion-element,
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-title { opacity: initial; }
+
+  .use-motion .logo,
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">ArthurChi's Blog</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+    
+      
+        <p class="site-subtitle">Yesterday you said tomorrow</p>
+      
+    
+    
+  </div>
+
+  <div class="site-nav-toggle">
+    <button aria-label="Toggle navigation bar">
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  
+    <ul id="menu" class="menu">
+      
+        
+        
+        
+          
+          <li class="menu-item menu-item-home">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/" rel="section"><i class="menu-item-icon fa fa-fw fa-home"></i> <br>Home</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-archives">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/archives/" rel="section"><i class="menu-item-icon fa fa-fw fa-archive"></i> <br>Archives</a>
+
+  </li>
+
+      
+      
+    </ul>
+  
+
+  
+    
+
+  
+
+  
+</nav>
+
+
+
+  
+
+
+
+</div>
+    </header>
+
+    
+
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2016/05/30/NSURLSession与网络框架(一)NSURLSessionTask/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Author">
+      <meta itemprop="description" content>
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="ArthurChi's Blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">NSURLSession与网络框架(一)NSURLSessionTask
+
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+
+            
+            
+            
+
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Posted on</span>
+              
+
+              
+                
+              
+
+              <time title="Created: 2016-05-30 10:57:02" itemprop="dateCreated datePublished" datetime="2016-05-30T10:57:02+08:00">2016-05-30</time>
+            
+
+            
+              
+
+              
+                
+                <span class="post-meta-divider">|</span>
+                
+
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">Edited on</span>
+                
+                <time title="Modified: 2016-06-04 17:16:04" itemprop="dateModified" datetime="2016-06-04T17:16:04+08:00">2016-06-04</time>
+              
+            
+          </span>
+
+          
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">In</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/iOS/" itemprop="url" rel="index"><span itemprop="name">iOS</span></a></span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><p>本文记录本人学习NSURLSession的一些总结, 还有一些网络库的部分的工作原理的梳理, 请以批判的眼光看, 如有错误处请留言, 你我共同进步!</p>
+<h2 id="大纲"><a href="#大纲" class="headerlink" title="大纲"></a>大纲</h2><ul>
+<li>NSURLSessionTask</li>
+<li>NSURLSessionConfiguration</li>
+<li>NSURLSession</li>
+<li>AFNetWorking</li>
+<li>Alamofire<a id="more"></a>
+<h2 id="NSURLSessionTask"><a href="#NSURLSessionTask" class="headerlink" title="NSURLSessionTask"></a>NSURLSessionTask</h2><h3 id="SessionTask-Hierarchy"><a href="#SessionTask-Hierarchy" class="headerlink" title="SessionTask Hierarchy"></a>SessionTask Hierarchy</h3><img src="http://7xpsbt.com1.z0.glb.clouddn.com/NSURLSessionTask.png" alt="NSURLSessionTask继承关系"><br>NSURLSessionTask<br><br>&emsp;&emsp;NSURLSessionDownloadTask&emsp;–接收一个临时文件<br><br>&emsp;&emsp;NSURLSessionStreakTask&emsp;–建立TCP/IP连接<br><br>&emsp;&emsp;NSURLSessionDataTask&emsp;–接收一个NSData对象<br><br>&emsp;&emsp;&emsp;&emsp;NSURLSessionUploadTask&emsp;–上传一个文件, 然后接收一个NSData对象<br><h3 id="API"><a href="#API" class="headerlink" title="API"></a>API</h3><h4 id="brief-interduction-amp-tips"><a href="#brief-interduction-amp-tips" class="headerlink" title="brief interduction &amp; tips"></a>brief interduction &amp; tips</h4>翻译一下API里面所说的, 虽然没什么东西, 但是了解一下也没什么坏处<br><blockquote>
+<p>The NSURLSessionTask class is the base class for tasks in a URL session. Tasks are always part of a session; you create a task by calling one of the task creation methods on an NSURLSession object. The method you call determines the type of task.<br><br>URL sessions provide three types of tasks: data tasks, upload tasks, and download tasks. These tasks are instances of the NSURLSessionDataTask, NSURLSessionUploadTask, NSURLSessionDownloadTask, NSURLSessionStreamTask subclasses of NSURLSessionTask, respectively.<br><br>After you create a task, you start it by calling its resume method. The session then maintains a strong reference to the task until the request finishes or fails; you do not need to maintain a reference to the task unless it is useful to do so for your app’s internal bookkeeping purposes.</p>
+</blockquote>
+</li>
+</ul>
+<p>NSURLSessionTask是url session任务类的一个基类. 是session的一部分; 你可以通过调用NSURLSession对象的创建task的方法来创建一个task. 创建哪种task取决于你调用什么方法.<br><br>session提供了三中类型的task, data task; upload task; download task. 这些task分别是NSURLSessionDataTask, NSURLSessionUploadTask, NSURLSessionDownloadTask, NSURLSessionStreamTask的实例, 同时也是NSURLSessionTask的子类.<br><br>当你创建了一个task, 你可以通过调用<code>resume</code>方法去开启它. 紧接着, session会对这个task进行强引用, 直到请求完成或者失败; 你不需要去强引用这个task, 除非你的app有必要这么做.</p>
+<h4 id="func-cancel"><a href="#func-cancel" class="headerlink" title="func cancel()"></a>func cancel()</h4><blockquote>
+<p>This method returns immediately, marking the task as being canceled. Once a task is marked as being canceled, URLSession:task:didCompleteWithError: will be sent to the task delegate, passing an error in the domain NSURLErrorDomain with the code NSURLErrorCancelled. A task may, under some circumstances, send messages to its delegate before the cancelation is acknowledged.<br><br>This method may be called on a task that is suspended.</p>
+</blockquote>
+<p>这个方法会立刻返回, 标记task为取消. 一旦task被标记为取消, <code>URLSession:task:didCompleteWithError:</code>消息将发送给对应的task的代理, 传递一个domain的code被标记为NSURLErrorCancelled的error对象. 在一些情况下, cancel的确认在代理发出消息之后.<br>挂起的task也可以被取消</p>
+<p><a href="#cancelByProducingResumData">看看cancelByProducingResumeData:</a></p>
+<h4 id="func-resume"><a href="#func-resume" class="headerlink" title="func resume()"></a>func resume()</h4><p>用于开启一个task或者继续一个挂起的task</p>
+<h4 id="func-suspend"><a href="#func-suspend" class="headerlink" title="func suspend"></a>func suspend</h4><p>不受网络和超时影响. 一个挂起的任务可以稍后继续. 所有其他的任务必须从头开始.</p>
+<h4 id="var-state-NSURLSessionTaskState-get"><a href="#var-state-NSURLSessionTaskState-get" class="headerlink" title="var state: NSURLSessionTaskState {get}"></a>var state: NSURLSessionTaskState {get}</h4><p>查看当前task的状态 -活跃;挂起;取消;完成</p>
+<h4 id="var-priority-Float"><a href="#var-priority-Float" class="headerlink" title="var priority: Float"></a>var priority: Float</h4><p>从0.0到1.0之间标识优先级. 系统有三个默认的常量供你使用, 默认的是<code>NSURLSessionTaskPriorityDefault</code>, 数量级为0.5</p>
+<h4 id="var-countOfBytesExpectedToReceive-Int64-get"><a href="#var-countOfBytesExpectedToReceive-Int64-get" class="headerlink" title="var countOfBytesExpectedToReceive: Int64 {get}"></a>var countOfBytesExpectedToReceive: Int64 {get}</h4><p>这个值取决于从服务器返回的header中的<code>Content-Length</code>. 缺省值是<code>NSURLSessionTransferSizeUnknown</code></p>
+<h4 id="var-countOfBytesReceived-Int64-get"><a href="#var-countOfBytesReceived-Int64-get" class="headerlink" title="var countOfBytesReceived: Int64 {get}"></a>var countOfBytesReceived: Int64 {get}</h4><p>已经从服务端获取到的字节长度, 当这个值变化的时候, 会触发代理的<code>URLSession:dataTask:didReceiveData:</code>(data and upload tasks)或者<code>URLSession:downloadTask:didWriteData:totalBytesWritten:totalBytesExpectedToWrite:</code>(download task), 这个数字要和上一个一起用</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">double taskProgress = (double)task.countOfBytesReceived / (double)task.countOfBytesExpectedToReceive;</span><br></pre></td></tr></table></figure>
+<h4 id="var-countOfBytesExpectedToSend-Int64-get"><a href="#var-countOfBytesExpectedToSend-Int64-get" class="headerlink" title="var countOfBytesExpectedToSend: Int64 {get}"></a>var countOfBytesExpectedToSend: Int64 {get}</h4><p>取决于三方面的长度:</p>
+<ul>
+<li>用于上传的NSData对象的长度</li>
+<li>用于磁盘上准备上船的文件的长度</li>
+<li>请求头中<code>Content-Length</code>的长度<h4 id="var-countOfBytesSent-Int64-get"><a href="#var-countOfBytesSent-Int64-get" class="headerlink" title="var countOfBytesSent: Int64 {get}"></a>var countOfBytesSent: Int64 {get}</h4>仅仅包含请求提中的字节长度, 当这个数字变化的时候, 会触发代理的<code>URLSession:task:didSendBodyData:totalBytesSent:totalBytesExpectedToSend:</code>的方法<h4 id="NSCopying-var-currentRequest-NSURLRequest-get"><a href="#NSCopying-var-currentRequest-NSURLRequest-get" class="headerlink" title="@NSCopying var currentRequest: NSURLRequest? {get}"></a>@NSCopying var currentRequest: NSURLRequest? {get}</h4>它和<code>originalRequest</code>是一样的, 除非出现了重定向<h4 id="NSCopying-var-response-NSURLResponse-get"><a href="#NSCopying-var-response-NSURLResponse-get" class="headerlink" title="@NSCopying var response: NSURLResponse? { get }"></a>@NSCopying var response: NSURLResponse? { get }</h4>包含但不仅限于如下信息:</li>
+<li>original URL</li>
+<li>expected length</li>
+<li>MIME type</li>
+<li>encoding information</li>
+<li>suggested filename<h4 id="var-taskIdentifier-Int-get"><a href="#var-taskIdentifier-Int-get" class="headerlink" title="var taskIdentifier: Int { get }"></a>var taskIdentifier: Int { get }</h4>同一个session中, 是不相同的, 不同的session中的task可能出现相同的<h4 id="NSCopying-var-error-NSError-get"><a href="#NSCopying-var-error-NSError-get" class="headerlink" title="@NSCopying var error: NSError? { get }"></a>@NSCopying var error: NSError? { get }</h4>如果task成功, 则值是NULL</li>
+</ul>
+<h2 id="NSURLSessionDownloadTask"><a href="#NSURLSessionDownloadTask" class="headerlink" title="NSURLSessionDownloadTask"></a>NSURLSessionDownloadTask</h2><h3 id="API-1"><a href="#API-1" class="headerlink" title="API"></a>API</h3><p><div id="cancelByProducingResumData"></div></p>
+<h4 id="func-cancelByProducingResumeData-completionHandler-NSData-gt-Void"><a href="#func-cancelByProducingResumeData-completionHandler-NSData-gt-Void" class="headerlink" title="func cancelByProducingResumeData(_ completionHandler: (NSData?) -&gt; Void)"></a>func cancelByProducingResumeData(_ completionHandler: (NSData?) -&gt; Void)</h4><p>当一个download被成功取消, 这个完成回调会被调用. 如果下载是可以续传的, 这个回调会得到一个resumeData对象. 你的app可以通过session的<code>downloadTaskWithResumeData:</code>或<code>downloadTaskWithResumeData:completionHandler:</code>方法去创建一个从断点续传的任务, 这个回调不保证在特定线程中执行, 所以你需要指定一个线程<br><br>如果你想要断点续传, 你需要满足以下条件</p>
+<ul>
+<li>请求源和你第一次请求的源是同一个</li>
+<li>当前task是HTTP(S)的GET方法</li>
+<li>服务端支持<code>ETag</code>或<code>Last-Modified</code></li>
+<li>服务端支持<code>byte-range</code>请求</li>
+<li>临时文件没有被系统删除</li>
+</ul>
+<h2 id="结束"><a href="#结束" class="headerlink" title="结束"></a>结束</h2><p>下一篇咱们过一下NSURLSession</p>
+<h3 id="参考文献"><a href="#参考文献" class="headerlink" title="参考文献"></a>参考文献</h3><blockquote>
+<p><a href="http://objccn.io/issue-5-4/" target="_blank" rel="noopener">http://objccn.io/issue-5-4/</a> <br><br><a href="https://gist.github.com/floriankugler/6870499" target="_blank" rel="noopener">https://gist.github.com/floriankugler/6870499</a> <br><br><a href="http://www.cnblogs.com/goodboy-heyang/p/5195806.html" target="_blank" rel="noopener">http://www.cnblogs.com/goodboy-heyang/p/5195806.html</a> <br><br><a href="http://stackoverflow.com/questions/20702558/average-progress-of-all-the-nsurlsessiontasks-in-a-nsurlsession" target="_blank" rel="noopener">http://stackoverflow.com/questions/20702558/average-progress-of-all-the-nsurlsessiontasks-in-a-nsurlsession</a></p>
+</blockquote>
+
+      
+    </div>
+
+    
+
+    
+    
+    
+
+    
+
+    
+      
+    
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/网络/" rel="tag"># 网络</a>
+          
+            <a href="/tags/NSURLSessionTask/" rel="tag"># NSURLSessionTask</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2016/05/21/CALayer做背景图片时遇到的小问题/" rel="next" title="CALayer做背景图片时遇到的小问题">
+                <i class="fa fa-chevron-left"></i> CALayer做背景图片时遇到的小问题
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2016/05/30/NSURLSession与网络框架-二-NSURLSession/" rel="prev" title="NSURLSession与网络框架(二)NSURLSession">
+                NSURLSession与网络框架(二)NSURLSession <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+  </div>
+
+
+          </div>
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            Table of Contents
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            Overview
+          </li>
+        </ul>
+      
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <p class="site-author-name" itemprop="name">Author</p>
+              <div class="site-description motion-element" itemprop="description"></div>
+          </div>
+
+          
+            <nav class="site-state motion-element">
+              
+                <div class="site-state-item site-state-posts">
+                
+                  <a href="/archives/">
+                
+                    <span class="site-state-item-count">118</span>
+                    <span class="site-state-item-name">posts</span>
+                  </a>
+                </div>
+              
+
+              
+                
+                
+                <div class="site-state-item site-state-categories">
+                  
+                    
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                    <span class="site-state-item-count">11</span>
+                    <span class="site-state-item-name">categories</span>
+                  
+                </div>
+              
+
+              
+                
+                
+                <div class="site-state-item site-state-tags">
+                  
+                    
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                    <span class="site-state-item-count">106</span>
+                    <span class="site-state-item-name">tags</span>
+                  
+                </div>
+              
+            </nav>
+          
+
+          
+
+          
+
+          
+
+          
+
+          
+          
+
+          
+            
+          
+          
+
+        </div>
+      </div>
+
+      
+      <!--noindex-->
+        <div class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+            
+            
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#前言"><span class="nav-number">1.</span> <span class="nav-text">前言</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#大纲"><span class="nav-number">2.</span> <span class="nav-text">大纲</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#NSURLSessionTask"><span class="nav-number">3.</span> <span class="nav-text">NSURLSessionTask</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#SessionTask-Hierarchy"><span class="nav-number">3.1.</span> <span class="nav-text">SessionTask Hierarchy</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#API"><span class="nav-number">3.2.</span> <span class="nav-text">API</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#brief-interduction-amp-tips"><span class="nav-number">3.2.1.</span> <span class="nav-text">brief interduction &amp; tips</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#func-cancel"><span class="nav-number">3.2.2.</span> <span class="nav-text">func cancel()</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#func-resume"><span class="nav-number">3.2.3.</span> <span class="nav-text">func resume()</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#func-suspend"><span class="nav-number">3.2.4.</span> <span class="nav-text">func suspend</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#var-state-NSURLSessionTaskState-get"><span class="nav-number">3.2.5.</span> <span class="nav-text">var state: NSURLSessionTaskState {get}</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#var-priority-Float"><span class="nav-number">3.2.6.</span> <span class="nav-text">var priority: Float</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#var-countOfBytesExpectedToReceive-Int64-get"><span class="nav-number">3.2.7.</span> <span class="nav-text">var countOfBytesExpectedToReceive: Int64 {get}</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#var-countOfBytesReceived-Int64-get"><span class="nav-number">3.2.8.</span> <span class="nav-text">var countOfBytesReceived: Int64 {get}</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#var-countOfBytesExpectedToSend-Int64-get"><span class="nav-number">3.2.9.</span> <span class="nav-text">var countOfBytesExpectedToSend: Int64 {get}</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#var-countOfBytesSent-Int64-get"><span class="nav-number">3.2.10.</span> <span class="nav-text">var countOfBytesSent: Int64 {get}</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#NSCopying-var-currentRequest-NSURLRequest-get"><span class="nav-number">3.2.11.</span> <span class="nav-text">@NSCopying var currentRequest: NSURLRequest? {get}</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#NSCopying-var-response-NSURLResponse-get"><span class="nav-number">3.2.12.</span> <span class="nav-text">@NSCopying var response: NSURLResponse? { get }</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#var-taskIdentifier-Int-get"><span class="nav-number">3.2.13.</span> <span class="nav-text">var taskIdentifier: Int { get }</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#NSCopying-var-error-NSError-get"><span class="nav-number">3.2.14.</span> <span class="nav-text">@NSCopying var error: NSError? { get }</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#NSURLSessionDownloadTask"><span class="nav-number">4.</span> <span class="nav-text">NSURLSessionDownloadTask</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#API-1"><span class="nav-number">4.1.</span> <span class="nav-text">API</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#func-cancelByProducingResumeData-completionHandler-NSData-gt-Void"><span class="nav-number">4.1.1.</span> <span class="nav-text">func cancelByProducingResumeData(_ completionHandler: (NSData?) -&gt; Void)</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#结束"><span class="nav-number">5.</span> <span class="nav-text">结束</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#参考文献"><span class="nav-number">5.1.</span> <span class="nav-text">参考文献</span></a></li></ol></li></ol></div>
+            
+
+          </div>
+        </div>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+  
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2020</span>
+  <span class="with-love" id="animate">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Author</span>
+
+  
+
+  
+</div>
+
+
+  <div class="powered-by">Powered by <a href="https://hexo.io" class="theme-link" rel="noopener" target="_blank">Hexo</a> v3.9.0</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">Theme – <a href="https://theme-next.org" class="theme-link" rel="noopener" target="_blank">NexT.Muse</a> v7.1.0</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+    
+
+    
+  </div>
+
+  
+
+<script>
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  <script src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+
+  
+
+
+  <script src="/js/utils.js?v=7.1.0"></script>
+
+  <script src="/js/motion.js?v=7.1.0"></script>
+
+
+
+  
+  
+
+
+  <script src="/js/schemes/muse.js?v=7.1.0"></script>
+
+
+
+  
+  <script src="/js/scrollspy.js?v=7.1.0"></script>
+<script src="/js/post-details.js?v=7.1.0"></script>
+
+
+
+  
+
+
+  <script src="/js/next-boot.js?v=7.1.0"></script>
+
+
+  
+
+  
+
+  
+
+  
+
+
+  
+
+
+  
+
+
+
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

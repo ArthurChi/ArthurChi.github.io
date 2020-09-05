@@ -1,0 +1,1047 @@
+<!DOCTYPE html>
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+<html class="theme-next muse use-motion" lang="zh-Hans">
+<head><meta name="generator" content="Hexo 3.9.0">
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2">
+
+<link rel="stylesheet" href="/css/main.css?v=7.1.0">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=7.1.0">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=7.1.0">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=7.1.0">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=7.1.0" color="#222">
+
+
+
+
+
+
+
+<script id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Muse',
+    version: '7.1.0',
+    sidebar: {"position":"left","display":"post","offset":12,"onmobile":false,"dimmer":false},
+    back2top: true,
+    back2top_sidebar: false,
+    fancybox: false,
+    fastclick: false,
+    lazyload: false,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+  
+
+
+
+
+  <meta name="description" content="前言最近在学习Android, 从网上视频看到一个文件续传的demo, 于是撸了一下, 效果不是很理想, 总是下载到一点点的时候就断掉了. 不知道是不是服务器搭建的有问题, 于是换了OKHTTP可以顺利下载了, 于是想实现一下iOS的断点续传, 接下来的几篇文章, 会记录包括Server端的搭建, iOS和Android端实现的过程, 以及这过程中遇到的坑, 记录并分享.">
+<meta name="keywords" content="PHP,Apache">
+<meta property="og:type" content="article">
+<meta property="og:title" content="断点续传-环境搭建">
+<meta property="og:url" content="http://yoursite.com/2016/10/30/断点续传-环境搭建/index.html">
+<meta property="og:site_name" content="ArthurChi&#39;s Blog">
+<meta property="og:description" content="前言最近在学习Android, 从网上视频看到一个文件续传的demo, 于是撸了一下, 效果不是很理想, 总是下载到一点点的时候就断掉了. 不知道是不是服务器搭建的有问题, 于是换了OKHTTP可以顺利下载了, 于是想实现一下iOS的断点续传, 接下来的几篇文章, 会记录包括Server端的搭建, iOS和Android端实现的过程, 以及这过程中遇到的坑, 记录并分享.">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:image" content="http://7xpsbt.com1.z0.glb.clouddn.com/Apache.png">
+<meta property="og:updated_time" content="2016-11-11T06:54:22.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="断点续传-环境搭建">
+<meta name="twitter:description" content="前言最近在学习Android, 从网上视频看到一个文件续传的demo, 于是撸了一下, 效果不是很理想, 总是下载到一点点的时候就断掉了. 不知道是不是服务器搭建的有问题, 于是换了OKHTTP可以顺利下载了, 于是想实现一下iOS的断点续传, 接下来的几篇文章, 会记录包括Server端的搭建, iOS和Android端实现的过程, 以及这过程中遇到的坑, 记录并分享.">
+<meta name="twitter:image" content="http://7xpsbt.com1.z0.glb.clouddn.com/Apache.png">
+
+
+
+
+
+  
+  
+  <link rel="canonical" href="http://yoursite.com/2016/10/30/断点续传-环境搭建/">
+
+
+
+<script id="page.configurations">
+  CONFIG.page = {
+    sidebar: "",
+  };
+</script>
+
+  <title>断点续传-环境搭建 | ArthurChi's Blog</title>
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .motion-element,
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-title { opacity: initial; }
+
+  .use-motion .logo,
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">ArthurChi's Blog</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+    
+      
+        <p class="site-subtitle">Yesterday you said tomorrow</p>
+      
+    
+    
+  </div>
+
+  <div class="site-nav-toggle">
+    <button aria-label="Toggle navigation bar">
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  
+    <ul id="menu" class="menu">
+      
+        
+        
+        
+          
+          <li class="menu-item menu-item-home">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/" rel="section"><i class="menu-item-icon fa fa-fw fa-home"></i> <br>Home</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-archives">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/archives/" rel="section"><i class="menu-item-icon fa fa-fw fa-archive"></i> <br>Archives</a>
+
+  </li>
+
+      
+      
+    </ul>
+  
+
+  
+    
+
+  
+
+  
+</nav>
+
+
+
+  
+
+
+
+</div>
+    </header>
+
+    
+
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2016/10/30/断点续传-环境搭建/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Author">
+      <meta itemprop="description" content>
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="ArthurChi's Blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">断点续传-环境搭建
+
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+
+            
+            
+            
+
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Posted on</span>
+              
+
+              
+                
+              
+
+              <time title="Created: 2016-10-30 19:40:22" itemprop="dateCreated datePublished" datetime="2016-10-30T19:40:22+08:00">2016-10-30</time>
+            
+
+            
+              
+
+              
+                
+                <span class="post-meta-divider">|</span>
+                
+
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">Edited on</span>
+                
+                <time title="Modified: 2016-11-11 14:54:22" itemprop="dateModified" datetime="2016-11-11T14:54:22+08:00">2016-11-11</time>
+              
+            
+          </span>
+
+          
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">In</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/环境搭建/" itemprop="url" rel="index"><span itemprop="name">环境搭建</span></a></span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h1 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h1><p>最近在学习Android, 从网上视频看到一个文件续传的demo, 于是撸了一下, 效果不是很理想, 总是下载到一点点的时候就断掉了. 不知道是不是服务器搭建的有问题, 于是换了OKHTTP可以顺利下载了, 于是想实现一下iOS的断点续传, 接下来的几篇文章, 会记录包括Server端的搭建, iOS和Android端实现的过程, 以及这过程中遇到的坑, 记录并分享.<br><a id="more"></a></p>
+<h1 id="环境"><a href="#环境" class="headerlink" title="环境"></a>环境</h1><p>笔者所用环境和开发语言如下:</p>
+<ul>
+<li>PHP(人家说PHP是最好的语言)</li>
+<li>OS - MAC</li>
+<li>Server - Apache<h1 id="配置过程"><a href="#配置过程" class="headerlink" title="配置过程"></a>配置过程</h1>注: 这里所记录的是笔者印象比较深刻的, 因为周末两天战线拉的太长, 有些细枝末节的可能会有疏漏, 不过都可以google出来.<h2 id="Apache"><a href="#Apache" class="headerlink" title="Apache"></a>Apache</h2></li>
+<li>首先切到apache配置目录下<code>cd /etc/apache2/</code></li>
+<li>找到<code>#ServerName www.example.com:80</code>, 然后回车, 输入<code>ServerName localhost:80</code></li>
+<li>找到<code>LoadModule php5_module libexec/apache2/libphp5.so</code>这段话, 把前面的#符号去掉, 为了是让Apache可以支持PHP</li>
+<li>接下来, 你需要确定一下, 你资源文件的路径<code>DocumentRoot</code>, 这里我的是<code>/Library/WebServer/Documents</code></li>
+<li>接下来找到<code>Options FollowSymLinks</code>这里, 确定是<code>Options FollowSymLinks Multiviews</code></li>
+<li>找到紧邻的会有<code>AllowOverride</code> 后面应该跟着是none之类的单词, 不管, 改成<code>AllowOverride All</code>, 这里是为了支持ETag, 而这个允许复写是为了稍后我们会在一个我们自定义的资源文件夹下写一个配置文件, 而允许这个配置文件对当前路径单独生效. 至于ETag是什么, 你可以理解为服务端为了提高效率, 采取的一种缓存机制.<br><br>这里如图:<br><br><img src="http://7xpsbt.com1.z0.glb.clouddn.com/Apache.png" alt></li>
+</ul>
+<h2 id="资源目录"><a href="#资源目录" class="headerlink" title="资源目录"></a>资源目录</h2><p>这里我们配置了资源目录是<code>/Library/WebServer/Documents</code>, 那么就切到这个目录下.</p>
+<ul>
+<li>建立一个文件夹(tip: 简短一点)</li>
+<li>进入你新建的这个文件夹</li>
+<li>新建一个index.php, 新建一个FileDownload.class.php, 新建一个docs文件夹, 当然, 名字你随便起, 但是我们这个是为了做客户端的项目, 无需在这些上面转移注意力, 勿忘初心.</li>
+<li>index.php和FileDownload.class.php在下面我会贴出来</li>
+<li>现在进入docs文件夹, 把你提供下载的资源拖进来, 然后, 需要建立一个名为<code>.htaccess</code>, 注意, 这货没名字, 只有后缀名, 如果你搞不定, 可以进入命令行, cd空格, 然后把docs这个文件路径拖进来, 回车, 然后 <code>touch .htaccess</code>, 回车. 然后这个文件里面写一句话<code>FileETag MTime Size</code> 就可以了. 下面是两个PHP的代码, 当然, 这里要声明, 笔者并不会什么PHP, 这里要说明<a href="http://www.jb51.net/article/55523.htm" target="_blank" rel="noopener">代码的出处</a>, 但是我有一些改动, 为了支持iOS的获取resumeData的操作, 所以, 我建议你直接复制我的, 没必要走一遍弯路.</li>
+</ul>
+<h3 id="FileDownload-class-php"><a href="#FileDownload-class-php" class="headerlink" title="FileDownload.class.php"></a>FileDownload.class.php</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br></pre></td><td class="code"><pre><span class="line">&lt;?php </span><br><span class="line">/** php下载类,支持断点续传 </span><br><span class="line">*  Date:  2013-06-30 </span><br><span class="line">*  Author: test </span><br><span class="line">*  Ver:  1.0 </span><br><span class="line">* </span><br><span class="line">*  Func: </span><br><span class="line">*  download: 下载文件 </span><br><span class="line">*  setSpeed: 设置下载速度 </span><br><span class="line">*  getRange: 获取header中Range </span><br><span class="line">*/</span><br><span class="line">  </span><br><span class="line">class FileDownload&#123; // class start </span><br><span class="line">  </span><br><span class="line">  private $_speed = 512;  // 下载速度 </span><br><span class="line">  </span><br><span class="line">  /** 下载 </span><br><span class="line">  * @param String $file  要下载的文件路径 </span><br><span class="line">  * @param String $name  文件名称,为空则与下载的文件名称一样 </span><br><span class="line">  * @param boolean $reload 是否开启断点续传 </span><br><span class="line">  */</span><br><span class="line">  public function download($file, $name=&apos;&apos;, $reload=false)&#123; </span><br><span class="line">    if(file_exists($file))&#123; </span><br><span class="line">      if($name==&apos;&apos;)&#123; </span><br><span class="line">        $name = basename($file); </span><br><span class="line">      &#125; </span><br><span class="line">  </span><br><span class="line">      $fp = fopen($file, &apos;rb&apos;); </span><br><span class="line">      $file_size = filesize($file); </span><br><span class="line">      $ranges = $this-&gt;getRange($file_size); </span><br><span class="line">  </span><br><span class="line">      header(&apos;cache-control:public&apos;); </span><br><span class="line">      header(&apos;content-type:application/octet-stream&apos;); </span><br><span class="line">      header(&apos;content-disposition:attachment; filename=&apos;.$name); </span><br><span class="line">      header(&quot;Etag: &quot;.sprintf(&apos;&quot;%x-%x-%s&quot;&apos;, $fp[&apos;ino&apos;], $fp[&apos;size&apos;],base_convert(str_pad($fp[&apos;mtime&apos;],16,&quot;0&quot;),10,16)));</span><br><span class="line">  </span><br><span class="line">      if($reload &amp;&amp; $ranges!=null)&#123; // 使用续传 </span><br><span class="line">        header(&apos;HTTP/1.1 206 Partial Content&apos;); </span><br><span class="line">        header(&apos;Accept-Ranges:bytes&apos;); </span><br><span class="line">          </span><br><span class="line">        // 剩余长度 </span><br><span class="line">        header(sprintf(&apos;content-length:%u&apos;,$ranges[&apos;end&apos;]-$ranges[&apos;start&apos;])); </span><br><span class="line">          </span><br><span class="line">        // range信息 </span><br><span class="line">        header(sprintf(&apos;content-range:bytes %s-%s/%s&apos;, $ranges[&apos;start&apos;], $ranges[&apos;end&apos;], $file_size)); </span><br><span class="line">          </span><br><span class="line">        // fp指针跳到断点位置 </span><br><span class="line">        fseek($fp, sprintf(&apos;%u&apos;, $ranges[&apos;start&apos;])); </span><br><span class="line">      &#125;else&#123; </span><br><span class="line">        header(&apos;HTTP/1.1 200 OK&apos;); </span><br><span class="line">        header(&apos;content-length:&apos;.$file_size); </span><br><span class="line">      &#125; </span><br><span class="line">  </span><br><span class="line">      while(!feof($fp))&#123; </span><br><span class="line">        echo fread($fp, round($this-&gt;_speed*1024,0)); </span><br><span class="line">        ob_flush(); </span><br><span class="line">        sleep(2);</span><br><span class="line">        //sleep(1); // 用于测试,减慢下载速度 </span><br><span class="line">      &#125; </span><br><span class="line">  </span><br><span class="line">      ($fp!=null) &amp;&amp; fclose($fp); </span><br><span class="line">  </span><br><span class="line">    &#125;else&#123; </span><br><span class="line">      return &apos;&apos;; </span><br><span class="line">    &#125; </span><br><span class="line">  &#125; </span><br><span class="line">  </span><br><span class="line">  /** 设置下载速度 </span><br><span class="line">  * @param int $speed </span><br><span class="line">  */</span><br><span class="line">  public function setSpeed($speed)&#123; </span><br><span class="line">    if(is_numeric($speed) &amp;&amp; $speed&gt;16 &amp;&amp; $speed&lt;4096)&#123; </span><br><span class="line">      $this-&gt;_speed = $speed; </span><br><span class="line">    &#125; </span><br><span class="line">  &#125; </span><br><span class="line">  </span><br><span class="line">  /** 获取header range信息 </span><br><span class="line">  * @param int  $file_size 文件大小 </span><br><span class="line">  * @return Array </span><br><span class="line">  */</span><br><span class="line">  private function getRange($file_size)&#123; </span><br><span class="line">    if(isset($_SERVER[&apos;HTTP_RANGE&apos;]) &amp;&amp; !empty($_SERVER[&apos;HTTP_RANGE&apos;]))&#123; </span><br><span class="line">      $range = $_SERVER[&apos;HTTP_RANGE&apos;]; </span><br><span class="line">      $range = preg_replace(&apos;/[\s|,].*/&apos;, &apos;&apos;, $range); </span><br><span class="line">      $range = explode(&apos;-&apos;, substr($range, 6)); </span><br><span class="line">      if(count($range)&lt;2)&#123; </span><br><span class="line">        $range[1] = $file_size; </span><br><span class="line">      &#125; </span><br><span class="line">      $range = array_combine(array(&apos;start&apos;,&apos;end&apos;), $range); </span><br><span class="line">      if(empty($range[&apos;start&apos;]))&#123; </span><br><span class="line">        $range[&apos;start&apos;] = 0; </span><br><span class="line">      &#125; </span><br><span class="line">      if(empty($range[&apos;end&apos;]))&#123; </span><br><span class="line">        $range[&apos;end&apos;] = $file_size; </span><br><span class="line">      &#125; </span><br><span class="line">      return $range; </span><br><span class="line">    &#125; </span><br><span class="line">    return null; </span><br><span class="line">  &#125; </span><br><span class="line">&#125; // class end </span><br><span class="line">  </span><br><span class="line">?&gt;</span><br></pre></td></tr></table></figure>
+<h3 id="index-php"><a href="#index-php" class="headerlink" title="index.php"></a>index.php</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">&lt;?php </span><br><span class="line">require(&apos;FileDownload.class.php&apos;); </span><br><span class="line">$file = &apos;docs/Unity_Games_by_Tutorials_v0.1.rar&apos;; </span><br><span class="line">$name = time().&apos;.zip&apos;; </span><br><span class="line">$obj = new FileDownload(); </span><br><span class="line">// $flag = $obj-&gt;download($file, $name); </span><br><span class="line">$flag = $obj-&gt;download($file, $name, true); // 断点续传 </span><br><span class="line">  </span><br><span class="line">if(!$flag)&#123; </span><br><span class="line">  echo &apos;file not exists&apos;; </span><br><span class="line">&#125; </span><br><span class="line">?&gt;</span><br></pre></td></tr></table></figure>
+<p>这里的<code>$file = &#39;docs/Unity_Games_by_Tutorials_v0.1.rar&#39;;</code>是我放到刚才建立的docs目录下的资源文件, 也就是要下载的文件. 当然你可以随便放点什么电影什么的, 练习电影播放, 都可以. 你高兴就好.</p>
+<h1 id="结束"><a href="#结束" class="headerlink" title="结束"></a>结束</h1><p>至此, 环境搭建完毕, 使用命令行 <code>sudo apachectl -k start</code>启动你的服务. 然后, 通过你的IP地址加上你Documents目录下的名字, 就可以访问了, 比如, 我气的名字叫<code>DownloadFile</code>, 那就在浏览器里输入<code>http://127.0.0.1/DownloadFile</code>就可以了, 不过这里我要提醒一下的是, 这里会有一个304(重定向), 如果不想要, 就<code>http://127.0.0.1/DownloadFile/iindex.php</code> 如果有什么疑问, 可以留言.</p>
+<h1 id="Reference"><a href="#Reference" class="headerlink" title="Reference"></a>Reference</h1><blockquote>
+<p><a href="http://stackoverflow.com/questions/36257103/nsurlsession-cant-get-resume-data-after-calling-cancelbyproducingresumedata/36964393" target="_blank" rel="noopener">http://stackoverflow.com/questions/36257103/nsurlsession-cant-get-resume-data-after-calling-cancelbyproducingresumedata/36964393</a><br><a href="http://www.yudouyudou.com/jiaochengheji/wangzhanjianshe/262.html" target="_blank" rel="noopener">http://www.yudouyudou.com/jiaochengheji/wangzhanjianshe/262.html</a><br><a href="https://www.zybuluo.com/phper/note/73726" target="_blank" rel="noopener">https://www.zybuluo.com/phper/note/73726</a><br><a href="http://blog.csdn.net/kikikind/article/details/6266101" target="_blank" rel="noopener">http://blog.csdn.net/kikikind/article/details/6266101</a><br><a href="http://stackoverflow.com/questions/44937/how-do-you-make-an-etag-that-matches-apache" target="_blank" rel="noopener">http://stackoverflow.com/questions/44937/how-do-you-make-an-etag-that-matches-apache</a></p>
+</blockquote>
+
+      
+    </div>
+
+    
+
+    
+    
+    
+
+    
+
+    
+      
+    
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/PHP/" rel="tag"># PHP</a>
+          
+            <a href="/tags/Apache/" rel="tag"># Apache</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2016/10/26/swift升级小记/" rel="next" title="swift升级小记">
+                <i class="fa fa-chevron-left"></i> swift升级小记
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2016/11/11/本周Android学习收获/" rel="prev" title="本周Android学习收获">
+                本周Android学习收获 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+  </div>
+
+
+          </div>
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            Table of Contents
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            Overview
+          </li>
+        </ul>
+      
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <p class="site-author-name" itemprop="name">Author</p>
+              <div class="site-description motion-element" itemprop="description"></div>
+          </div>
+
+          
+            <nav class="site-state motion-element">
+              
+                <div class="site-state-item site-state-posts">
+                
+                  <a href="/archives/">
+                
+                    <span class="site-state-item-count">118</span>
+                    <span class="site-state-item-name">posts</span>
+                  </a>
+                </div>
+              
+
+              
+                
+                
+                <div class="site-state-item site-state-categories">
+                  
+                    
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                    <span class="site-state-item-count">11</span>
+                    <span class="site-state-item-name">categories</span>
+                  
+                </div>
+              
+
+              
+                
+                
+                <div class="site-state-item site-state-tags">
+                  
+                    
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                    <span class="site-state-item-count">106</span>
+                    <span class="site-state-item-name">tags</span>
+                  
+                </div>
+              
+            </nav>
+          
+
+          
+
+          
+
+          
+
+          
+
+          
+          
+
+          
+            
+          
+          
+
+        </div>
+      </div>
+
+      
+      <!--noindex-->
+        <div class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+            
+            
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#前言"><span class="nav-number">1.</span> <span class="nav-text">前言</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#环境"><span class="nav-number">2.</span> <span class="nav-text">环境</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#配置过程"><span class="nav-number">3.</span> <span class="nav-text">配置过程</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#Apache"><span class="nav-number">3.1.</span> <span class="nav-text">Apache</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#资源目录"><span class="nav-number">3.2.</span> <span class="nav-text">资源目录</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#FileDownload-class-php"><span class="nav-number">3.2.1.</span> <span class="nav-text">FileDownload.class.php</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#index-php"><span class="nav-number">3.2.2.</span> <span class="nav-text">index.php</span></a></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#结束"><span class="nav-number">4.</span> <span class="nav-text">结束</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Reference"><span class="nav-number">5.</span> <span class="nav-text">Reference</span></a></li></ol></div>
+            
+
+          </div>
+        </div>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+  
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2020</span>
+  <span class="with-love" id="animate">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Author</span>
+
+  
+
+  
+</div>
+
+
+  <div class="powered-by">Powered by <a href="https://hexo.io" class="theme-link" rel="noopener" target="_blank">Hexo</a> v3.9.0</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">Theme – <a href="https://theme-next.org" class="theme-link" rel="noopener" target="_blank">NexT.Muse</a> v7.1.0</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+    
+
+    
+  </div>
+
+  
+
+<script>
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  <script src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+
+  
+
+
+  <script src="/js/utils.js?v=7.1.0"></script>
+
+  <script src="/js/motion.js?v=7.1.0"></script>
+
+
+
+  
+  
+
+
+  <script src="/js/schemes/muse.js?v=7.1.0"></script>
+
+
+
+  
+  <script src="/js/scrollspy.js?v=7.1.0"></script>
+<script src="/js/post-details.js?v=7.1.0"></script>
+
+
+
+  
+
+
+  <script src="/js/next-boot.js?v=7.1.0"></script>
+
+
+  
+
+  
+
+  
+
+  
+
+
+  
+
+
+  
+
+
+
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

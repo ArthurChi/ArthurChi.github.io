@@ -1,0 +1,1041 @@
+<!DOCTYPE html>
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+<html class="theme-next muse use-motion" lang="zh-Hans">
+<head><meta name="generator" content="Hexo 3.9.0">
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2">
+
+<link rel="stylesheet" href="/css/main.css?v=7.1.0">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=7.1.0">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=7.1.0">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=7.1.0">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=7.1.0" color="#222">
+
+
+
+
+
+
+
+<script id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Muse',
+    version: '7.1.0',
+    sidebar: {"position":"left","display":"post","offset":12,"onmobile":false,"dimmer":false},
+    back2top: true,
+    back2top_sidebar: false,
+    fancybox: false,
+    fastclick: false,
+    lazyload: false,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+  
+
+
+
+
+  <meta name="description" content="前言加班终于告一段落了, 可以继续研究YYKit啦, 好开心. 看了一下YYKit提供的demo, 决定先看看Text Binding和异步绘制以及检测FPS的方法, 这一片记录Text Binding">
+<meta name="keywords" content="YYText">
+<meta property="og:type" content="article">
+<meta property="og:title" content="YYText学习之Text Binding">
+<meta property="og:url" content="http://yoursite.com/2016/09/09/YYText学习之Text-Binding/index.html">
+<meta property="og:site_name" content="ArthurChi&#39;s Blog">
+<meta property="og:description" content="前言加班终于告一段落了, 可以继续研究YYKit啦, 好开心. 看了一下YYKit提供的demo, 决定先看看Text Binding和异步绘制以及检测FPS的方法, 这一片记录Text Binding">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:updated_time" content="2016-09-23T07:34:42.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="YYText学习之Text Binding">
+<meta name="twitter:description" content="前言加班终于告一段落了, 可以继续研究YYKit啦, 好开心. 看了一下YYKit提供的demo, 决定先看看Text Binding和异步绘制以及检测FPS的方法, 这一片记录Text Binding">
+
+
+
+
+
+  
+  
+  <link rel="canonical" href="http://yoursite.com/2016/09/09/YYText学习之Text-Binding/">
+
+
+
+<script id="page.configurations">
+  CONFIG.page = {
+    sidebar: "",
+  };
+</script>
+
+  <title>YYText学习之Text Binding | ArthurChi's Blog</title>
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .motion-element,
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-title { opacity: initial; }
+
+  .use-motion .logo,
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">ArthurChi's Blog</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+    
+      
+        <p class="site-subtitle">Yesterday you said tomorrow</p>
+      
+    
+    
+  </div>
+
+  <div class="site-nav-toggle">
+    <button aria-label="Toggle navigation bar">
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  
+    <ul id="menu" class="menu">
+      
+        
+        
+        
+          
+          <li class="menu-item menu-item-home">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/" rel="section"><i class="menu-item-icon fa fa-fw fa-home"></i> <br>Home</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-archives">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/archives/" rel="section"><i class="menu-item-icon fa fa-fw fa-archive"></i> <br>Archives</a>
+
+  </li>
+
+      
+      
+    </ul>
+  
+
+  
+    
+
+  
+
+  
+</nav>
+
+
+
+  
+
+
+
+</div>
+    </header>
+
+    
+
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2016/09/09/YYText学习之Text-Binding/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Author">
+      <meta itemprop="description" content>
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="ArthurChi's Blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">YYText学习之Text Binding
+
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+
+            
+            
+            
+
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Posted on</span>
+              
+
+              
+                
+              
+
+              <time title="Created: 2016-09-09 16:14:24" itemprop="dateCreated datePublished" datetime="2016-09-09T16:14:24+08:00">2016-09-09</time>
+            
+
+            
+              
+
+              
+                
+                <span class="post-meta-divider">|</span>
+                
+
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">Edited on</span>
+                
+                <time title="Modified: 2016-09-23 15:34:42" itemprop="dateModified" datetime="2016-09-23T15:34:42+08:00">2016-09-23</time>
+              
+            
+          </span>
+
+          
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">In</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/iOS/" itemprop="url" rel="index"><span itemprop="name">iOS</span></a></span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><p>加班终于告一段落了, 可以继续研究YYKit啦, 好开心. 看了一下YYKit提供的demo, 决定先看看Text Binding和异步绘制以及检测FPS的方法, 这一片记录Text Binding<br><a id="more"></a></p>
+<h2 id="开始"><a href="#开始" class="headerlink" title="开始"></a>开始</h2><p>通过<a href="http://sun-fox-cj.github.io/2016/08/27/%E9%80%9A%E8%BF%87%E5%8F%AF%E7%82%B9%E5%87%BB%E6%96%87%E5%AD%97%E7%9C%8BCoreText/" target="_blank" rel="noopener">上一篇</a>的学习, 我们知道, YYText的思路是通过扩展AttributeString的属性来扩展功能的, 那么, 这次我们有的放矢, 直接可以看Binding对AttributeString做了怎样的扩展.</p>
+<h3 id="YYTextBindingExample"><a href="#YYTextBindingExample" class="headerlink" title="YYTextBindingExample"></a>YYTextBindingExample</h3><p>来到YYTextBindingExample.m, 看到如下代码</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">NSMutableAttributedString *text = [[NSMutableAttributedString alloc] 	initWithString:@&quot;sjobs@apple.com, apple@apple.com, banana@banana.com, 	pear@pear.com &quot;];</span><br><span class="line">   text.font = [UIFont systemFontOfSize:17];</span><br><span class="line">   text.lineSpacing = 5;</span><br><span class="line">   text.color = [UIColor blackColor];</span><br><span class="line">   </span><br><span class="line">   YYTextView *textView = [YYTextView new];</span><br><span class="line">   textView.attributedText = text;</span><br><span class="line">   textView.textParser = [YYTextExampleEmailBindingParser new];</span><br><span class="line">   textView.size = self.view.size;</span><br><span class="line">   textView.textContainerInset = UIEdgeInsetsMake(10, 10, 10, 10);</span><br><span class="line">   textView.delegate = self;</span><br><span class="line">   if (kiOS7Later) &#123;</span><br><span class="line">       textView.keyboardDismissMode = UIScrollViewKeyboardDismissModeInteractive;</span><br><span class="line">   &#125;</span><br></pre></td></tr></table></figure>
+<p>这里初始化了一个YYTextView, 然后给她的textParser设置了一个YYTextExampleEmailBindingParser, 而这个YYTextExampleEmailBindingParser的作用是根据正则来判断字符串是否符合标准, 然后对符合标准的, 进行属性添加, 接下来我们看看添加的属性的Value</p>
+<h3 id="YYTextBinding"><a href="#YYTextBinding" class="headerlink" title="YYTextBinding"></a>YYTextBinding</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">@interface YYTextBinding : NSObject &lt;NSCoding, NSCopying&gt;</span><br><span class="line">+ (instancetype)bindingWithDeleteConfirm:(BOOL)deleteConfirm;</span><br><span class="line">@property (nonatomic, assign) BOOL deleteConfirm; ///&lt; confirm the range when delete in YYTextView</span><br><span class="line">@end</span><br></pre></td></tr></table></figure>
+<p>这里我们看到, 一个是初始化方法, 一个确认删除的标记位, 我们通过描述可以看到, 这个值和YYTextBindingAttributeName这个KEY配合使用的, 接下来我们全局搜索一下YYTextBindingAttributeName. 这里会出来很多, 我们定位到YYTextView里面</p>
+<h3 id="deleteBackward"><a href="#deleteBackward" class="headerlink" title="deleteBackward"></a>deleteBackward</h3><p>这个方法是UITextInput协议中的方法. 我们的继续看看这里的实现, 这里我们先实现一个小目标, 比如先用ScrollView做一个TextView出来, 哈哈哈, 说笑了, 我们先模仿一个功能, 就是删除的时候, 高亮选择一定范围内的文字, 然后再进行删除. YY的作者还是很NB的, 直接使用ScrollView实现了了一个TextView. 因为我们研究的重点在于文字绑定, 所以我就直接继承自UITextView了, 并为文字绑定了TextBindingAttributeName属性</p>
+<h3 id="模仿思路"><a href="#模仿思路" class="headerlink" title="模仿思路"></a>模仿思路</h3><p>我模仿的思路是这样的:</p>
+<ol>
+<li>override deleteBackword方法</li>
+<li>根据光标的位置查找当前位置的attribute string中的属性字典查找TextBindingAttributeName对应的对象</li>
+<li>然后得到最长的属性文字长度(因为有可能光标在属性文字的中央)</li>
+<li>定义一个标志位, 然后在删除的时候, 先将标志位更改, 然后对range内的文字的背景色进行修改, 然后再进来, 将range内的文字用空字符串进行替换, 并将标志位还原. 下面是比较粗糙的代码</li>
+</ol>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line">override func deleteBackward() &#123;</span><br><span class="line">        </span><br><span class="line">        var effectiveRange = NSRange.init()//: NSRangePointer = nil</span><br><span class="line">        let binding = self.attributedText.attribute(TextBindingAttributeName, atIndex: selectedRange.location - 1, longestEffectiveRange: &amp;effectiveRange, inRange: NSRange.init(location: 0, length: self.attributedText.string.lengthOfBytesUsingEncoding(NSUTF8StringEncoding)))</span><br><span class="line">        </span><br><span class="line">        if binding == nil &#123;</span><br><span class="line">            super.deleteBackward()</span><br><span class="line">        &#125; else &#123;</span><br><span class="line">            let attrbuteString = self.attributedText.mutableCopy() as! NSMutableAttributedString</span><br><span class="line">            preSelecteRanget = selectedRange</span><br><span class="line">            </span><br><span class="line">            if !self.delConform &#123;</span><br><span class="line">                self.delConform = true</span><br><span class="line">                </span><br><span class="line">                attrbuteString.addAttributes([NSBackgroundColorAttributeName: UIColor.blueColor()], range: effectiveRange)</span><br><span class="line">                </span><br><span class="line">            &#125; else &#123;</span><br><span class="line">                </span><br><span class="line">                self.delConform = false</span><br><span class="line">                attrbuteString.replaceCharactersInRange(effectiveRange, withString: &quot;&quot;)</span><br><span class="line">                </span><br><span class="line">                preSelecteRanget = effectiveRange</span><br><span class="line">                preSelecteRanget.length = 0</span><br><span class="line">            &#125;</span><br><span class="line">            </span><br><span class="line">            self.attributedText = attrbuteString</span><br><span class="line">            self.selectedRange = preSelecteRanget</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+<p>这里需要注意的是光标的位置, 如果看YYText是如何写的, 他是完全通过scrollView实现了一个TextView, 当然, 我们的目的是探索如何实现BindingText, 先把注意力集中到这上面来.<br><br>那么, 我们下一步的工作就变成了, 如何为符合规范的文字设置Attribute.</p>
+<h3 id="为符合条件的字符串添加属性"><a href="#为符合条件的字符串添加属性" class="headerlink" title="为符合条件的字符串添加属性"></a>为符合条件的字符串添加属性</h3><p>这里我们有一个正则表达式, 这个就要看项目的需求了, 然后使用使用正则遍历匹配整个内容, 然后为符合条件的内容添加对应的属性. 但是有几点需要注意的:</p>
+<ol>
+<li>由于需要遍历整个内容去匹配正则, 所以在添加属性之前, 需要先将对应的属性移除.</li>
+<li>要判断是否有匹配的内容, 注意判空</li>
+<li>对于字符的变化要进行注册监听</li>
+</ol>
+<h3 id="insertText"><a href="#insertText" class="headerlink" title="insertText(_:)"></a>insertText(_:)</h3><p>接下来, 我们简单的模仿一下textView的写入功能, 当然这个方法是textView已经实现好了的, 也就是说, 我们override insertText(_:), 但是不使用super的方法而实现了功能就说明我们搞定了.</p>
+<h4 id="let’s-begin"><a href="#let’s-begin" class="headerlink" title="let’s begin"></a>let’s begin</h4><p>思路:<br>使用repleaceRange(<em>:with:)对对应范围的字符串进行替换<br><br>其实这个并没有很难, 关键是这里要引入两个概念: UITextRange, UITextPosition, 这两个对象很简单, 没什么可讲的属性, 但是得到实例化对象的过程还是有点小曲折的.<br><br>在这里有两个属性来获取到position, 一个是: <code>beginningOfDocument</code>, <code>endOfDocument</code>, 如果想要获得其他点, 那么就只能通过这两个点进行计算, 比如有一个方法, 可以通过其中一个position然后和offset进行联合, 得到某一个position. 得到position然后就可以得到 UITextRange实例对象了, 进一步才能使用repleaceRange(</em>:with:), 因为这个方法的第一个参数类型是UITextRange</p>
+<h2 id="结束"><a href="#结束" class="headerlink" title="结束"></a>结束</h2><p>代码放在<a href="https://github.com/sun-fox-cj/CoreTextpractise.git" target="_blank" rel="noopener">git上了</a></p>
+
+      
+    </div>
+
+    
+
+    
+    
+    
+
+    
+
+    
+      
+    
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/YYText/" rel="tag"># YYText</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2016/09/05/iOS开发过程中遇到的cookie的一些操作/" rel="next" title="iOS开发过程中遇到的cookie的一些操作">
+                <i class="fa fa-chevron-left"></i> iOS开发过程中遇到的cookie的一些操作
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2016/09/12/CATextLayer遮罩与动画/" rel="prev" title="CATextLayer遮罩与动画">
+                CATextLayer遮罩与动画 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+  </div>
+
+
+          </div>
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            Table of Contents
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            Overview
+          </li>
+        </ul>
+      
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <p class="site-author-name" itemprop="name">Author</p>
+              <div class="site-description motion-element" itemprop="description"></div>
+          </div>
+
+          
+            <nav class="site-state motion-element">
+              
+                <div class="site-state-item site-state-posts">
+                
+                  <a href="/archives/">
+                
+                    <span class="site-state-item-count">118</span>
+                    <span class="site-state-item-name">posts</span>
+                  </a>
+                </div>
+              
+
+              
+                
+                
+                <div class="site-state-item site-state-categories">
+                  
+                    
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                    <span class="site-state-item-count">11</span>
+                    <span class="site-state-item-name">categories</span>
+                  
+                </div>
+              
+
+              
+                
+                
+                <div class="site-state-item site-state-tags">
+                  
+                    
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                    <span class="site-state-item-count">106</span>
+                    <span class="site-state-item-name">tags</span>
+                  
+                </div>
+              
+            </nav>
+          
+
+          
+
+          
+
+          
+
+          
+
+          
+          
+
+          
+            
+          
+          
+
+        </div>
+      </div>
+
+      
+      <!--noindex-->
+        <div class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+            
+            
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#前言"><span class="nav-number">1.</span> <span class="nav-text">前言</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#开始"><span class="nav-number">2.</span> <span class="nav-text">开始</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#YYTextBindingExample"><span class="nav-number">2.1.</span> <span class="nav-text">YYTextBindingExample</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#YYTextBinding"><span class="nav-number">2.2.</span> <span class="nav-text">YYTextBinding</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#deleteBackward"><span class="nav-number">2.3.</span> <span class="nav-text">deleteBackward</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#模仿思路"><span class="nav-number">2.4.</span> <span class="nav-text">模仿思路</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#为符合条件的字符串添加属性"><span class="nav-number">2.5.</span> <span class="nav-text">为符合条件的字符串添加属性</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#insertText"><span class="nav-number">2.6.</span> <span class="nav-text">insertText(_:)</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#let’s-begin"><span class="nav-number">2.6.1.</span> <span class="nav-text">let’s begin</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#结束"><span class="nav-number">3.</span> <span class="nav-text">结束</span></a></li></ol></div>
+            
+
+          </div>
+        </div>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+  
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2020</span>
+  <span class="with-love" id="animate">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Author</span>
+
+  
+
+  
+</div>
+
+
+  <div class="powered-by">Powered by <a href="https://hexo.io" class="theme-link" rel="noopener" target="_blank">Hexo</a> v3.9.0</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">Theme – <a href="https://theme-next.org" class="theme-link" rel="noopener" target="_blank">NexT.Muse</a> v7.1.0</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+    
+
+    
+  </div>
+
+  
+
+<script>
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  <script src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+
+  
+
+
+  <script src="/js/utils.js?v=7.1.0"></script>
+
+  <script src="/js/motion.js?v=7.1.0"></script>
+
+
+
+  
+  
+
+
+  <script src="/js/schemes/muse.js?v=7.1.0"></script>
+
+
+
+  
+  <script src="/js/scrollspy.js?v=7.1.0"></script>
+<script src="/js/post-details.js?v=7.1.0"></script>
+
+
+
+  
+
+
+  <script src="/js/next-boot.js?v=7.1.0"></script>
+
+
+  
+
+  
+
+  
+
+  
+
+
+  
+
+
+  
+
+
+
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

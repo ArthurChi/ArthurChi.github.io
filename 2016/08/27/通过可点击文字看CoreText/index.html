@@ -1,0 +1,1041 @@
+<!DOCTYPE html>
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+<html class="theme-next muse use-motion" lang="zh-Hans">
+<head><meta name="generator" content="Hexo 3.9.0">
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2">
+
+<link rel="stylesheet" href="/css/main.css?v=7.1.0">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=7.1.0">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=7.1.0">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=7.1.0">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=7.1.0" color="#222">
+
+
+
+
+
+
+
+<script id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Muse',
+    version: '7.1.0',
+    sidebar: {"position":"left","display":"post","offset":12,"onmobile":false,"dimmer":false},
+    back2top: true,
+    back2top_sidebar: false,
+    fancybox: false,
+    fastclick: false,
+    lazyload: false,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+  
+
+
+
+
+  <meta name="description" content="起因前一段时间自学了一丢丢Android, 那时候看到Android的Demo中实现可点击文字, 惯性的想了想iOS怎么实现, 于是了解了一下CoreText, 本来想愉快的学完把两个平台的都总结一下, 结果工作如泰山压顶般的压了下来, 过了好一阵子才开始总结. 已无力吐槽了, 撸码好了. 这里有一个比砂纸还粗糙的Demo, 需要的朋友可以down一下.">
+<meta name="keywords" content="CoreText">
+<meta property="og:type" content="article">
+<meta property="og:title" content="通过可点击文字看CoreText">
+<meta property="og:url" content="http://yoursite.com/2016/08/27/通过可点击文字看CoreText/index.html">
+<meta property="og:site_name" content="ArthurChi&#39;s Blog">
+<meta property="og:description" content="起因前一段时间自学了一丢丢Android, 那时候看到Android的Demo中实现可点击文字, 惯性的想了想iOS怎么实现, 于是了解了一下CoreText, 本来想愉快的学完把两个平台的都总结一下, 结果工作如泰山压顶般的压了下来, 过了好一阵子才开始总结. 已无力吐槽了, 撸码好了. 这里有一个比砂纸还粗糙的Demo, 需要的朋友可以down一下.">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:image" content="http://7xpsbt.com1.z0.glb.clouddn.com/CTFrameWork.jpg">
+<meta property="og:image" content="http://7xpsbt.com1.z0.glb.clouddn.com/CFFrame.jpeg">
+<meta property="og:image" content="http://7xpsbt.com1.z0.glb.clouddn.com/coretextorign.png">
+<meta property="og:updated_time" content="2016-09-23T07:33:27.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="通过可点击文字看CoreText">
+<meta name="twitter:description" content="起因前一段时间自学了一丢丢Android, 那时候看到Android的Demo中实现可点击文字, 惯性的想了想iOS怎么实现, 于是了解了一下CoreText, 本来想愉快的学完把两个平台的都总结一下, 结果工作如泰山压顶般的压了下来, 过了好一阵子才开始总结. 已无力吐槽了, 撸码好了. 这里有一个比砂纸还粗糙的Demo, 需要的朋友可以down一下.">
+<meta name="twitter:image" content="http://7xpsbt.com1.z0.glb.clouddn.com/CTFrameWork.jpg">
+
+
+
+
+
+  
+  
+  <link rel="canonical" href="http://yoursite.com/2016/08/27/通过可点击文字看CoreText/">
+
+
+
+<script id="page.configurations">
+  CONFIG.page = {
+    sidebar: "",
+  };
+</script>
+
+  <title>通过可点击文字看CoreText | ArthurChi's Blog</title>
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .motion-element,
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-title { opacity: initial; }
+
+  .use-motion .logo,
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">ArthurChi's Blog</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+    
+      
+        <p class="site-subtitle">Yesterday you said tomorrow</p>
+      
+    
+    
+  </div>
+
+  <div class="site-nav-toggle">
+    <button aria-label="Toggle navigation bar">
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  
+    <ul id="menu" class="menu">
+      
+        
+        
+        
+          
+          <li class="menu-item menu-item-home">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/" rel="section"><i class="menu-item-icon fa fa-fw fa-home"></i> <br>Home</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-archives">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/archives/" rel="section"><i class="menu-item-icon fa fa-fw fa-archive"></i> <br>Archives</a>
+
+  </li>
+
+      
+      
+    </ul>
+  
+
+  
+    
+
+  
+
+  
+</nav>
+
+
+
+  
+
+
+
+</div>
+    </header>
+
+    
+
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2016/08/27/通过可点击文字看CoreText/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Author">
+      <meta itemprop="description" content>
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="ArthurChi's Blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">通过可点击文字看CoreText
+
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+
+            
+            
+            
+
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Posted on</span>
+              
+
+              
+                
+              
+
+              <time title="Created: 2016-08-27 21:42:32" itemprop="dateCreated datePublished" datetime="2016-08-27T21:42:32+08:00">2016-08-27</time>
+            
+
+            
+              
+
+              
+                
+                <span class="post-meta-divider">|</span>
+                
+
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">Edited on</span>
+                
+                <time title="Modified: 2016-09-23 15:33:27" itemprop="dateModified" datetime="2016-09-23T15:33:27+08:00">2016-09-23</time>
+              
+            
+          </span>
+
+          
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">In</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/iOS/" itemprop="url" rel="index"><span itemprop="name">iOS</span></a></span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h2 id="起因"><a href="#起因" class="headerlink" title="起因"></a>起因</h2><p>前一段时间自学了一丢丢Android, 那时候看到Android的Demo中实现可点击文字, 惯性的想了想iOS怎么实现, 于是了解了一下CoreText, 本来想愉快的学完把两个平台的都总结一下, 结果工作如泰山压顶般的压了下来, 过了好一阵子才开始总结. 已无力吐槽了, 撸码好了. 这里有一个比砂纸还粗糙的<a href="https://github.com/sun-fox-cj/CoreTextpractise" target="_blank" rel="noopener">Demo</a>, 需要的朋友可以down一下.<br><a id="more"></a></p>
+<h2 id="Framework"><a href="#Framework" class="headerlink" title="Framework"></a>Framework</h2><p>查了很多资料, 都没说明白iOS怎么实现可点击文字, 但都说需要用CoreText. 这时, 突然想起以前看过的一个很NB的框架YYKit, then I run the demo, 果然可以, 所以想潜心看看源码是如何做到的. 对于平时我们用到的一些控件, 先看看下图, 以便理解NSAttributedString.<br><img src="http://7xpsbt.com1.z0.glb.clouddn.com/CTFrameWork.jpg" alt="framework"></p>
+<p>为什么说这个图和NSAttributedString有关系呢, 继续往下看.</p>
+<h2 id="NSAttributedString"><a href="#NSAttributedString" class="headerlink" title="NSAttributedString"></a>NSAttributedString</h2><h3 id="实现思路"><a href="#实现思路" class="headerlink" title="实现思路"></a>实现思路</h3><p>这里需要提到我们的基础–属性文字, 在此之前, 我对它的理解就是可是设置各种样式的一种文字, 看了YYKit之后, 我觉得我理解的太肤浅了, NSAttributedString应该是一个带有KV对的文字, 而我们之所以能用KV对去给文字设置属性, 是因为系统底层, 对对应的Value取出并加以加工, 我们可以自定义一个KEY, 它的VALUE是一个function pointer, 然后在需要的时候取出去调用, 这就是可点击文字的实现的大概思路. </p>
+<h3 id="和上面图的关系"><a href="#和上面图的关系" class="headerlink" title="和上面图的关系"></a>和上面图的关系</h3><p>那和上面的那个图有什么关系呢? 我觉得iOS整体就是一层一层的对底层逐步的封装, 而在平时我们写代码的时候, 也会有一些封装, 所以这些控件什么的, 它并不是不可拆解的, 它是有底层功能组装起来的. 我们接下来的第一个例子是图文混排. 让我们先热热身, 看看NSAttributedString是怎样的一个KV对的文字. 不过在这之前, 我们需要准备点基础知识</p>
+<h2 id="Core-Text"><a href="#Core-Text" class="headerlink" title="Core Text"></a>Core Text</h2><h3 id="CT"><a href="#CT" class="headerlink" title="CT"></a>CT</h3><p>让我们先来看一张图<br><br><img src="http://7xpsbt.com1.z0.glb.clouddn.com/CFFrame.jpeg" alt="CFFramework"></p>
+<p>简单的来说系统将AttributeString -&gt; frameSetter -&gt; CFFrame, CFFrame是由许多的CTLine组成, 而CTLine又由许多的CTRun组成. in an other word, CTRun是属性文字中最小的单位. 我们接下来要这样做, 在一段文字中, 插入一个空字符, 作为某一个图片的占位符, 然后为这个字符设置一些KV对, 在另一端, 我们取出这些KV对, 做对应的事情.</p>
+<h3 id="Let’s-code"><a href="#Let’s-code" class="headerlink" title="Let’s code"></a>Let’s code</h3><p>首先我们写一个CTRunDelegateCallbacks, 这个作用是, 系统在将占位符换成图片的时候, 需要知道怎么把这个图片画到上面, 具体的, 有上行间距, 下行间距, 宽度.</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">var imageCallback = CTRunDelegateCallbacks(version: kCTRunDelegateVersion1, dealloc: &#123; (pointer) in</span><br><span class="line">            </span><br><span class="line">            &#125;, getAscent: &#123; (pointer) -&gt; CGFloat in</span><br><span class="line">                return 30</span><br><span class="line">            &#125;, getDescent: &#123; (pointer) -&gt; CGFloat in</span><br><span class="line">                return 0</span><br><span class="line">            &#125;) &#123; (pointer) -&gt; CGFloat in</span><br><span class="line">                return 30</span><br><span class="line">        &#125;</span><br></pre></td></tr></table></figure>
+<p>接下来, 我们要在当前的内容中插入一个Attribute空字符, 然后为这个空字符绑定两个属性, 一个是CTRunDelegate, 以保证程序会调用我们刚刚创建的代理. 然后我们自定义了一个AttributeName, 为KEY, VALUE是图片的名字, 当然这里我偷懒</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">// 创建CTRun回调</span><br><span class="line">        let runDelegate = CTRunDelegateCreate(&amp;imageCallback, nil)</span><br><span class="line">        </span><br><span class="line">        // 为要画的图片留一个占位符</span><br><span class="line">        let imageAttributedString = NSMutableAttributedString(string: &quot; &quot;)</span><br><span class="line">        // 有这行, 才会在绘制的时候, 调用代理, 留下代理中的rect</span><br><span class="line">        imageAttributedString.addAttribute(kCTRunDelegateAttributeName as String, value: runDelegate!, range: NSRange(location: 0,length: 1))</span><br><span class="line">        // 存下你的图片名或URL</span><br><span class="line">        imageAttributedString.addAttribute(imgName, value: imgName, range: NSRange(location: 0, length: 1))</span><br><span class="line">        </span><br><span class="line">        content.appendAttributedString(imageAttributedString)</span><br><span class="line">        </span><br><span class="line">        let lastedAttributedString = NSMutableAttributedString(string: &quot;123cpoy2: 这是一个测试文字, 来个图片, 还有点击事件, cpoy3: 这是一个测试文字, 来个图片, 还有点击事件&quot;)</span><br><span class="line">        content.appendAttributedString(lastedAttributedString)</span><br></pre></td></tr></table></figure>
+<p>接下来要说明的是, UIKit和CoreText的坐标系的问题<br><img src="http://7xpsbt.com1.z0.glb.clouddn.com/coretextorign.png" alt="坐标系的不同"><br>至于为什么是这样, 我猜想CoreText是从OS系统搬过来的. 那么我们在操作的时候, 就要做点什么让所有操作处于同一个坐标系下. </p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br></pre></td><td class="code"><pre><span class="line">// 可以理解为 - 要旋转画布了</span><br><span class="line">CGContextSaveGState(context)</span><br><span class="line">        </span><br><span class="line">// 旋转画布</span><br><span class="line">CGContextSetTextMatrix(context, CGAffineTransformIdentity)</span><br><span class="line">CGContextTranslateCTM(context, 0, rect.size.height)</span><br><span class="line">CGContextScaleCTM(context, 1.0, -1.0)</span><br><span class="line"></span><br><span class="line">		/*</span><br><span class="line">         * 1. 通过AttributeString-&gt;CTFramesetter</span><br><span class="line">         * 2. 创建路径, 你可以做点形变, 可以修改渲染的路径</span><br><span class="line">         * 3. 通过以上两个对象, 创建CTFrame</span><br><span class="line">         * 4. 将CTFrame对象渲染上去</span><br><span class="line">         */</span><br><span class="line">        </span><br><span class="line">        let frameSetter = CTFramesetterCreateWithAttributedString(content as CFAttributedString)</span><br><span class="line">        </span><br><span class="line">        let path = CGPathCreateMutable()</span><br><span class="line">        CGPathAddRect(path, nil, CGRect(x: 0, y: 0, width: rect.size.width, height: rect.size.height))</span><br><span class="line">        </span><br><span class="line">        frameAttr = CTFramesetterCreateFrame(frameSetter, CFRange(location: 0, length: content.length), path, nil)</span><br><span class="line">        </span><br><span class="line">        CTFrameDraw(frameAttr, context!)</span><br><span class="line">        </span><br><span class="line">        /*</span><br><span class="line">         * 1. 从CTFrame中获取所有的CTLine</span><br><span class="line">         * 2. 建立一个CGPoint的数组, 用来存放没个CTLine的原点</span><br><span class="line">         * 3. 遍历所有的CTLine</span><br><span class="line">         * 4. 遍历当前CTLine中的CTRun</span><br><span class="line">         * 5. 从CTRun中获取属性字典中的值(这里需要知道CTRun是什么)</span><br><span class="line">         * 6. 找到后, 用Core Graphics画上去</span><br><span class="line">         */</span><br><span class="line">        </span><br><span class="line">        let lines = CTFrameGetLines(frameAttr) as Array</span><br><span class="line">        var lineOrigins = [CGPoint](count:lines.count, repeatedValue: CGPointZero)</span><br><span class="line">        CTFrameGetLineOrigins(frameAttr, CFRange(location: 0, length: 0), &amp;lineOrigins)</span><br><span class="line">        </span><br><span class="line">        for i in 0..&lt;lines.count &#123;</span><br><span class="line">            </span><br><span class="line">            var</span><br><span class="line">            lineAscent = CGFloat(),</span><br><span class="line">            lineDescent = CGFloat(),</span><br><span class="line">            lineLeading = CGFloat()</span><br><span class="line">            </span><br><span class="line">            let line = lines[i] as! CTLine</span><br><span class="line">            CTLineGetTypographicBounds(line, &amp;lineAscent, &amp;lineDescent, &amp;lineLeading)</span><br><span class="line">            </span><br><span class="line">            let runs = CTLineGetGlyphRuns(line) as Array</span><br><span class="line">            </span><br><span class="line">            for j in 0..&lt;runs.count &#123;</span><br><span class="line">                </span><br><span class="line">                var</span><br><span class="line">                runAscent = CGFloat(),</span><br><span class="line">                runDescent = CGFloat()</span><br><span class="line">                </span><br><span class="line">                let run = runs[j] as! CTRun</span><br><span class="line">                </span><br><span class="line">                var runRect = CGRectZero</span><br><span class="line">                runRect.size.width = CGFloat(CTRunGetTypographicBounds(run, CFRangeMake(0, 0), &amp;runAscent, &amp;runDescent, nil))</span><br><span class="line">                </span><br><span class="line">                // 获取当前CTRun的Range, 用来控制画图所用的X</span><br><span class="line">                let strRangeLocation = CTRunGetStringRange(run).location</span><br><span class="line">                // 获取当前CTLine的原点, 用来控制画图所用的Y</span><br><span class="line">                let lineOrigin = lineOrigins[i]</span><br><span class="line">                // 算出绘图所需的Rect</span><br><span class="line">                runRect = CGRect(x: lineOrigin.x + CTLineGetOffsetForStringIndex(line, strRangeLocation, nil), y: lineOrigin.y - runDescent, width: runRect.size.width, height: runAscent - runDescent)</span><br><span class="line">                </span><br><span class="line">                // 这里是要取出刚才你起的attribute的名字</span><br><span class="line">                let attributes = CTRunGetAttributes(run)</span><br><span class="line">                let imageName = (attributes as Dictionary)[imgName]</span><br><span class="line">                </span><br><span class="line">                // 生成Image并渲染</span><br><span class="line">                if let imageName = imageName as? String &#123;</span><br><span class="line">                    if let image = UIImage(named: imageName) &#123;</span><br><span class="line">                        </span><br><span class="line">                        var imageDrawRect = CGRectZero</span><br><span class="line">                        imageDrawRect.size = CGSize(width: 30, height: 30)</span><br><span class="line">                        imageDrawRect.origin.x = runRect.origin.x + lineOrigin.x</span><br><span class="line">                        imageDrawRect.origin.y = lineOrigin.y</span><br><span class="line">                        CGContextDrawImage(context, imageDrawRect, image.CGImage)</span><br><span class="line">                    &#125;</span><br><span class="line">                &#125;</span><br><span class="line">                </span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        </span><br><span class="line">        // 把刚旋转的画布转回来</span><br><span class="line">        CGContextRestoreGState(context)</span><br></pre></td></tr></table></figure>
+<p>这里我们看到, 以上方法可以获取到每一个CTLine的原点坐标, 通过这个, 我们可以得到Rect来将图片画上去. 而可点击文字的原理也是这样. 主要思想就是通过你点击的手指的point和你要找的string的范围做比较. 如果是你要找的string并且你给他设置了function pointer, 那么, 你就可以做点什么了.<br><br>当然, 这里需要先自定义一个Object来存放function pointer, 因为在给attributeString设置属性的时候, value是AnyObject, 很显然, function pointer是不合适的. 那么, 我们就封装一下.</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">class Action: NSObject &#123;</span><br><span class="line">    </span><br><span class="line">    var callback: () -&gt; Void</span><br><span class="line">    </span><br><span class="line">    init(callback: (()-&gt;Void)) &#123;</span><br><span class="line">        self.callback = callback</span><br><span class="line">        super.init()</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>主要思想就是通过你点击的手指的point和你要找的string的范围做比较</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br></pre></td><td class="code"><pre><span class="line">override func touchesBegan(touches: Set&lt;UITouch&gt;, withEvent event: UIEvent?) &#123;</span><br><span class="line">        </span><br><span class="line">        let touch = touches.first</span><br><span class="line">        var location = touch?.locationInView(self) ?? CGPointZero</span><br><span class="line">        </span><br><span class="line">        let lines = CTFrameGetLines(frameAttr) as Array</span><br><span class="line">        var origins = [CGPoint](count:lines.count, repeatedValue: CGPointZero)</span><br><span class="line">        CTFrameGetLineOrigins(frameAttr, CFRangeMake(0, 0), &amp;origins)</span><br><span class="line">        </span><br><span class="line">        var line: CTLine?</span><br><span class="line">        var lineOrigin = CGPointZero</span><br><span class="line">        </span><br><span class="line">        for i in 0..&lt;lines.count &#123;</span><br><span class="line">            </span><br><span class="line">            let origin = origins[i]</span><br><span class="line">            let path = CTFrameGetPath(frameAttr)</span><br><span class="line">            let rect = CGPathGetBoundingBox(path)</span><br><span class="line">            let y = rect.origin.y + rect.size.height - origin.y</span><br><span class="line">            </span><br><span class="line">            if location.y &lt;= y &amp;&amp; location.x &gt;= origin.x &#123;</span><br><span class="line">                line = (lines[i] as! CTLine)</span><br><span class="line">                lineOrigin = origin</span><br><span class="line">                break</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        </span><br><span class="line">        location.x -= lineOrigin.x</span><br><span class="line">        </span><br><span class="line">        if let line = line &#123;</span><br><span class="line">            </span><br><span class="line">            // 模拟YYText可点击文字</span><br><span class="line">            let runs = CTLineGetGlyphRuns(line) as Array</span><br><span class="line">            </span><br><span class="line">            for j in 0..&lt;runs.count &#123;</span><br><span class="line">                </span><br><span class="line">                let run = runs[j] as! CTRun</span><br><span class="line">                </span><br><span class="line">                // 这里是要取出刚才你起的attribute的名字</span><br><span class="line">                let attributes = CTRunGetAttributes(run)</span><br><span class="line">                if let action = (attributes as Dictionary)[kClickeableAttributeString] as? Action &#123;</span><br><span class="line">                    let index = CTLineGetStringIndexForPosition(line, location)</span><br><span class="line">                    </span><br><span class="line">                    let strLocation = CTRunGetStringRange(run).location</span><br><span class="line">                    let strLength = CTRunGetStringRange(run).length</span><br><span class="line">                    </span><br><span class="line">                    if index &gt;= strLocation &amp;&amp; index &lt;= strLocation + strLength &#123;</span><br><span class="line">                        action.callback()</span><br><span class="line">                    &#125;</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+<p>这里我在写的时候粗心了, 最后那里需要判断index来精准的找到你的那串文字, 然后再进行调用function</p>
+<h2 id="结束"><a href="#结束" class="headerlink" title="结束"></a>结束</h2><p>有了这些只是, 我们就可以看YYText中的可点击文字了.</p>
+<h2 id="Reference"><a href="#Reference" class="headerlink" title="Reference"></a>Reference</h2><blockquote>
+<p><a href="http://www.jianshu.com/p/e52a38e60e7c" target="_blank" rel="noopener">http://www.jianshu.com/p/e52a38e60e7c</a></p>
+</blockquote>
+
+      
+    </div>
+
+    
+
+    
+    
+    
+
+    
+
+    
+      
+    
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/CoreText/" rel="tag"># CoreText</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2016/08/26/花生客户端1-5开发过程中遇到的问题记录/" rel="next" title="花生客户端1.5开发过程中遇到的问题记录">
+                <i class="fa fa-chevron-left"></i> 花生客户端1.5开发过程中遇到的问题记录
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2016/08/28/关于封装的一些小心得/" rel="prev" title="关于封装的一些小心得">
+                关于封装的一些小心得 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+  </div>
+
+
+          </div>
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            Table of Contents
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            Overview
+          </li>
+        </ul>
+      
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <p class="site-author-name" itemprop="name">Author</p>
+              <div class="site-description motion-element" itemprop="description"></div>
+          </div>
+
+          
+            <nav class="site-state motion-element">
+              
+                <div class="site-state-item site-state-posts">
+                
+                  <a href="/archives/">
+                
+                    <span class="site-state-item-count">118</span>
+                    <span class="site-state-item-name">posts</span>
+                  </a>
+                </div>
+              
+
+              
+                
+                
+                <div class="site-state-item site-state-categories">
+                  
+                    
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                    <span class="site-state-item-count">11</span>
+                    <span class="site-state-item-name">categories</span>
+                  
+                </div>
+              
+
+              
+                
+                
+                <div class="site-state-item site-state-tags">
+                  
+                    
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                    <span class="site-state-item-count">106</span>
+                    <span class="site-state-item-name">tags</span>
+                  
+                </div>
+              
+            </nav>
+          
+
+          
+
+          
+
+          
+
+          
+
+          
+          
+
+          
+            
+          
+          
+
+        </div>
+      </div>
+
+      
+      <!--noindex-->
+        <div class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+            
+            
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#起因"><span class="nav-number">1.</span> <span class="nav-text">起因</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Framework"><span class="nav-number">2.</span> <span class="nav-text">Framework</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#NSAttributedString"><span class="nav-number">3.</span> <span class="nav-text">NSAttributedString</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#实现思路"><span class="nav-number">3.1.</span> <span class="nav-text">实现思路</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#和上面图的关系"><span class="nav-number">3.2.</span> <span class="nav-text">和上面图的关系</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Core-Text"><span class="nav-number">4.</span> <span class="nav-text">Core Text</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#CT"><span class="nav-number">4.1.</span> <span class="nav-text">CT</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Let’s-code"><span class="nav-number">4.2.</span> <span class="nav-text">Let’s code</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#结束"><span class="nav-number">5.</span> <span class="nav-text">结束</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Reference"><span class="nav-number">6.</span> <span class="nav-text">Reference</span></a></li></ol></div>
+            
+
+          </div>
+        </div>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+  
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2020</span>
+  <span class="with-love" id="animate">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Author</span>
+
+  
+
+  
+</div>
+
+
+  <div class="powered-by">Powered by <a href="https://hexo.io" class="theme-link" rel="noopener" target="_blank">Hexo</a> v3.9.0</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">Theme – <a href="https://theme-next.org" class="theme-link" rel="noopener" target="_blank">NexT.Muse</a> v7.1.0</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+    
+
+    
+  </div>
+
+  
+
+<script>
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  <script src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+
+  
+
+
+  <script src="/js/utils.js?v=7.1.0"></script>
+
+  <script src="/js/motion.js?v=7.1.0"></script>
+
+
+
+  
+  
+
+
+  <script src="/js/schemes/muse.js?v=7.1.0"></script>
+
+
+
+  
+  <script src="/js/scrollspy.js?v=7.1.0"></script>
+<script src="/js/post-details.js?v=7.1.0"></script>
+
+
+
+  
+
+
+  <script src="/js/next-boot.js?v=7.1.0"></script>
+
+
+  
+
+  
+
+  
+
+  
+
+
+  
+
+
+  
+
+
+
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>
