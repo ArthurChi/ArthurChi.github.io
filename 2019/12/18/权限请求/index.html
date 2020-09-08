@@ -96,17 +96,17 @@
 
 
 
-  <meta name="description" content="这篇文章, 写于去年的12月, 但一直没有发, 直到今天才发出来, 本想写一个简单的相机的app, 然后记录一下这个过程, 等整体完成后, 再发布出来, 但是这期间经历了很多变化, 时间被工作充斥了, 好多事情都搁置了, 今天挤出一些时间, 把它发出来. 2020-9-8 开篇权限请求, 在这样的一个多媒体的app中, 是经常用到的, 没有这些权限, 就没法访问摄像头, 麦克风, 这篇文章中, 会">
+  <meta name="description" content="这篇文章, 写于去年的12月, 但一直没有发, 直到今天才发出来, 本想写一个简单的相机的app, 然后记录一下这个过程, 等整体完成后, 再发布出来, 但是这期间经历了很多变化, 时间被工作充斥了, 好多事情都搁置了, 今天挤出一些时间, 把它发出来. 2020-9-8">
 <meta property="og:type" content="article">
 <meta property="og:title" content="权限请求">
 <meta property="og:url" content="http://yoursite.com/2019/12/18/权限请求/index.html">
 <meta property="og:site_name" content="ArthurChi&#39;s Blog">
-<meta property="og:description" content="这篇文章, 写于去年的12月, 但一直没有发, 直到今天才发出来, 本想写一个简单的相机的app, 然后记录一下这个过程, 等整体完成后, 再发布出来, 但是这期间经历了很多变化, 时间被工作充斥了, 好多事情都搁置了, 今天挤出一些时间, 把它发出来. 2020-9-8 开篇权限请求, 在这样的一个多媒体的app中, 是经常用到的, 没有这些权限, 就没法访问摄像头, 麦克风, 这篇文章中, 会">
+<meta property="og:description" content="这篇文章, 写于去年的12月, 但一直没有发, 直到今天才发出来, 本想写一个简单的相机的app, 然后记录一下这个过程, 等整体完成后, 再发布出来, 但是这期间经历了很多变化, 时间被工作充斥了, 好多事情都搁置了, 今天挤出一些时间, 把它发出来. 2020-9-8">
 <meta property="og:locale" content="zh-Hans">
-<meta property="og:updated_time" content="2020-09-08T14:38:04.862Z">
+<meta property="og:updated_time" content="2020-09-08T14:50:16.354Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="权限请求">
-<meta name="twitter:description" content="这篇文章, 写于去年的12月, 但一直没有发, 直到今天才发出来, 本想写一个简单的相机的app, 然后记录一下这个过程, 等整体完成后, 再发布出来, 但是这期间经历了很多变化, 时间被工作充斥了, 好多事情都搁置了, 今天挤出一些时间, 把它发出来. 2020-9-8 开篇权限请求, 在这样的一个多媒体的app中, 是经常用到的, 没有这些权限, 就没法访问摄像头, 麦克风, 这篇文章中, 会">
+<meta name="twitter:description" content="这篇文章, 写于去年的12月, 但一直没有发, 直到今天才发出来, 本想写一个简单的相机的app, 然后记录一下这个过程, 等整体完成后, 再发布出来, 但是这期间经历了很多变化, 时间被工作充斥了, 好多事情都搁置了, 今天挤出一些时间, 把它发出来. 2020-9-8">
 
 
 
@@ -353,7 +353,7 @@
                 
                   <span class="post-meta-item-text">Edited on</span>
                 
-                <time title="Modified: 2020-09-08 22:38:04" itemprop="dateModified" datetime="2020-09-08T22:38:04+08:00">2020-09-08</time>
+                <time title="Modified: 2020-09-08 22:50:16" itemprop="dateModified" datetime="2020-09-08T22:50:16+08:00">2020-09-08</time>
               
             
           </span>
@@ -388,6 +388,7 @@
 
       
         <p>这篇文章, 写于去年的12月, 但一直没有发, 直到今天才发出来, 本想写一个简单的相机的app, 然后记录一下这个过程, 等整体完成后, 再发布出来, 但是这期间经历了很多变化, 时间被工作充斥了, 好多事情都搁置了, 今天挤出一些时间, 把它发出来. 2020-9-8</p>
+<a id="more"></a>
 <h1 id="开篇"><a href="#开篇" class="headerlink" title="开篇"></a>开篇</h1><p>权限请求, 在这样的一个多媒体的app中, 是经常用到的, 没有这些权限, 就没法访问摄像头, 麦克风, 这篇文章中, 会先用常规的写法来请求权限, 然后, 一步一步的封装一个权限请求的小组件</p>
 <h1 id="常规操作"><a href="#常规操作" class="headerlink" title="常规操作"></a>常规操作</h1><p>首先, 一个权限请求的过程应该是这样的:</p>
 <p>先判断有没有请求过相关的权限, 如果请求过, 则直接返回结果, 否则就进行请求, 并将请求的结果通知给业务方. 以摄像头的权限请求为例</p>
