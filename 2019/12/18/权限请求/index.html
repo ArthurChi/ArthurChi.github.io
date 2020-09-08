@@ -1,0 +1,1016 @@
+<!DOCTYPE html>
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+<html class="theme-next muse use-motion" lang="zh-Hans">
+<head><meta name="generator" content="Hexo 3.9.0">
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2">
+
+<link rel="stylesheet" href="/css/main.css?v=7.1.0">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=7.1.0">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=7.1.0">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=7.1.0">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=7.1.0" color="#222">
+
+
+
+
+
+
+
+<script id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Muse',
+    version: '7.1.0',
+    sidebar: {"position":"left","display":"post","offset":12,"onmobile":false,"dimmer":false},
+    back2top: true,
+    back2top_sidebar: false,
+    fancybox: false,
+    fastclick: false,
+    lazyload: false,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+  
+
+
+
+
+  <meta name="description" content="这篇文章, 写于去年的12月, 但一直没有发, 直到今天才发出来, 本想写一个简单的相机的app, 然后记录一下这个过程, 等整体完成后, 再发布出来, 但是这期间经历了很多变化, 时间被工作充斥了, 好多事情都搁置了, 今天挤出一些时间, 把它发出来. 2020-9-8 开篇权限请求, 在这样的一个多媒体的app中, 是经常用到的, 没有这些权限, 就没法访问摄像头, 麦克风, 这篇文章中, 会">
+<meta property="og:type" content="article">
+<meta property="og:title" content="权限请求">
+<meta property="og:url" content="http://yoursite.com/2019/12/18/权限请求/index.html">
+<meta property="og:site_name" content="ArthurChi&#39;s Blog">
+<meta property="og:description" content="这篇文章, 写于去年的12月, 但一直没有发, 直到今天才发出来, 本想写一个简单的相机的app, 然后记录一下这个过程, 等整体完成后, 再发布出来, 但是这期间经历了很多变化, 时间被工作充斥了, 好多事情都搁置了, 今天挤出一些时间, 把它发出来. 2020-9-8 开篇权限请求, 在这样的一个多媒体的app中, 是经常用到的, 没有这些权限, 就没法访问摄像头, 麦克风, 这篇文章中, 会">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:updated_time" content="2020-09-08T14:38:04.862Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="权限请求">
+<meta name="twitter:description" content="这篇文章, 写于去年的12月, 但一直没有发, 直到今天才发出来, 本想写一个简单的相机的app, 然后记录一下这个过程, 等整体完成后, 再发布出来, 但是这期间经历了很多变化, 时间被工作充斥了, 好多事情都搁置了, 今天挤出一些时间, 把它发出来. 2020-9-8 开篇权限请求, 在这样的一个多媒体的app中, 是经常用到的, 没有这些权限, 就没法访问摄像头, 麦克风, 这篇文章中, 会">
+
+
+
+
+
+  
+  
+  <link rel="canonical" href="http://yoursite.com/2019/12/18/权限请求/">
+
+
+
+<script id="page.configurations">
+  CONFIG.page = {
+    sidebar: "",
+  };
+</script>
+
+  <title>权限请求 | ArthurChi's Blog</title>
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .motion-element,
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-title { opacity: initial; }
+
+  .use-motion .logo,
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">ArthurChi's Blog</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+    
+      
+        <p class="site-subtitle">Yesterday you said tomorrow</p>
+      
+    
+    
+  </div>
+
+  <div class="site-nav-toggle">
+    <button aria-label="Toggle navigation bar">
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  
+    <ul id="menu" class="menu">
+      
+        
+        
+        
+          
+          <li class="menu-item menu-item-home">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/" rel="section"><i class="menu-item-icon fa fa-fw fa-home"></i> <br>Home</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-archives">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/archives/" rel="section"><i class="menu-item-icon fa fa-fw fa-archive"></i> <br>Archives</a>
+
+  </li>
+
+      
+      
+    </ul>
+  
+
+  
+    
+
+  
+
+  
+</nav>
+
+
+
+  
+
+
+
+</div>
+    </header>
+
+    
+
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/12/18/权限请求/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Author">
+      <meta itemprop="description" content>
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="ArthurChi's Blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">权限请求
+
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+
+            
+            
+            
+
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Posted on</span>
+              
+
+              
+                
+              
+
+              <time title="Created: 2019-12-18 19:53:13" itemprop="dateCreated datePublished" datetime="2019-12-18T19:53:13+08:00">2019-12-18</time>
+            
+
+            
+              
+
+              
+                
+                <span class="post-meta-divider">|</span>
+                
+
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">Edited on</span>
+                
+                <time title="Modified: 2020-09-08 22:38:04" itemprop="dateModified" datetime="2020-09-08T22:38:04+08:00">2020-09-08</time>
+              
+            
+          </span>
+
+          
+
+          
+            
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>这篇文章, 写于去年的12月, 但一直没有发, 直到今天才发出来, 本想写一个简单的相机的app, 然后记录一下这个过程, 等整体完成后, 再发布出来, 但是这期间经历了很多变化, 时间被工作充斥了, 好多事情都搁置了, 今天挤出一些时间, 把它发出来. 2020-9-8</p>
+<h1 id="开篇"><a href="#开篇" class="headerlink" title="开篇"></a>开篇</h1><p>权限请求, 在这样的一个多媒体的app中, 是经常用到的, 没有这些权限, 就没法访问摄像头, 麦克风, 这篇文章中, 会先用常规的写法来请求权限, 然后, 一步一步的封装一个权限请求的小组件</p>
+<h1 id="常规操作"><a href="#常规操作" class="headerlink" title="常规操作"></a>常规操作</h1><p>首先, 一个权限请求的过程应该是这样的:</p>
+<p>先判断有没有请求过相关的权限, 如果请求过, 则直接返回结果, 否则就进行请求, 并将请求的结果通知给业务方. 以摄像头的权限请求为例</p>
+<p>为了语义清晰, 先定义一个closure的类别描述, 用于描述权限请求的回调类型</p>
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">typealias</span> <span class="type">AuthorityCallback</span> = (<span class="type">Bool</span>) -&gt; <span class="type">Void</span></span><br></pre></td></tr></table></figure>
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">static</span> <span class="function"><span class="keyword">func</span> <span class="title">requestAuthorityIfNeed</span><span class="params">(<span class="number">_</span> resultBlock: @escaping AuthorityCallback)</span></span> &#123;</span><br><span class="line">            <span class="keyword">let</span> authorityStatus = <span class="type">AVCaptureDevice</span>.authorizationStatus(<span class="keyword">for</span>: .video)</span><br><span class="line">            <span class="keyword">guard</span> authorityStatus == .notDetermined <span class="keyword">else</span> &#123;</span><br><span class="line">                resultBlock(authorityStatus == .authorized)</span><br><span class="line">                <span class="keyword">return</span></span><br><span class="line">            &#125;</span><br><span class="line">            </span><br><span class="line">            <span class="type">AVCaptureDevice</span>.requestAccess(<span class="keyword">for</span>: .video, completionHandler: &#123; (result) <span class="keyword">in</span></span><br><span class="line">                resultBlock(result)</span><br><span class="line">            &#125;)</span><br><span class="line">        &#125;</span><br></pre></td></tr></table></figure>
+<p>看起来还好, 那么接下来麦克风的权限, 我们只需要把类别改为audio即可, 像这样</p>
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">AVCaptureDevice</span>.requestAccess(<span class="keyword">for</span>: .audio, completionHandler: &#123; (result) <span class="keyword">in</span></span><br><span class="line">                resultBlock(result)</span><br><span class="line">            &#125;)</span><br></pre></td></tr></table></figure>
+<p>当然, 基于DRY原则, 要对上面的函数的参数进行扩展, 传递一个类型, 用来区别倒到底是请求哪种类型的权限. 那么问题来了, 如果后面要添加相册权限呢? push权限呢? 这就变得不好处理了, 当然, 可以通过传递类型和回调函数来把这些类型区分开. 但是每当需要增加新的类别, 就需要把这个文件进行修改. 这个并不是一个好的设计.</p>
+<p>实际上, 那段判断并不需要</p>
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">let</span> authorityStatus = <span class="type">AVCaptureDevice</span>.authorizationStatus(<span class="keyword">for</span>: .video)</span><br><span class="line">            <span class="keyword">guard</span> authorityStatus == .notDetermined <span class="keyword">else</span> &#123;</span><br><span class="line">                resultBlock(authorityStatus == .authorized)</span><br><span class="line">                <span class="keyword">return</span></span><br><span class="line">            &#125;</span><br></pre></td></tr></table></figure>
+<p>因为根据文档, 是这样描述的:</p>
+<blockquote>
+<p>The response parameter is a block whose sole parameter indicates whether the user granted or denied permission to record. This method always returns immediately. If the user has previously granted or denied recording permission, it executes the block when called; otherwise, it displays an alert and executes the block only after the user has responded to the alert.</p>
+</blockquote>
+<h1 id="抽象分析"><a href="#抽象分析" class="headerlink" title="抽象分析"></a>抽象分析</h1><p>我们对这些权限的行为有两个:</p>
+<ol>
+<li>查询权限状态</li>
+<li>请求权限, 并得知结果</li>
+</ol>
+<p>那么, 将这个作为一个标准, 使用协议进行描述. 同时, 为了统一, 需要声明一个枚举类来描述权限状态, 因为虽然每个权限描述的内容都一样, 但是他们在不同的框架中, 用数字来进行描述. 所以这里我们需要声明一个类来统一他们.</p>
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">struct</span> <span class="title">Authority</span> </span>&#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="class"><span class="keyword">enum</span> <span class="title">Status</span>: <span class="title">Int</span> </span>&#123;</span><br><span class="line">        <span class="keyword">case</span> notDetermined</span><br><span class="line">        <span class="keyword">case</span> restricted</span><br><span class="line">        <span class="keyword">case</span> denied</span><br><span class="line">        <span class="keyword">case</span> authorized</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>其次, 我们要将权限的这些行为统一起来</p>
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">protocol</span> <span class="title">Authoritiable</span> </span>&#123;</span><br><span class="line">    <span class="comment">// 简易状态获取</span></span><br><span class="line">    <span class="keyword">static</span> <span class="keyword">var</span> isAvaliable: <span class="type">Bool</span> &#123; <span class="keyword">get</span> &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 状态</span></span><br><span class="line">    <span class="keyword">static</span> <span class="keyword">var</span> status: <span class="type">Authority</span>.<span class="type">Status</span> &#123; <span class="keyword">get</span> &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 申请权限</span></span><br><span class="line">    <span class="keyword">static</span> <span class="function"><span class="keyword">func</span> <span class="title">requestAuthority</span><span class="params">()</span></span> -&gt; <span class="type">Promise</span>&lt;<span class="type">Bool</span>&gt;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>在这里, 提供一个简易的查询状态, 来获取当前权限是否是允许的状态.</p>
+<p>在协议的定义中, 我们使用了PromiseKit, 这是一个总线框架, 可以优雅的解决block回调地狱. 也很容易上手, 如果你没有接触过, 也没有关系, 在这里你先把它看成是一个回调, 随着后面代码的深入, 你会对它的用法有一个深刻的了解.</p>
+<h2 id="建立组件"><a href="#建立组件" class="headerlink" title="建立组件"></a>建立组件</h2><p>对于请求权限这件事, 他是一个独立的功能, 或者说, 可以被其他的项目复用的功能, 所以在这里, 让我们把它做成一个组件, 有以下的几点好处:</p>
+<ol>
+<li>方便复用</li>
+<li>为后续维护代码的人规定了如何维护, 对代码进行了物理隔离, 防止后面维护的人腐蚀框架结构</li>
+</ol>
+<h3 id="开始"><a href="#开始" class="headerlink" title="开始"></a>开始</h3><p>首先我给它起个名字, 就叫Authority, 然后为了统一结构, 我会在这个文件夹下建立</p>
+<ol>
+<li>Classes文件夹</li>
+<li>podspec描述文件</li>
+<li>LICENSE</li>
+</ol>
+<p>统一了这样的结构后, 后面如果需要, 我们可以用脚本来生成这样的模板.</p>
+<h3 id="构建"><a href="#构建" class="headerlink" title="构建"></a>构建</h3><p>首先要思考, 在这个项目中, 需要相机, 麦克风, 相册的权限功能, 但是在其他的项目中, 他可能只需要其中的几个, 比如相册或者推送功能. 那么, 如何组合, 如何扩展? 为了解决这个问题, 需要将这个组件分别定义为几个子组件, 由业务方按需索取.</p>
+<p>在这里, 将相机, 麦克风, 相册权限分别定义为一个子组件. 然后由一个base组件将他们关联起来</p>
+<p>首先在Classes文件夹下, 定义这几个组件的文件夹.<br>然后在定义podspec描述文件</p>
+<figure class="highlight ruby"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">s.default_subspec = <span class="string">'Base'</span></span><br><span class="line"></span><br><span class="line">s.ios.deployment_target = <span class="string">'10.0'</span></span><br><span class="line"></span><br><span class="line">s.swift_version = <span class="string">'5.0'</span></span><br><span class="line"></span><br><span class="line">s.subspec <span class="string">'Base'</span> <span class="keyword">do</span> <span class="params">|base|</span></span><br><span class="line">  base.source_files = <span class="string">'Classes/Base/*.&#123;swift&#125;'</span></span><br><span class="line">  base.dependency <span class="string">'PromiseKit'</span></span><br><span class="line"><span class="keyword">end</span></span><br><span class="line"></span><br><span class="line">s.subspec <span class="string">'Video'</span> <span class="keyword">do</span> <span class="params">|video|</span></span><br><span class="line">  video.source_files = <span class="string">'Classes/Video/*.&#123;swift&#125;'</span></span><br><span class="line">  video.dependency <span class="string">'Authority/Base'</span></span><br><span class="line">  video.frameworks = <span class="string">'AVFoundation'</span></span><br><span class="line"><span class="keyword">end</span></span><br><span class="line"></span><br><span class="line">s.subspec <span class="string">'Audio'</span> <span class="keyword">do</span> <span class="params">|audio|</span></span><br><span class="line">  audio.source_files = <span class="string">'Classes/Audio/*.&#123;swift&#125;'</span></span><br><span class="line">  audio.dependency <span class="string">'Authority/Base'</span></span><br><span class="line">  audio.frameworks = <span class="string">'AVFoundation'</span></span><br><span class="line"><span class="keyword">end</span></span><br><span class="line"></span><br><span class="line">s.subspec <span class="string">'Photo'</span> <span class="keyword">do</span> <span class="params">|album|</span></span><br><span class="line">  album.source_files = <span class="string">'Classes/Photo/*.&#123;swift&#125;'</span></span><br><span class="line">  album.dependency <span class="string">'Authority/Base'</span></span><br><span class="line">  album.frameworks = <span class="string">'Photos'</span></span><br><span class="line"><span class="keyword">end</span></span><br></pre></td></tr></table></figure>
+<p>这里省略掉一些模板的内容, pod的描述文件是这样的, 需要注意的是定义了base之后, 需要让后面的subspec进行依赖, 同时需要指明自己所依赖的类文件的路径, 搞定后, 直接pod即可.</p>
+<p>接下来, 工程结构有了, 基本类型也有了, 剩下的就是编码工作了.</p>
+<h3 id="Base"><a href="#Base" class="headerlink" title="Base"></a>Base</h3><p>这里放的是协议, 即各模块的行为规范的描述, 之所以有这样的一个base层, 一个是为了行为规范, 其他模块需要实现协议, 统一方法, 防止架构被腐蚀; 另一个是为了解耦, 如果上层需要用到权限请求的抽象类, 而不是具体实现类的话, 那么就可以使用协议去描述. 所以这里的内容, 只有上面说到的协议和状态类型描述.</p>
+<h3 id="Camera"><a href="#Camera" class="headerlink" title="Camera"></a>Camera</h3><p>具体实现, 拿相机权限的申请举例</p>
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> Foundation</span><br><span class="line"><span class="keyword">import</span> PromiseKit</span><br><span class="line"><span class="keyword">import</span> AVFoundation</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">extension</span> <span class="title">Authority</span> </span>&#123;</span><br><span class="line">    <span class="class"><span class="keyword">struct</span> <span class="title">Camera</span>: <span class="title">Authoritiable</span> </span>&#123;</span><br><span class="line">        <span class="keyword">static</span> <span class="keyword">var</span> isAvaliable: <span class="type">Bool</span> &#123;</span><br><span class="line">            <span class="keyword">return</span> <span class="type">AVCaptureDevice</span>.authorizationStatus(<span class="keyword">for</span>: .video) == .authorized</span><br><span class="line">        &#125;</span><br><span class="line">        </span><br><span class="line">        <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">var</span> status: <span class="type">Authority</span>.<span class="type">Status</span> &#123;</span><br><span class="line">            <span class="keyword">switch</span> <span class="type">AVCaptureDevice</span>.authorizationStatus(<span class="keyword">for</span>: .video) &#123;</span><br><span class="line">            <span class="keyword">case</span> .authorized:</span><br><span class="line">                <span class="keyword">return</span> .authorized</span><br><span class="line">            <span class="keyword">case</span> .denied:</span><br><span class="line">                <span class="keyword">return</span> .denied</span><br><span class="line">            <span class="keyword">case</span> .notDetermined:</span><br><span class="line">                <span class="keyword">return</span> .notDetermined</span><br><span class="line">            <span class="keyword">case</span> .restricted:</span><br><span class="line">                <span class="keyword">return</span> .restricted</span><br><span class="line">            @unknown <span class="keyword">default</span>:</span><br><span class="line">                <span class="built_in">fatalError</span>()</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        </span><br><span class="line">        <span class="keyword">public</span> <span class="keyword">static</span> <span class="function"><span class="keyword">func</span> <span class="title">requestAuthority</span><span class="params">()</span></span> -&gt; <span class="type">Promise</span>&lt;<span class="type">Bool</span>&gt; &#123;</span><br><span class="line">            <span class="keyword">return</span> <span class="type">Promise</span>&lt;<span class="type">Bool</span>&gt; &#123; (seal) <span class="keyword">in</span></span><br><span class="line">                <span class="type">AVCaptureDevice</span>.requestAccess(<span class="keyword">for</span>: .video) &#123; (result) <span class="keyword">in</span></span><br><span class="line">                    <span class="keyword">if</span> result &#123;</span><br><span class="line">                        seal.fulfill(result)</span><br><span class="line">                    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">                        seal.reject(<span class="type">Error</span>.accessDeny)</span><br><span class="line">                    &#125;</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>这里, 对Authority进行扩展, 增加不同权限的, 这样, 我们不需要对原有的代码修改, 就可以增加新的功能, 其他的功能, 都可以如法炮制, 例如相册权限</p>
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> Foundation</span><br><span class="line"><span class="keyword">import</span> Photos</span><br><span class="line"><span class="keyword">import</span> PromiseKit</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">extension</span> <span class="title">Authority</span> </span>&#123;</span><br><span class="line">    <span class="class"><span class="keyword">struct</span> <span class="title">Photo</span>: <span class="title">Authoritiable</span> </span>&#123;</span><br><span class="line">        <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">var</span> isAvaliable: <span class="type">Bool</span> &#123;</span><br><span class="line">            <span class="keyword">return</span> <span class="type">PHPhotoLibrary</span>.authorizationStatus() == .authorized</span><br><span class="line">        &#125;</span><br><span class="line">        </span><br><span class="line">        <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">var</span> status: <span class="type">Authority</span>.<span class="type">Status</span> &#123;</span><br><span class="line">            <span class="keyword">switch</span> <span class="type">PHPhotoLibrary</span>.authorizationStatus() &#123;</span><br><span class="line">            <span class="keyword">case</span> .authorized:</span><br><span class="line">                <span class="keyword">return</span> .authorized</span><br><span class="line">            <span class="keyword">case</span> .denied:</span><br><span class="line">                <span class="keyword">return</span> .denied</span><br><span class="line">            <span class="keyword">case</span> .notDetermined:</span><br><span class="line">                <span class="keyword">return</span> .notDetermined</span><br><span class="line">            <span class="keyword">case</span> .restricted:</span><br><span class="line">                <span class="keyword">return</span> .restricted</span><br><span class="line">            @unknown <span class="keyword">default</span>:</span><br><span class="line">                <span class="built_in">fatalError</span>()</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        </span><br><span class="line">        <span class="keyword">public</span> <span class="keyword">static</span> <span class="function"><span class="keyword">func</span> <span class="title">requestAuthority</span><span class="params">()</span></span> -&gt; <span class="type">Promise</span>&lt;<span class="type">Bool</span>&gt; &#123;</span><br><span class="line">            <span class="keyword">return</span> <span class="type">Promise</span>&lt;<span class="type">Bool</span>&gt; &#123; (seal) <span class="keyword">in</span></span><br><span class="line">                <span class="type">PHPhotoLibrary</span>.requestAuthorization &#123; (result) <span class="keyword">in</span></span><br><span class="line">                    <span class="keyword">if</span> result == .authorized &#123;</span><br><span class="line">                        seal.fulfill(<span class="literal">true</span>)</span><br><span class="line">                    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">                        seal.reject(<span class="type">Error</span>.accessDeny)</span><br><span class="line">                    &#125;</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>在我们写组件的时候, 需要注意的是访问权限的修饰, 如果在你写好了组件, 发现有一些组件的方法或者属性无法通过提示获取到, 那么很有可能你使用了错误的访问权限控制修饰. 在这里, 我们不需要继承复写, 所以, public足够了. 这里有<a href="https://docs.swift.org/swift-book/LanguageGuide/AccessControl.html" target="_blank" rel="noopener">苹果官方的详细文档</a> </p>
+<h1 id="收益"><a href="#收益" class="headerlink" title="收益"></a>收益</h1><p>在这里, 我们来对比一下这样的做法有什么收益</p>
+<p>首先, 看一下, 如果不用PromiseKit, 代码会是什么样子呢?</p>
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">AVCaptureDevice</span>.requestAccess(<span class="keyword">for</span>: .video) &#123; (resultVidoe) <span class="keyword">in</span></span><br><span class="line">            <span class="keyword">if</span> resultVidoe &#123;</span><br><span class="line">                <span class="type">AVCaptureDevice</span>.requestAccess(<span class="keyword">for</span>: .audio) &#123; (resultAudio) <span class="keyword">in</span></span><br><span class="line">                    <span class="keyword">if</span> resultAudio &#123;</span><br><span class="line">                        </span><br><span class="line">                    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">                        </span><br><span class="line">                    &#125;</span><br><span class="line">                &#125;</span><br><span class="line">            &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">                </span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br></pre></td></tr></table></figure>
+<p>可以看出, 串行请求时, 代码已经惨不忍睹了, 而且这样写, 并不是我们想要的, 因为一个权限的请求与否, 并不依赖于其他权限, 但是我们需要他们顺序的展示出来, 市面上有一些app, 会疯狂的弹出权限请求, 你还没看清一个弹窗, 另一个弹窗就出来了, 这是因为他们并行的请求了这些权限, 为什么不等一个完成后, 再去请求另一个呢? 我想, 这样的代码并没有那么好写, 而且无论怎样组合, 这样的回调嵌套都不那么容易阅读, 那么, 如果我们用我们这一节的内容包装一下呢?</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">Authority.Camera.requestAuthority()</span><br><span class="line">            .then &#123; _ in Authority.Audio.requestAuthority() &#125;</span><br><span class="line">            .catch &#123; (error) in print(error) &#125;</span><br></pre></td></tr></table></figure>
+<p>这个代码是在请求完相机权限后, 请求麦克风权限. 从代码阅读上来看, 这样就清晰很多. </p>
+<h1 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h1><p>在这一章节, 展示了如何将权限请求的功能封装成一个组件, 并增加扩展性, 让它符合开闭原则. 同时接触了PromiseKit这个事件总线. 展示了如何优雅的按照顺序获取权限. 但是需要注意的是, 根据工信部的要求, 弹出的权限请求, 只有在必要时才能进行, 代码虽雅, 也还是要遵循需求.</p>
+
+      
+    </div>
+
+    
+
+    
+    
+    
+
+    
+
+    
+      
+    
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2018/09/19/从YYCache学习设计一个CaChe-in-Swift/" rel="next" title="从YYCache学习设计一个CaChe in Swift">
+                <i class="fa fa-chevron-left"></i> 从YYCache学习设计一个CaChe in Swift
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2020/09/05/等待-静候花开/" rel="prev" title="等待-静候花开">
+                等待-静候花开 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+  </div>
+
+
+          </div>
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            Table of Contents
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            Overview
+          </li>
+        </ul>
+      
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <p class="site-author-name" itemprop="name">Author</p>
+              <div class="site-description motion-element" itemprop="description"></div>
+          </div>
+
+          
+            <nav class="site-state motion-element">
+              
+                <div class="site-state-item site-state-posts">
+                
+                  <a href="/archives/">
+                
+                    <span class="site-state-item-count">98</span>
+                    <span class="site-state-item-name">posts</span>
+                  </a>
+                </div>
+              
+
+              
+                
+                
+                <div class="site-state-item site-state-categories">
+                  
+                    
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                    <span class="site-state-item-count">9</span>
+                    <span class="site-state-item-name">categories</span>
+                  
+                </div>
+              
+
+              
+                
+                
+                <div class="site-state-item site-state-tags">
+                  
+                    
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                    <span class="site-state-item-count">92</span>
+                    <span class="site-state-item-name">tags</span>
+                  
+                </div>
+              
+            </nav>
+          
+
+          
+
+          
+
+          
+
+          
+
+          
+          
+
+          
+            
+          
+          
+
+        </div>
+      </div>
+
+      
+      <!--noindex-->
+        <div class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+            
+            
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#开篇"><span class="nav-number">1.</span> <span class="nav-text">开篇</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#常规操作"><span class="nav-number">2.</span> <span class="nav-text">常规操作</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#抽象分析"><span class="nav-number">3.</span> <span class="nav-text">抽象分析</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#建立组件"><span class="nav-number">3.1.</span> <span class="nav-text">建立组件</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#开始"><span class="nav-number">3.1.1.</span> <span class="nav-text">开始</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#构建"><span class="nav-number">3.1.2.</span> <span class="nav-text">构建</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Base"><span class="nav-number">3.1.3.</span> <span class="nav-text">Base</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Camera"><span class="nav-number">3.1.4.</span> <span class="nav-text">Camera</span></a></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#收益"><span class="nav-number">4.</span> <span class="nav-text">收益</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#总结"><span class="nav-number">5.</span> <span class="nav-text">总结</span></a></li></ol></div>
+            
+
+          </div>
+        </div>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+  
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2020</span>
+  <span class="with-love" id="animate">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Author</span>
+
+  
+
+  
+</div>
+
+
+  <div class="powered-by">Powered by <a href="https://hexo.io" class="theme-link" rel="noopener" target="_blank">Hexo</a> v3.9.0</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">Theme – <a href="https://theme-next.org" class="theme-link" rel="noopener" target="_blank">NexT.Muse</a> v7.1.0</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+    
+
+    
+  </div>
+
+  
+
+<script>
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  <script src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+
+  
+
+
+  <script src="/js/utils.js?v=7.1.0"></script>
+
+  <script src="/js/motion.js?v=7.1.0"></script>
+
+
+
+  
+  
+
+
+  <script src="/js/schemes/muse.js?v=7.1.0"></script>
+
+
+
+  
+  <script src="/js/scrollspy.js?v=7.1.0"></script>
+<script src="/js/post-details.js?v=7.1.0"></script>
+
+
+
+  
+
+
+  <script src="/js/next-boot.js?v=7.1.0"></script>
+
+
+  
+
+  
+
+  
+
+  
+
+
+  
+
+
+  
+
+
+
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>
